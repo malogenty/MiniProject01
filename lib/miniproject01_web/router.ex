@@ -1,12 +1,13 @@
 defmodule ApiProjectWeb.Router do
   use ApiProjectWeb, :router
+
   pipeline :api do
     plug :accepts, ["json"]
   end
 
   scope "/api", ApiProjectWeb do
     pipe_through :api
-    get "/users", UserController, :list
+    get "/users", UserController, :readCredentials
     get "/users/:userId", UserController, :read
     post "/users/", UserController, :create
     put "/users/:userId", UserController, :update
@@ -21,5 +22,4 @@ defmodule ApiProjectWeb.Router do
     get "/clocks/:userId", ClockingController, :read
     post "/clocks/:userId", ClockingController, :create
   end
-
 end
