@@ -1,21 +1,25 @@
-# Miniproject01
+# ApiProject
 
-**TODO: Add description**
+Create user in PostgreSQL:  
+  ``CREATE ROLE miniapiproject WITH LOGIN PASSWORD 'password';  
+  ALTER ROLE miniapiproject CREATEDB;
+  ``
 
-## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `miniproject01` to your list of dependencies in `mix.exs`:
+To start your Phoenix server:
 
-```elixir
-def deps do
-  [
-    {:miniproject01, "~> 0.1.0"}
-  ]
-end
-```
+  * Install dependencies with `mix deps.get`
+  * Create and migrate your database with `mix ecto.setup`
+  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/miniproject01>.
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+
+## Learn more
+
+  * Official website: https://www.phoenixframework.org/
+  * Guides: https://hexdocs.pm/phoenix/overview.html
+  * Docs: https://hexdocs.pm/phoenix
+  * Forum: https://elixirforum.com/c/phoenix-forum
+  * Source: https://github.com/phoenixframework/phoenix
