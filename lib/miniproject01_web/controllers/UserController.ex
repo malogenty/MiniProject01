@@ -1,19 +1,33 @@
-defmodule Miniproject01Web.UserController do
-  use Miniproject01Web, :controller
+defmodule ApiProjectWeb.UsersController do
+  use ApiProjectWeb, :controller
 
-  def index(conn, _params, %{"userId" => id}) do
-    json(conn, %{hello: "index"})
+  alias ApiProject.MiniProject01
+  alias ApiProject.MiniProject01.Users
+
+  action_fallback(ApiProjectWeb.FallbackController)
+
+  def create(conn, %{"user" => user_params}) do
+    with {:ok, %Users{} = user} <- MiniProject01.create_user(user_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", Routes.users_path(conn, :show, user))
+      |> render("show.json", user: user)
+    end
   end
 
-  def create(conn) do
-    json(conn, %{hello: "create"})
-  end
+  def update(conn, %{"userId" => id, "user" => user_params}) do
+    user = MiniProject01.get_user!(id)
 
-  def update(conn, %{"userId" => id}) do
-    json(conn, %{hello: "update"})
+    with {:ok, %Users{} = users} <- MiniProject01.update_user(user, user_params) do
+      render(conn, "show.json", user: user)
+    end
   end
 
   def delete(conn, %{"userId" => id}) do
-    json(conn, %{hello: "delete"})
+    user = MiniProject01.get_user!(id)
+
+    with {:ok, %Users{}} <- MiniProject01.delete_user(user) do
+      send_resp(conn, :no_content, "")
+    end
   end
 end
