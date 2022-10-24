@@ -10,7 +10,8 @@ defmodule ApiProjectWeb.Router do
     end
     scope "/workingtimes", WorkingTimesController, as: :workingtimes do
     end
-    scope "/workingtimes", ClocksController, as: :workingtimes do
+    scope "/clocks", ClocksController, as: :clocks do
+      get "/", ClocksController, :read
     end
   end
 
