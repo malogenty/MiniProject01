@@ -1,6 +1,7 @@
 defmodule ApiProject.User do
   use Ecto.Schema
   import Ecto.Changeset
+  import EctoCommons.EmailValidator
 
   schema "users" do
     field(:email, :string)
