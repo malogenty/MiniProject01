@@ -1,5 +1,11 @@
 # ApiProject
 
+Create user in PostgreSQL:  
+  ``CREATE ROLE miniapiproject WITH LOGIN PASSWORD 'password';  
+  ALTER ROLE miniapiproject CREATEDB;
+  ``
+
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`

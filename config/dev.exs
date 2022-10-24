@@ -2,8 +2,8 @@ import Config
 
 # Configure your database
 config :miniproject01, ApiProject.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "miniapiproject",
+  password: "password",
   hostname: "localhost",
   database: "miniproject01_dev",
   stacktrace: true,
