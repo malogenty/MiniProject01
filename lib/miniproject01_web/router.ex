@@ -6,13 +6,19 @@ defmodule ApiProjectWeb.Router do
 
   scope "/api", ApiProjectWeb do
     pipe_through :api
-    scope "/users", UserController, as: :users do
-    end
-    scope "/workingtimes", WorkingTimesController, as: :workingtimes do
-    end
-    scope "/clocks", ClocksController, as: :clocks do
-      get "/", ClocksController, :read
-    end
+    get "/users", UserController, :list
+    get "/users", UserController, :read
+    post "/users", UserController, :create
+    put "/users", UserController, :update
+    delete "/users", UserController, :delete
+
+    get "/workingtimes", WorkingTimeController, :read
+    post "/workingtimes", WorkingTimeController, :create
+    put "/workingtimes", WorkingTimeController, :update
+    delete "/workingtimes", WorkingTimeController, :delete
+
+    get "/workingtimes", ClockingController, :read
+    post "/workingtimes", ClockingController, :create
   end
 
 end
