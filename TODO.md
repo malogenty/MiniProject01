@@ -1,10 +1,10 @@
 # Routes
 ## USER  
-- [ ] a GET method: http://localhost:4000/api/users?email=XXX&username=YYY 
-- [ ] a GET method: http://localhost:4000/api/users/:userID
-- [ ] a POST method: http://localhost:4000/api/users
-- [ ] a PUT method: http://localhost:4000/api/users/:userID
-- [ ] a DELETE method: http://localhost:4000/api/users/:userID 
+- [x] a GET method: http://localhost:4000/api/users?email=XXX&username=YYY 
+- [x] a GET method: http://localhost:4000/api/users/:userID
+- [x] a POST method: http://localhost:4000/api/users
+- [x] a PUT method: http://localhost:4000/api/users/:userID
+- [x] a DELETE method: http://localhost:4000/api/users/:userID 
 
 ## WORKING TIME  
 - [ ] a GET(ALL) method: http://localhost:4000/api/workingtimes/:userID?start=XXX&end=YYY 
@@ -30,11 +30,11 @@
   - If value passes validation (maybe add unique email ?)
     - Push to DB + 200 && payload 
   - Else returns 400
-- [ ] On PUT
+- [x] On PUT
   - If value passes validation && user exists
     - Edit corresponding user + 200 && payload
   - Else returns 400 || 404
-- [ ] On DELETE
+- [x] On DELETE
   - If user exists
     - Delete corresponding user + 204
   - Else returns 404
