@@ -5,11 +5,12 @@ defmodule ApiProject.Clock do
   import IO
   alias ApiProject.Repo
   alias ApiProject.Clock
+  alias ApiProject.User
 
   schema "clocks" do
     field(:status, :boolean, default: true)
     field(:time, :naive_datetime)
-    field(:user, :id)
+    belongs_to :user, User
 
     timestamps()
   end
@@ -30,6 +31,7 @@ defmodule ApiProject.Clock do
       {:error, _} -> :error
     end
   end
+
   def select(userId) do
     from(clock in Clock, where: clock.user == ^userId) |> Repo.all()
   end
