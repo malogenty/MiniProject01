@@ -28,9 +28,10 @@ defmodule ApiProject.WorkingTime do
   def get_working_time!(id), do: Repo.get!(WorkingTime, id)
 
   def get_working_time_by_user(%{user_id: user_id}) do
-    Repo.all("working_times"
+    WorkingTime
+    |> Ecto.Query.preload([:user])
     |> where([w], w.user_id == ^user_id)
-    |> select([:start]))
+    |> Repo.all()
   end
 
   def create_working_time(attrs \\ %{}) do

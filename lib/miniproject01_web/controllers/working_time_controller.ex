@@ -5,8 +5,8 @@ defmodule ApiProjectWeb.WorkingTimeController do
 
   action_fallback ApiProjectWeb.FallbackController
 
-  def readAll(conn, _params) do
-    working_times = WorkingTime.list_working_times()
+  def readAll(conn, %{"userId" => userId}) do
+    working_times = WorkingTime.get_working_time_by_user(%{user_id: userId})
     render(conn, "index.json", working_times: working_times)
   end
 
