@@ -9,4 +9,10 @@ defmodule ApiProjectWeb.UserView do
       email: user.email
     }
   end
+
+  def render("error.json", %{reason: reason}) do
+    %{
+      error: reason
+    }
+  end
 end
