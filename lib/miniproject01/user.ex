@@ -3,6 +3,10 @@ defmodule ApiProject.User do
   import Ecto.Changeset
   import EctoCommons.EmailValidator
 
+  import Ecto.Query, warn: false
+  alias ApiProject.Repo
+  alias ApiProject.User
+
   schema "users" do
     field(:email, :string)
     field(:username, :string)
@@ -16,5 +20,9 @@ defmodule ApiProject.User do
     |> cast(attrs, [:username, :email])
     |> validate_email(:email)
     |> validate_required([:username, :email])
+  end
+
+  def get_user(id) do
+    Repo.get(User, id)
   end
 end
