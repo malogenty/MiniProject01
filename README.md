@@ -88,7 +88,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Working time
 ``GET /api/workingtimes/:userId?start=xxx&end=xxx``
-> Expects start/end to look like : YYYY-MM-DD HH-MM-SS
+> Expects start/end to look like : YYYY-MM-DD HH:MM:SS
 > Will return a response of this kind (JSON)
 ```json
 [
