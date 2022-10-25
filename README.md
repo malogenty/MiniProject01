@@ -77,6 +77,11 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 > Will return code 204
 
 ## Working time
+``GET /api/workingtimes/:userId?start=xxx&end=xxx``
+``GET /api/workingtimes/:userId/:id``
+``POST /api/workingtimes/:userId``
+``PUT /api/workingtimes/:id ``
+``DELETE /api/workingtimes/:id ``
 ## Clocking
 ``GET /api/clocks/:userID``
 > Will return a response of this kind (JSON)
