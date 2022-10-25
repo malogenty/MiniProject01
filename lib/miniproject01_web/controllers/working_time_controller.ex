@@ -10,8 +10,8 @@ defmodule ApiProjectWeb.WorkingTimeController do
     render(conn, "index.json", working_times: working_times)
   end
 
-  def readOne(conn, %{"id" => id}) do
-    working_time = WorkingTime.get_working_time!(id)
+  def readOne(conn, %{"id" => id, "userId" => userId}) do
+    working_time = WorkingTime.get_working_time!(%{id: id, user_id: userId})
     render(conn, "show.json", working_time: working_time)
   end
 
