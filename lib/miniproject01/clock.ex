@@ -30,7 +30,8 @@ defmodule ApiProject.Clock do
       {:error, _} -> :error
     end
   end
-  def select(id) do
-    Repo.all(Clock, user: id)
+  def select(userId) do
+    #Repo.get(Clock, user: userId)
+    from(clock in Clock, where: clock.user == ^userId) |> Repo.all()
   end
 end
