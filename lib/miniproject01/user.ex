@@ -31,13 +31,19 @@ defmodule ApiProject.User do
     Repo.get(User, id)
   end
 
-  def create_user(attrs \\ %{}) do
+  def create_user(user_params \\ %{}) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.changeset(user_params)
     |> Repo.insert()
-    |> case do
-      {:ok, user} -> {:ok, user}
-      {:error, _} -> :error
-    end
+  end
+
+  def update_user(%User{} = user, user_params) do
+    user
+    |> User.changeset(user_params)
+    |> Repo.update()
+  end
+
+  def delete_user(user) do
+    Repo.delete(user)
   end
 end
