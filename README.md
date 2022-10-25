@@ -78,10 +78,74 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Working time
 ``GET /api/workingtimes/:userId?start=xxx&end=xxx``
+> Expects start/date to look like : YYYY-MM-DD  
+> Will return a response of this kind (JSON)
+```json
+[
+  {
+    "start": "2022-10-25 08:33:05",
+    "end": "2022-10-25 13:30:15",
+    "user": 5
+  },
+  {
+    "start": "2022-10-25 14:30:0",
+    "end": "2022-10-25 18:32:11",
+    "user": 5
+  }
+]
+```
+
 ``GET /api/workingtimes/:userId/:id``
-``POST /api/workingtimes/:userId``
-``PUT /api/workingtimes/:id ``
-``DELETE /api/workingtimes/:id ``
+> Will return a response of this kind (JSON)
+```json
+{
+  "start": "2022-10-25 08:33:05",
+  "end": "2022-10-25 13:30:15",
+  "user": 5
+}
+```
+
+``POST /api/workingtimes/:userId`` 
+> Expects a payload as such  
+```json
+{
+  "workingTime": {
+    "start": "2022-10-25 08:33:05",
+    "end": "2022-10-25 13:30:15",
+  }
+}
+```
+> Will return a response of this kind (JSON)
+```json
+{
+  "start": "2022-10-25 08:33:05",
+  "end": "2022-10-25 13:30:15",
+  "user": 5
+}
+```
+
+``PUT /api/workingtimes/:id ``  
+> Expects a payload as such  
+```json
+{
+  "workingTime": {
+    "end": "2022-10-25 13:30:15"
+  }
+}
+```
+> Will return a response of this kind (JSON)
+```json
+{
+  "start": "2022-10-25 08:33:05",
+  "end": "2022-10-25 13:30:15",
+  "user": 5
+}
+```
+
+``DELETE /api/workingtimes/:id ``  
+> Will return code 204
+
+
 ## Clocking
 ``GET /api/clocks/:userID``
 > Will return a response of this kind (JSON)
