@@ -31,7 +31,6 @@ defmodule ApiProject.Clock do
     end
   end
   def select(userId) do
-    #Repo.get(Clock, user: userId)
     from(clock in Clock, where: clock.user == ^userId) |> Repo.all()
   end
 end
