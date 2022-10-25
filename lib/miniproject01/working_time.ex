@@ -27,10 +27,12 @@ defmodule ApiProject.WorkingTime do
 
   def get_working_time!(id), do: Repo.get!(WorkingTime, id)
 
-  def get_working_time_by_user(%{user_id: user_id}) do
+  def get_working_time_by_user(%{user_id: user_id, start: start_datetime, end: end_datetime}) do
     WorkingTime
     |> Ecto.Query.preload([:user])
     |> where([w], w.user_id == ^user_id)
+    |> where([w], w.start >= ^start_datetime)
+    |> where([w], w.end <= ^end_datetime)
     |> Repo.all()
   end
 
