@@ -1,6 +1,5 @@
 defmodule ApiProjectWeb.WorkingTimeView do
   use ApiProjectWeb, :view
-  alias ApiProjectWeb.WorkingTimeView
 
   def render("index.json", %{working_times: working_times}) do
     for working_time <- working_times do
