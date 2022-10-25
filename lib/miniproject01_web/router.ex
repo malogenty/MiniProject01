@@ -12,8 +12,8 @@ defmodule ApiProjectWeb.Router do
     put "/users/:userId", UserController, :update
     delete "/users/:userId", UserController, :delete
 
-    get "/workingtimes/:userId", WorkingTimeController, :read
-    get "/workingtimes/:userId/:id", WorkingTimeController, :read
+    get "/workingtimes/:userId", WorkingTimeController, :readAll
+    get "/workingtimes/:userId/:id", WorkingTimeController, :readOne
     post "/workingtimes/:userId", WorkingTimeController, :create
     put "/workingtimes/:id", WorkingTimeController, :update
     delete "/workingtimes/:id", WorkingTimeController, :delete
