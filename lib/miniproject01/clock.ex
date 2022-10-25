@@ -33,6 +33,6 @@ defmodule ApiProject.Clock do
   end
 
   def select(userId) do
-    from(clock in Clock, where: clock.user == ^userId) |> Repo.all()
+    from(clock in Clock, where: clock.user_id == ^userId) |> Repo.all()
   end
 end
