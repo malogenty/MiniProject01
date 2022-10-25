@@ -18,8 +18,8 @@ defmodule ApiProjectWeb.Router do
     put "/workingtimes/:id", WorkingTimeController, :update
     delete "/workingtimes/:id", WorkingTimeController, :delete
 
-    get "/clocks/:userId", ClockingController, :read
-    post "/clocks/:userId", ClockingController, :create
+    get "/clocks/:userId", ClockController, :read
+    post "/clocks/:userId", ClockController, :create
   end
 
 end
