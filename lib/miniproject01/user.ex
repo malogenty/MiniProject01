@@ -1,4 +1,5 @@
 defmodule ApiProject.User do
+  require Logger
   use Ecto.Schema
   import Ecto.Changeset
   import EctoCommons.EmailValidator
@@ -22,7 +23,11 @@ defmodule ApiProject.User do
     |> validate_required([:username, :email])
   end
 
-  def get_user(id) do
-    Repo.get(User, id)
+  def get_user_with_credentials!(%{email: email, username: username}) do
+    Repo.get_by!(User, email: email, username: username)
+  end
+
+  def get_user!(id) do
+    Repo.get!(User, id)
   end
 end
