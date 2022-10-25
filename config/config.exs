@@ -7,6 +7,11 @@
 # General application configuration
 import Config
 
+config :miniproject01, ApiProject.Repo,
+  password: "password",
+  hostname: "localhost",
+  database: "miniproject01_dev"
+
 config :miniproject01,
   namespace: ApiProject,
   ecto_repos: [ApiProject.Repo]

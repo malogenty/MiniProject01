@@ -5,6 +5,13 @@ Create user in PostgreSQL:
   ALTER ROLE miniapiproject CREATEDB;
   ``
 
+Into the database (\connect miniproject01_dev):
+```
+GRANT SELECT, UPDATE, INSERT, DELETE ON users TO miniapiproject;
+GRANT SELECT, UPDATE, INSERT, DELETE ON clocks TO miniapiproject;
+GRANT SELECT, UPDATE, INSERT, DELETE ON workingtimes TO miniapiproject;
+```
+
 
 To start your Phoenix server:
 

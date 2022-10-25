@@ -19,14 +19,14 @@
 
 # Controllers methods
 ## USER
-- [ ] On GET
+- [x] On GET
   - If there are query params, fetch in db and return 
     - 404 if no user
     - 200 + payload if found
   - if no query params, but /userId, fetch in db and return
     - 404 if no user
     - 200 + payload if found
-- [ ] On POST
+- [x] On POST
   - If value passes validation (maybe add unique email ?)
     - Push to DB + 200 && payload 
   - Else returns 400
