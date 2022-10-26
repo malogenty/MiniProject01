@@ -17,3 +17,5 @@ Description: Managing the working time
 Description: Managing the clocks
 ## ChartManager
 Description: Managing the graphs
+Charts Idea:
+ - Working hours day/week/month/year
