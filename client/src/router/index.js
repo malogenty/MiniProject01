@@ -8,20 +8,9 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/clock',
+    path: '/clock/:username',
     name: 'clock',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/ClockView.vue')
-  },
-  {
-    path: '/clock/:userId',
-    name: 'clock',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/ClockView.vue')
+    component: () => import('../views/ClockView.vue')
   }
 ]
 
