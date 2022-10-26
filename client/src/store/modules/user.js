@@ -5,47 +5,33 @@ const user = {
   state: () => ({
     id: null,
     username: null,
-    email: null,
-    workingTimes: [],
-    clocks: []
+    email: null
   }),
   mutations: {
-    updateUsername(state, {username}) {
+    updateUser(state, {id, username, email}) {
+      state.id = id
       state.username = username
-    },
-    updateEmail(state, {email}) {
       state.email = email
-    },
-    updateWorkingtimes(state, {workingTimes}) {
-      state.workingTimes = workingTimes
-    },
-    updateClocks(state, {clocks}) {
-      state.clocks = clocks
     }
   },
   actions: {
-    async fetchUser({commit, dispatch}, {id}) {
-      const idBis = 1;
-      await axios.get(`http://localhost:4000/api/users/${idBis}`, {mode: 'no-cors'})
-      commit('updateUsername', {id})
-      await dispatch('fetchWorkingTimes')
-      await dispatch('fetchClocks')
+    async fetchUser({commit}, {id}) {
+      try {
+        const {data} = await axios.get(`http://localhost:4000/api/users/${id}`)
+        commit('updateUser', data)
+      } catch(e) {
+        throw new Error(e)
+      }
     },
-    async fetchWorkingTimes({commit}) {
-      const workingTimes = 'working_times'
-      commit('updateWorkingTimes', {workingTimes})
-    },
-    async fetchClocks({commit}) {
-      const clocks = 'clocks'
-      commit('updateClocks', {clocks})
-    },
-    async updateUsername({commit}, {username}) {
-      commit('updateUsername', {username})
-    },
-    async updateEmail({commit}, {email}) {
-      commit('updateEmail', {email})
-    }
-  }
+    async updateUser({commit, state}, user) {
+      try {
+        const {data} = await axios.put(`http://localhost:4000/api/users/${state.id}`, {user})
+        commit('updateUser', data)
+      } catch(e) {
+        throw new Error(e)
+      }
+    } 
+   }
 }
 
 export default user

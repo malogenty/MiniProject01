@@ -3,7 +3,12 @@
     Hey
     <button
     @click="fetchUserData">
-      Click here Q
+      Click here to get id 1
+    </button>
+
+    <button
+    @click="setUsername">
+      click here to set username to 'hey_you'
     </button>
   </div>
 </template>
@@ -16,16 +21,20 @@ export default {
       ...mapGetters([
     'getAllUsers'
     ]),
-    getUsers() {
-      return this.getAllUsers // => returns ['first_user']
+    getUser() {
+      return this.getUser(1) // => returns ['first_user']
     }
   },
   methods: {
     ...mapActions({
       fetchUser: 'user/fetchUser',
+      updateUser: 'user/updateUser'
   }),
     fetchUserData() {
       this.fetchUser({id: 1})
+    },
+    setUsername() {
+      this.updateUser({username: 'hey_you'})
     }
   }
 }
