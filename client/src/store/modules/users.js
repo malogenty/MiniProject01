@@ -2,10 +2,12 @@ import axios from 'axios'
 
 const users = {
   namespaced: true,
-  state: () => ([]),
+  state: () => ({
+    users: []
+  }),
   mutations: {
     updateUsers(state, users) {
-      state = users
+      state.users = users
     }
   },
   actions: {

@@ -5,7 +5,7 @@ defmodule ApiProjectWeb.UserController do
 
   # list one user with params: email & username
   def list(conn, params) do
-    if params["username"] && params["email"] do
+    if params["email"] && params["username"] do
       user =
         User.get_user_with_credentials(%{email: params["email"], username: params["username"]})
 
