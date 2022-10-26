@@ -19,3 +19,17 @@ Description: Managing the clocks
 Description: Managing the graphs
 Charts Idea:
  - Working hours day/week/month/year
+
+## Store -> Hujo
+- Create all getters
+  - get users
+  - get all working times for user
+  - get clock for uesr
+  - get all working times for given id
+- Create all actions
+  - create user
+  - get user
+  - delete user
+  - create working time
+  - update working time 
+  - delete working time
