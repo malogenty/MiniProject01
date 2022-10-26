@@ -20,5 +20,13 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Good to know
+IDEs can have a hard time finding the babel config file if they are not opened at the directory of the client folder.  
+To solve that, add this piece of code to the eslint settings.json file 
+```json
+    "eslint.workingDirectories": [
+        {
+            "mode": "auto"
+        }
+    ],
+```
