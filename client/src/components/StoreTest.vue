@@ -20,16 +20,19 @@ export default {
   async mounted() {
     await this.fetchUserData()
     this.user = this.getUser
+    this.users = this.getUsers
     console.log(this.user)
   },
   data() {
     return {
-      user: {}
+      user: {},
+      users: []
     }
   },
   computed: {
       ...mapGetters({
-        getUser: 'user/getUser'      
+        getUser: 'user/getUser',
+        getUsers: 'users/getAllUsers'
       })
   },
   methods: {
@@ -38,7 +41,7 @@ export default {
       updateUser: 'user/updateUser'
   }),
     async fetchUserData() {
-      this.fetchUser({id: 1})
+      await this.fetchUser({id: 1})
     },
     setUsername() {
       this.updateUser({username: 'hey_you'})
