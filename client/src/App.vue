@@ -2,7 +2,10 @@
   <div>
     <nav>
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/clock">About</router-link>
+      <router-link :to="{ name: 'clock', params: { username: 'mark2021' } }" >
+      Profile
+      </router-link>
     </nav>
     <router-view/>
   </div>
