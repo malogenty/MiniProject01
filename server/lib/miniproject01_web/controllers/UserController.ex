@@ -5,11 +5,7 @@ defmodule ApiProjectWeb.UserController do
 
   # list one user with params: email & username
   def list(conn, params) do
-<<<<<<< HEAD
     if params["email"] && params["username"] do
-=======
-    if params["username"] && params["email"] do
->>>>>>> master
       user =
         User.get_user_with_credentials(%{email: params["email"], username: params["username"]})
 
@@ -20,8 +16,6 @@ defmodule ApiProjectWeb.UserController do
         |> put_status(404)
         |> render("error.json", reason: "Invalid credentials")
       end
-<<<<<<< HEAD
-=======
     else
       users = User.get_all()
 
@@ -32,7 +26,6 @@ defmodule ApiProjectWeb.UserController do
         |> put_status(404)
         |> render("error.json", reason: "An error has occured")
       end
->>>>>>> master
     end
   end
 
