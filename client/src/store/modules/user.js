@@ -23,7 +23,6 @@ const user = {
         throw new Error(e)
       }
     },
-    // {username: xxx, email: xxx}
     async updateUser({commit, state}, user) {
       try {
         const {data} = await axios.put(`http://localhost:4000/api/users/${state.id}`, {user})
