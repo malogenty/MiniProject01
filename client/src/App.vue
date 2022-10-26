@@ -1,12 +1,11 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/clock">Clock</router-link>
-    <router-link :to="{ name: 'profile', params: { username: 'mark2021' } }" >
-      Profile
-    </router-link>
-  </nav>
-  <router-view/>
+  <div>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    <router-view/>
+  </div>
 </template>
 
 <style>
