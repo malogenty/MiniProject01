@@ -13,7 +13,6 @@ import { mapActions } from 'vuex';
 export default {
   async mounted() {
     await this.fetchUsers()
-    console.log('mounted')
   },
   methods: {
     ...mapActions({
