@@ -8,6 +8,23 @@
   </div>
 </template>
 
+<script>
+import { mapActions } from 'vuex';
+export default {
+  async created() {
+    await this.fetchUsers()
+  },
+  methods: {
+    ...mapActions({
+      'fetchAllUsers': 'users/fetchAllUsers'
+    }),
+    fetchUsers() {
+      this.fetchAllUsers()
+    }
+  }
+}
+</script>
+
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
