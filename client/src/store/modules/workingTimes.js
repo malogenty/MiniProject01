@@ -15,14 +15,13 @@ const workingTimes = {
     }
   },
   actions: {
-    async fetchWorkingTimesFromTo({ rootGetters}, {from, to}) {
+    async fetchWorkingTimesFromTo({ commit, rootGetters}, {from, to}) {
       try {
         const formatted_from = moment(from).format('YYYY-MM-DD hh:mm:ss')
         const formatted_to = moment(to).format('YYYY-MM-DD hh:mm:ss')
         const user = rootGetters['user/getUser']
         const {data} = await axios.get(`http://localhost:4000/api/workingtimes/${user.id}?start=${formatted_from}&end=${formatted_to}`)
-        console.log(data)
-        // commit('addMultipleWorkingTimes', data)
+        commit('addMultipleWorkingTimes', data)
       } catch(e) {
         throw new Error(e)
       }
@@ -42,7 +41,7 @@ const workingTimes = {
       return state.workingTimes
     },
     getWorkingTimeById(state, {id}) {
-      return this.state.filter(w => w.id ? w.id === id : {})
+      return state.workingTimes.filter(w => w.id === id)[0]
     }
   }
 }
