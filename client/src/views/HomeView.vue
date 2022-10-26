@@ -1,17 +1,17 @@
 <template>
   <div class="home">
-    <BaseFile/>
+    <StoreTest :userId="1"/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import BaseFile from '@/components/BaseFile.vue'
+import StoreTest from '@/components/StoreTest.vue'
 
 export default {
   name: 'HomeView',
   components: {
-    BaseFile
+    StoreTest
   }
 }
 </script>

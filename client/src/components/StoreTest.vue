@@ -16,7 +16,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 export default {
-  name: 'BaseFile',
+  name: 'StoreTest',
   async mounted() {
     await this.fetchUserData()
     this.user = this.getUser
