@@ -45,7 +45,8 @@ defmodule ApiProject.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:ecto_commons, "~> 0.3.3"}
+      {:ecto_commons, "~> 0.3.3"},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 
