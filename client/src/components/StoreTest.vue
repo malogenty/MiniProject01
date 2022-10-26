@@ -10,6 +10,10 @@
     @click="setUsername">
       click here to set username to 'hey_you'
     </button>
+    <button
+    @click="fetchWorkingTimesFromTo">
+      click here to fetch working times
+    </button>
   </div>
 </template>
 
@@ -21,7 +25,6 @@ export default {
     await this.fetchUserData()
     this.user = this.getUser
     this.users = this.getUsers
-    console.log(this.user)
   },
   data() {
     return {
@@ -38,13 +41,17 @@ export default {
   methods: {
     ...mapActions({
       fetchUser: 'user/fetchUser',
-      updateUser: 'user/updateUser'
+      updateUser: 'user/updateUser',
+      fetchWorkingTimesFT: 'user/fetchWorkingTimesFromTo'
   }),
     async fetchUserData() {
       await this.fetchUser({id: 1})
     },
     setUsername() {
       this.updateUser({username: 'hey_you'})
+    },
+    fetchWorkingTimesFromTo() {
+      this.fetchWorkingTimesFT({from: '2022-10-23', to: '2022-10-26'})
     }
   }
 }
