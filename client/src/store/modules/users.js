@@ -19,6 +19,11 @@ const users = {
         throw new Error(e)
       }
     },
+  },
+  getters: {
+    getAllUsers(state) {
+      return state.users
+    }
   }
 }
 

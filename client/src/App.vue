@@ -11,7 +11,7 @@
 <script>
 import { mapActions } from 'vuex';
 export default {
-  async mounted() {
+  async created() {
     await this.fetchUsers()
   },
   methods: {
