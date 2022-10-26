@@ -21,10 +21,15 @@ defmodule ApiProject.User do
     |> cast(attrs, [:username, :email])
     |> validate_email(:email, checks: [:html_input])
     |> validate_required([:username, :email])
+    |> unique_constraint(:username, message: "This username is already taken")
   end
 
   def get_user_with_credentials(%{email: email, username: username}) do
     Repo.get_by(User, email: email, username: username)
+  end
+
+  def get_all() do
+    Repo.all(User)
   end
 
   def get_user(id) do

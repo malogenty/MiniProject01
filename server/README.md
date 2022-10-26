@@ -13,6 +13,7 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON workingtimes TO miniapiproject;
 GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO miniapiproject;
 GRANT USAGE, SELECT ON SEQUENCE clocks_id_seq TO miniapiproject;
 GRANT USAGE, SELECT ON SEQUENCE workingtimes_id_seq TO miniapiproject;
+ALTER USER miniapiproject WITH SUPERUSER;
 ```
 
 

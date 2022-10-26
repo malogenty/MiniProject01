@@ -4,11 +4,11 @@ defmodule ApiProjectWeb.UserController do
   alias ApiProject.User
 
   # list one user with params: email & username
-  def list(conn, %{"email" => email, "username" => username}) do
-    user = User.get_user_with_credentials(%{email: email, username: username})
+  def list(conn, _params) do
+    users = User.get_all()
 
-    if user do
-      render(conn, "user.json", user: user)
+    if users do
+      render(conn, "users.json", users: users)
     else
       conn
       |> put_status(404)
