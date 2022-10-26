@@ -26,7 +26,7 @@ const user = {
   actions: {
     async fetchUser({commit, dispatch}, {id}) {
       const idBis = 1;
-      await axios.get(`http://localhost:4000/api/users/${idBis}`)
+      await axios.get(`http://localhost:4000/api/users/${idBis}`, {mode: 'no-cors'})
       commit('updateUsername', {id})
       await dispatch('fetchWorkingTimes')
       await dispatch('fetchClocks')
