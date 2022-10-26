@@ -10,7 +10,7 @@ const getDefaultState = () => ({
 })
 
 /**
- * This is the current user (the "parent" component. Once the user is fetched, the other data will be assigned to this user)
+ * This is the current user (the "parent" component). Once the user is fetched, the other data will be assigned to this user
  */
 const user = {
   namespaced: true,
@@ -33,13 +33,23 @@ const user = {
       state.workingTimes.push(workingTime)
     },
     addMultipleWorkingTimes(state, workingTimes) {
-      workingTimes.forEach(wt => state.workingTimes.push(wt))
+      // state.workingTimes = [...new Set(...state.workingTimes, ...workingTimes)]
+      Object.assign(state.workingTimes, [...new Set(workingTimes.concat(state.workingTimes))])
     },
     updateWorkingTime(state, workingTime) {
       state.workingTimes = state.workingTimes.map(wt => 
         wt.id === workingTime.id ? ({start: workingTime.start, end: workingTime.end, ...wt}) : wt)
-    }
+    },
+    deleteWorkingTime(state, workinTimeId) {
+      state.workingTimes = state.workingTimes.filter(w => w.id !== workinTimeId)
+    },
     // CLOCK-SPECIFIC
+    addClock(state, clock) {
+      state.clocks.push(clock)
+    },
+    addMultipleClocks(state, clocks) {
+      clocks.forEach(c => state.clocks.push(c))
+    }
 
   },
 
@@ -59,6 +69,14 @@ const user = {
       try {
         const {data} = await axios.put(`http://localhost:4000/api/users/${state.id}`, {user})
         commit('updateUser', data)
+      } catch(e) {
+        throw new Error(e)
+      }
+    },
+    async deleteUser({commit, state}) {
+      try {
+        await axios.delete(`http://localhost:4000/api/users/${state.id}`)
+        commit('resetState')
       } catch(e) {
         throw new Error(e)
       }
@@ -103,13 +121,44 @@ const user = {
       } catch(e) {
         throw new Error(e)
       }
+    },
+    async deleteWorkingTime({commit}, workingTimeId) {
+      try {
+        await axios.delete(`api/workingtimes/${workingTimeId}`)
+        commit('deleteWorkingTime', workingTimeId)
+      } catch(e) {
+        throw new Error(e)
+      }
+    },
+    // CLOCKS SPECIFIC
+    async fetchClocks({commit, state}) {
+      try {
+        const {data} = await axios.get(`/api/clocks/${state.id}`)
+        commit('addMultipleClocks', data)
+      } catch(e) {
+        throw new Error(e)
+      }
+    },
+    async createClock({commit, state}, {status}) {
+      try {
+        const {data} = axios.post(`/api/clocks/${state.id}`, {clock: {status}})
+        commit('addClock', data)
+      } catch(e) {
+        throw new Error(e)
+      }
     }
-    
   },
   getters: {
     getUser(state) {
       return state
     }
+  //  getWorkingTimeStartEnd(state, {start, end}) {
+      // const f_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
+      // const f_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
+      // return state.workingTimes.filter(wt => {
+      //   let cond1 = wt.start 
+      // })
+    // }
   }
 }
 

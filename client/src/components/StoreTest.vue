@@ -42,7 +42,7 @@ export default {
     ...mapActions({
       fetchUser: 'user/fetchUser',
       updateUser: 'user/updateUser',
-      fetchWorkingTimesFT: 'user/fetchWorkingTimesFromTo'
+      fetchWorkingTimesFT: 'user/fetchWorkingTimesStartEnd'
   }),
     async fetchUserData() {
       await this.fetchUser({id: 1})
@@ -51,7 +51,7 @@ export default {
       this.updateUser({username: 'hey_you'})
     },
     fetchWorkingTimesFromTo() {
-      this.fetchWorkingTimesFT({from: '2022-10-23', to: '2022-10-26'})
+      this.fetchWorkingTimesFT({start: '2022-10-23', end: '2022-10-26'})
     }
   }
 }
