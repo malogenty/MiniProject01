@@ -1,6 +1,6 @@
 <template>
   <div>
-    Hey
+    {{user.email}}
     <button
     @click="fetchUserData">
       Click here to get id 1
@@ -17,20 +17,27 @@
 import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'BaseFile',
-  computed: {
-      ...mapGetters([
-    'getAllUsers'
-    ]),
-    getUser() {
-      return this.getUser(1) // => returns ['first_user']
+  async mounted() {
+    await this.fetchUserData()
+    this.user = this.getUser
+    console.log(this.user)
+  },
+  data() {
+    return {
+      user: {}
     }
+  },
+  computed: {
+      ...mapGetters({
+        getUser: 'user/getUser'      
+      })
   },
   methods: {
     ...mapActions({
       fetchUser: 'user/fetchUser',
       updateUser: 'user/updateUser'
   }),
-    fetchUserData() {
+    async fetchUserData() {
       this.fetchUser({id: 1})
     },
     setUsername() {

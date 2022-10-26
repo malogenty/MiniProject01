@@ -31,7 +31,12 @@ const user = {
         throw new Error(e)
       }
     } 
-   }
+  },
+  getters: {
+    getUser(state) {
+      return state
+    }
+  }
 }
 
 export default user
