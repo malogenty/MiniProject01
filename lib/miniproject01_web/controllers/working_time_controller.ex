@@ -10,16 +10,15 @@ defmodule ApiProjectWeb.WorkingTimeController do
     render(conn, "index.json", working_times: working_times)
   end
 
-  def readOne(conn, %{"id" => id}) do
-    working_time = WorkingTime.get_working_time!(id)
+  def readOne(conn, %{"id" => id, "userId" => userId}) do
+    working_time = WorkingTime.get_working_time_by_user!(%{id: id, user_id: userId})
     render(conn, "show.json", working_time: working_time)
   end
 
-  def create(conn, %{"working_time" => working_time_params}) do
-    with {:ok, %WorkingTime{} = working_time} <- WorkingTime.create_working_time(working_time_params) do
+  def create(conn, %{"working_time" => working_time_params, "userId" => user_id}) do
+    with {:ok, %WorkingTime{} = working_time} <- WorkingTime.create_working_time(Map.merge(working_time_params, %{"user_id" => user_id})) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", Routes.working_time_path(conn, :show, working_time))
       |> render("show.json", working_time: working_time)
     end
   end
