@@ -42,7 +42,7 @@ export default {
     ...mapActions({
       fetchUser: 'user/fetchUser',
       updateUser: 'user/updateUser',
-      fetchWorkingTimesFT: 'workingTimes/fetchWorkingTimesFromTo'
+      fetchWorkingTimesFT: 'user/fetchWorkingTimesFromTo'
   }),
     async fetchUserData() {
       await this.fetchUser({id: 1})
