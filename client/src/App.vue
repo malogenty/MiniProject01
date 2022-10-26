@@ -1,0 +1,52 @@
+<template>
+  <div>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/clock">About</router-link>
+      <router-link :to="{ name: 'clock', params: { username: 'mark2021' } }" >
+      Profile
+      </router-link>
+    </nav>
+    <router-view/>
+  </div>
+</template>
+
+<script>
+import { mapActions } from 'vuex';
+export default {
+  async created() {
+    await this.fetchUsers()
+  },
+  methods: {
+    ...mapActions({
+      'fetchAllUsers': 'users/fetchAllUsers'
+    }),
+    fetchUsers() {
+      this.fetchAllUsers()
+    }
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
+}
+</style>

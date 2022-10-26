@@ -5,8 +5,9 @@ defmodule ApiProject.Repo.Migrations.CreateUsers do
     create table(:users) do
       add(:username, :string, null: false)
       add(:email, :string, null: false)
-
+      
       timestamps()
     end
+    create unique_index(:users, [:username, :email], name: :username_and_email_unique)
   end
 end

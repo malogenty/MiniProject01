@@ -4,15 +4,28 @@ defmodule ApiProjectWeb.UserController do
   alias ApiProject.User
 
   # list one user with params: email & username
-  def list(conn, %{"email" => email, "username" => username}) do
-    user = User.get_user_with_credentials(%{email: email, username: username})
+  def list(conn, params) do
+    if params["email"] && params["username"] do
+      user =
+        User.get_user_with_credentials(%{email: params["email"], username: params["username"]})
 
-    if user do
-      render(conn, "user.json", user: user)
+      if user do
+        render(conn, "user.json", user: user)
+      else
+        conn
+        |> put_status(404)
+        |> render("error.json", reason: "Invalid credentials")
+      end
     else
-      conn
-      |> put_status(404)
-      |> render("error.json", reason: "Invalid credentials")
+      users = User.get_all()
+
+      if users do
+        render(conn, "users.json", users: users)
+      else
+        conn
+        |> put_status(404)
+        |> render("error.json", reason: "An error has occured")
+      end
     end
   end
 

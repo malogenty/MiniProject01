@@ -10,6 +10,15 @@ defmodule ApiProjectWeb.UserView do
     }
   end
 
+  def render("users.json", %{users: users}) do
+    for user <- users do %{
+      id: user.id,
+      username: user.username,
+      email: user.email
+    }
+    end
+  end
+
   def render("error.json", %{reason: reason}) do
     %{
       error: reason

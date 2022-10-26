@@ -5,6 +5,17 @@ Create user in PostgreSQL:
   ALTER ROLE miniapiproject CREATEDB;
   ``
 
+Into the database (\connect miniproject01_dev):
+```
+GRANT SELECT, UPDATE, INSERT, DELETE ON users TO miniapiproject;
+GRANT SELECT, UPDATE, INSERT, DELETE ON clocks TO miniapiproject;
+GRANT SELECT, UPDATE, INSERT, DELETE ON workingtimes TO miniapiproject;
+GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO miniapiproject;
+GRANT USAGE, SELECT ON SEQUENCE clocks_id_seq TO miniapiproject;
+GRANT USAGE, SELECT ON SEQUENCE workingtimes_id_seq TO miniapiproject;
+ALTER USER miniapiproject WITH SUPERUSER;
+```
+
 
 To start your Phoenix server:
 
@@ -78,21 +89,94 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Working time
 ``GET /api/workingtimes/:userId?start=xxx&end=xxx``
+> Expects start/end to look like : YYYY-MM-DD HH:MM:SS
+> Will return a response of this kind (JSON)
+```json
+[
+  {
+    "id": 1,
+    "start": "2022-10-25 08:33:05",
+    "end": "2022-10-25 13:30:15",
+    "user": 5
+  },
+  {
+    "id": 2,
+    "start": "2022-10-25 14:30:0",
+    "end": "2022-10-25 18:32:11",
+    "user": 5
+  }
+]
+
+
+```
+
 ``GET /api/workingtimes/:userId/:id``
-``POST /api/workingtimes/:userId``
-``PUT /api/workingtimes/:id ``
-``DELETE /api/workingtimes/:id ``
+> Will return a response of this kind (JSON)
+```json
+{  
+  "id": 1,
+  "start": "2022-10-25 08:33:05",
+  "end": "2022-10-25 13:30:15",
+  "user": 5
+}
+```
+
+``POST /api/workingtimes/:userId`` 
+> Expects a payload as such  
+```json
+{
+  "workingTime": {
+    "start": "2022-10-25 08:33:05",
+    "end": "2022-10-25 13:30:15",
+  }
+}
+```
+> Will return a response of this kind (JSON)
+```json
+{
+  "id": 1,
+  "start": "2022-10-25 08:33:05",
+  "end": "2022-10-25 13:30:15",
+  "user": 5
+}
+```
+
+``PUT /api/workingtimes/:id ``  
+> Expects a payload as such  
+```json
+{
+  "workingTime": {
+    "end": "2022-10-25 13:30:15"
+  }
+}
+```
+> Will return a response of this kind (JSON)
+```json
+{
+  "id": 1,
+  "start": "2022-10-25 08:33:05",
+  "end": "2022-10-25 13:30:15",
+  "user": 5
+}
+```
+
+``DELETE /api/workingtimes/:id ``  
+> Will return code 204
+
+
 ## Clocking
 ``GET /api/clocks/:userID``
 > Will return a response of this kind (JSON)
 ```json
 [
   {
+    "id": 1,
     "status": true,
     "time": "2022-10-25 08:33:05", // Please note that this is UTC Time
     "user": 5
   },
   {
+    "id": 1,
     "status": false,
     "time": "2022-10-25 13:30:15",
     "user": 5
@@ -105,5 +189,14 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 {
   "user": 5,
   "status": false
+}
+```
+> Will return a response of this kind (JSON)
+```json
+{
+  "id": 1,
+  "status": false,
+  "time": "2022-10-25 13:30:15",
+  "user": 5
 }
 ```
