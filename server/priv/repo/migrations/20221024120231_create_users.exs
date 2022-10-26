@@ -8,6 +8,6 @@ defmodule ApiProject.Repo.Migrations.CreateUsers do
       
       timestamps()
     end
-    create unique_index(:users, [:username])
+    create unique_index(:users, [:username, :email], name: :username_and_email_unique)
   end
 end
