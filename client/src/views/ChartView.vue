@@ -7,6 +7,9 @@
 
     <h2>Nombre d'heures de travail par semaine</h2>
     <LineChart :data="weekData" dataLabel="Heures de Travail" />
+
+    <h2>Moyenne des heures de travail par semaine</h2>
+    <BarChart :data="averageWeekData" dataLabel="Heures de Travail" />
   </div>
 </template>
 
@@ -16,7 +19,8 @@ import LineChart from '../components/LineChart.vue'
 import fakeWorkingTimes from '../dummies/fakeWorkingTimes.json'
 import {
   getDayDurationsByWeeks,
-  getDurationByWeeks
+  getDurationByWeeks,
+  getAverageDurationByWeeks
 } from '../utils/workingtimes_utils.js'
 export default {
   name: 'HomeView',
@@ -27,7 +31,8 @@ export default {
   data() {
     return {
       daysData: getDayDurationsByWeeks(fakeWorkingTimes)['43'],
-      weekData: getDurationByWeeks(fakeWorkingTimes)
+      weekData: getDurationByWeeks(fakeWorkingTimes),
+      averageWeekData: getAverageDurationByWeeks(fakeWorkingTimes)
     }
   }
 }
