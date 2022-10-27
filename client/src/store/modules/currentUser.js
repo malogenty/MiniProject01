@@ -5,14 +5,14 @@ const getDefaultState = () => ({
   id: null,
   username: null,
   email: null,
-  workingTimes: [],
+  workingTimes: {},
   clocks: []
 })
 
 /**
  * This is the current user (the "parent" component). Once the user is fetched, the other data will be assigned to this user
  */
-const user = {
+const currentUser = {
   namespaced: true,
   state: () => (getDefaultState()),
 
@@ -29,19 +29,14 @@ const user = {
       state.email = email
     },
     // WORKING TIME-SPECIFIC
-    addWorkingTime(state, workingTime) {
-      state.workingTimes.push(workingTime)
-    },
     addMultipleWorkingTimes(state, workingTimes) {
-      // state.workingTimes = [...new Set(...state.workingTimes, ...workingTimes)]
-      Object.assign(state.workingTimes, [...new Set(workingTimes.concat(state.workingTimes))])
+      workingTimes.forEach(wt => state.workingTimes[wt.id] = wt)
     },
     updateWorkingTime(state, workingTime) {
-      state.workingTimes = state.workingTimes.map(wt => 
-        wt.id === workingTime.id ? ({start: workingTime.start, end: workingTime.end, ...wt}) : wt)
+      state.workingTimes[workingTime.id] = workingTime
     },
-    deleteWorkingTime(state, workinTimeId) {
-      state.workingTimes = state.workingTimes.filter(w => w.id !== workinTimeId)
+    deleteWorkingTime(state, workingTimeId) {
+      state.workingTimes[workingTimeId] = null
     },
     // CLOCK-SPECIFIC
     addClock(state, clock) {
@@ -56,6 +51,9 @@ const user = {
   // Actions discuss with the back-end and trigger mutations
   actions: {
     // USER-SPECIFIC
+    resetUser({commit}) {
+      commit('resetState')
+    },
     async fetchUser({commit}, {id}) {
       try {
         commit('resetState')
@@ -96,7 +94,7 @@ const user = {
     async fetchWorkingTime({commit, state}, {id}) {
       try {
         const {data} = await axios.get(`http://localhost:4000/api/workingtimes/${state.id}/${id}`)
-        commit('addWorkingTime', data)
+        commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
       }
@@ -106,7 +104,7 @@ const user = {
         const formatted_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
         const formatted_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
         const {data} = await axios.post(`http://localhost:4000/api/workingtimes/${state.id}`, {working_time: {start: formatted_start, end: formatted_end}})
-        commit('addWorkingTime', data)
+        commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
       }
@@ -149,17 +147,16 @@ const user = {
     }
   },
   getters: {
-    getUser(state) {
-      return state
+    getUser({id, username, email, workingTimes, clocks}) {
+      return ({
+        id,
+        username,
+        email,
+        workingTimes: Object.values(workingTimes),
+        clocks
+      })
     }
-  //  getWorkingTimeStartEnd(state, {start, end}) {
-      // const f_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
-      // const f_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
-      // return state.workingTimes.filter(wt => {
-      //   let cond1 = wt.start 
-      // })
-    // }
   }
 }
 
-export default user
+export default currentUser
