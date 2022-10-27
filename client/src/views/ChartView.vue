@@ -2,19 +2,23 @@
   <div class="chart">
     <h1>Charts</h1>
 
-    <h2>Nombre d'heures de travail par jour</h2>
-    <BarChart :data="daysData" dataLabel="Heures de Travail" />
+    <select v-model="selected">
+      <option disabled value="">Please select one</option>
+      <option value="daysData">days</option>
+      <option value="weekData">weeks</option>
+      <option value="averageWeekData">Average weeks</option>
+    </select>
 
-    <h2>Nombre d'heures de travail par semaine</h2>
-    <LineChart :data="weekData" dataLabel="Heures de Travail" />
-
-    <h2>Moyenne des heures de travail par semaine</h2>
-    <BarChart :data="averageWeekData" dataLabel="Heures de Travail" />
+    <h2>{{ result[selected].text }}</h2>
+    <LineChart
+      :key="result[selected].label"
+      :data="result[selected].data"
+      dataLabel="Heures de Travail"
+    />
   </div>
 </template>
 
 <script>
-import BarChart from '../components/BarChart.vue'
 import LineChart from '../components/LineChart.vue'
 import fakeWorkingTimes from '../dummies/fakeWorkingTimes.json'
 import {
@@ -25,14 +29,34 @@ import {
 export default {
   name: 'HomeView',
   components: {
-    BarChart,
     LineChart
   },
   data() {
     return {
-      daysData: getDayDurationsByWeeks(fakeWorkingTimes)['43'],
-      weekData: getDurationByWeeks(fakeWorkingTimes),
-      averageWeekData: getAverageDurationByWeeks(fakeWorkingTimes)
+      selected: 'weekData',
+      result: {
+        daysData: {
+          data: getDayDurationsByWeeks(fakeWorkingTimes)['43'],
+          text: 'Heures de travail par jour',
+          label: 'par jour',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)'
+        },
+        weekData: {
+          data: getDurationByWeeks(fakeWorkingTimes),
+          text: 'Heures de travail par semaine',
+          label: 'par semaine',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)'
+        },
+        averageWeekData: {
+          data: getAverageDurationByWeeks(fakeWorkingTimes),
+          text: 'Moyenne des heures de travail par semaine',
+          label: 'moyenne par semaine',
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)'
+        }
+      }
     }
   }
 }
