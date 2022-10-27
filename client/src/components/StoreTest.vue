@@ -37,7 +37,6 @@ export default {
       ...mapGetters({
         getUser: 'currentUser/getUser',
         getUsers: 'users/getAllUsers',
-        getWorkingTimesStartEnd: 'currentUser/getWorkingTimesStartEnd'
       })
   },
   methods: {
@@ -45,6 +44,7 @@ export default {
       fetchUser: 'currentUser/fetchUser',
       updateUser: 'currentUser/updateUser',
       fetchWorkingTimesFT: 'currentUser/fetchWorkingTimesStartEnd',
+      fetchUserClocks: 'currentUser/fetchClocks'
   }),
     async fetchUserData() {
       await this.fetchUser({id: 1})
@@ -54,8 +54,9 @@ export default {
     },
     async fetchWorkingTimesFromTo() {
       await this.fetchWorkingTimesFT({start: '2022-10-23', end: '2022-10-26'})
-      let x = this.getWorkingTimesStartEnd
-      console.log(x)
+    },
+    async fetchClocks() {
+      await this.fetchUserClocks()
     }
   }
 }
