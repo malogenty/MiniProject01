@@ -53,4 +53,15 @@ const getDurationByWeeks = workingTimes => {
 	return weeks;
 };
 
-module.exports = { getDayDurationsByWeeks, getDurationByWeeks };
+const getAverageDurationByWeeks = workingTimes => {
+    const weeks = getDayDurationsByWeeks(workingTimes);
+
+    for (const week in weeks) {
+        const averageDuration = Object.values(weeks[week]).reduce((acc, duration) => acc + duration, 0) / Object.keys(weeks[week]).length;
+        weeks[week] = Math.round(averageDuration * 100) / 100;
+    }
+
+    return weeks;
+};
+
+module.exports = { getDayDurationsByWeeks, getDurationByWeeks, getAverageDurationByWeeks }
