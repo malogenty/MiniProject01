@@ -2,15 +2,14 @@ defmodule ApiProject.Clock do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  import IO
   alias ApiProject.Repo
   alias ApiProject.Clock
-  alias ApiProject.User
 
   schema "clocks" do
     field(:status, :boolean, default: true)
     field(:time, :naive_datetime)
-    belongs_to(:user, User)
+
+    belongs_to :user, ApiProject.User
 
     timestamps()
   end
