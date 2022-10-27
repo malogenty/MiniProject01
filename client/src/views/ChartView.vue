@@ -1,24 +1,30 @@
 <template>
   <div class="chart">
     <h1>Chart</h1>
-    <BarChart :data="chartData"/>
+    <BarChart :data="daysData" />
+    <LineChart :data="daysData" />
   </div>
 </template>
 
 <script>
 import BarChart from '../components/BarChart.vue'
+import LineChart from '../components/LineChart.vue'
 import fakeWorkingTimes from '../dummies/fakeWorkingTimes.json'
-import { getDayDurationsByWeeks } from '../utils/workingtimes_utils.js'
+import {
+  getDayDurationsByWeeks,
+  getDurationByWeeks
+} from '../utils/workingtimes_utils.js'
 export default {
   name: 'HomeView',
   components: {
-    BarChart
+    BarChart,
+    LineChart
   },
   data() {
     return {
-      chartData: getDayDurationsByWeeks(fakeWorkingTimes)['43']
+      daysData: getDayDurationsByWeeks(fakeWorkingTimes)['43'],
+      weekData: getDurationByWeeks(fakeWorkingTimes)
     }
   }
-
 }
 </script>
