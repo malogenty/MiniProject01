@@ -11,6 +11,14 @@ const routes = [
     path: '/clock/:username',
     name: 'clock',
     component: () => import('../views/ClockView.vue')
+  },
+  {
+    path: '/user/:id',
+    props: {
+      id: Number
+    },
+    name: 'user',
+    component: () => import('@/views/UserView.vue')
   }
 ]
 

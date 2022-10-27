@@ -1,28 +1,24 @@
 <template>
-  <!-- <ul class="cards"> -->
-  <!-- <li class="cards__item"> -->
-    <div class="card">
-      <div class="card__image card__image--fence"></div>
-      <div class="card__content">
-        <div class="card__title">{{ user.username }}</div>
-        <p class="card__text">
-          {{ user.email }}
-        </p>
-        <button class="btn btn--block card__btn">More information</button>
-      </div>
+  <div class="card">
+    <div class="card__image card__image--fence"></div>
+    <div class="card__content">
+      <div class="card__title">{{ user.username }}</div>
+      <p class="card__text">
+        {{ user.email }}
+      </p>
+      <button class="btn btn--block card__btn">More information</button>
     </div>
-  <!-- </li> -->
-  <!-- </ul> -->
+  </div>
 </template>
 
 <script>
 export default {
   props: {
-      user: {
-          username: String,
-          email: String,
-          id: Number
-      }
+    user: {
+      username: String,
+      email: String,
+      id: Number,
+    },
   },
   name: "UserCard",
   data() {

@@ -1,7 +1,7 @@
 <template>
   <div> hello</div>
   <div v-for="user in users" :key="user.id">
-    <UserCard class="cards__item" :user="user"/>
+    <UserCard @click="showUser(user.id)" class="cards__item" :user="user"/>
   </div>
 </template>
 
@@ -27,6 +27,13 @@ export default {
         getUsers: 'users/getAllUsers'
       })
   },
+
+  methods: {
+    showUser(userId) {
+      this.$router.push({name: 'user', params: { id: userId}})
+      // this.fetchUser({id: userId})
+    }
+  }
 };
 </script>
 
