@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!loading">
     <nav>
       <router-link to="/">Home</router-link> |
       <router-link to="/clock">About</router-link>
@@ -9,20 +9,29 @@
     </nav>
     <router-view/>
   </div>
+  <div v-else>
+    Wait... Loading
+  </div>
 </template>
 
 <script>
 import { mapActions } from 'vuex';
 export default {
+  data() {
+    return {
+      loading: true
+    }
+  },
   async created() {
     await this.fetchUsers()
+    this.loading = false;
   },
   methods: {
     ...mapActions({
       'fetchAllUsers': 'users/fetchAllUsers'
     }),
-    fetchUsers() {
-      this.fetchAllUsers()
+    async fetchUsers() {
+      await this.fetchAllUsers()
     }
   }
 }
