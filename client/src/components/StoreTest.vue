@@ -14,6 +14,10 @@
     @click="fetchWorkingTimesFromTo">
       click here to fetch working times
     </button>
+    <button
+    @click="fetchClocks">
+      click here to fetch clocks
+    </button>
   </div>
 </template>
 
@@ -21,10 +25,7 @@
 import { mapGetters, mapActions } from 'vuex';
 export default {
   name: 'StoreTest',
-  async mounted() {
-    await this.fetchUserData()
-    this.user = this.getUser
-    this.users = this.getUsers
+  mounted() {
   },
   data() {
     return {
@@ -34,15 +35,16 @@ export default {
   },
   computed: {
       ...mapGetters({
-        getUser: 'user/getUser',
-        getUsers: 'users/getAllUsers'
+        getUser: 'currentUser/getUser',
+        getUsers: 'users/getAllUsers',
+        getWorkingTimesStartEnd: 'currentUser/getWorkingTimesStartEnd'
       })
   },
   methods: {
     ...mapActions({
-      fetchUser: 'user/fetchUser',
-      updateUser: 'user/updateUser',
-      fetchWorkingTimesFT: 'user/fetchWorkingTimesFromTo'
+      fetchUser: 'currentUser/fetchUser',
+      updateUser: 'currentUser/updateUser',
+      fetchWorkingTimesFT: 'currentUser/fetchWorkingTimesStartEnd',
   }),
     async fetchUserData() {
       await this.fetchUser({id: 1})
@@ -50,8 +52,10 @@ export default {
     setUsername() {
       this.updateUser({username: 'hey_you'})
     },
-    fetchWorkingTimesFromTo() {
-      this.fetchWorkingTimesFT({from: '2022-10-23', to: '2022-10-26'})
+    async fetchWorkingTimesFromTo() {
+      await this.fetchWorkingTimesFT({start: '2022-10-23', end: '2022-10-26'})
+      let x = this.getWorkingTimesStartEnd
+      console.log(x)
     }
   }
 }
