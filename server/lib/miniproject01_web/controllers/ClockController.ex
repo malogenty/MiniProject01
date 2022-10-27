@@ -2,8 +2,10 @@ defmodule ApiProjectWeb.ClockController do
   use ApiProjectWeb, :controller
   alias ApiProject.Clock
 
-  def read(conn, %{"userId" => userId}) do
-    clocks = Clock.select(userId)
+  action_fallback(ApiProjectWeb.FallbackController)
+
+  def read(conn, %{"userId" => user_id}) do
+    clocks = Clock.get_clocks_by_user(%{user_id: user_id})
 
     if clocks do
       render(conn, "clocks.json", clocks: clocks)

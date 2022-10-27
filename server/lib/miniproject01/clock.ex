@@ -6,19 +6,25 @@ defmodule ApiProject.Clock do
   alias ApiProject.Clock
 
   schema "clocks" do
-    field(:status, :boolean, default: true)
+    field(:status, :boolean)
     field(:time, :naive_datetime)
 
-    belongs_to :user, ApiProject.User
+    belongs_to(:user, ApiProject.User)
 
     timestamps()
   end
 
-  @doc false
   def changeset(clock, attrs) do
     clock
-    |> cast(attrs, [:user_id, :time, :status])
-    |> validate_required([:user_id, :time, :status])
+    |> cast(attrs, [:time, :status, :user_id])
+    |> validate_required([:time, :status, :user_id])
+  end
+
+  def get_clocks_by_user(%{user_id: user_id}) do
+    Clock
+    |> Ecto.Query.preload([:user])
+    |> where([c], c.user_id == ^user_id)
+    |> Repo.all()
   end
 
   def create(attrs \\ %{}) do
@@ -26,13 +32,5 @@ defmodule ApiProject.Clock do
     |> Repo.preload([:user])
     |> Clock.changeset(attrs)
     |> Repo.insert()
-    |> case do
-      {:ok, clock} -> {:ok, clock}
-      {:error, _} -> :error
-    end
-  end
-
-  def select(userId) do
-    from(clock in Clock, where: clock.user_id == ^userId) |> Repo.all()
   end
 end

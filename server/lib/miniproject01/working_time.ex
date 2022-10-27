@@ -5,12 +5,11 @@ defmodule ApiProject.WorkingTime do
   alias ApiProject.Repo
   alias ApiProject.WorkingTime
 
-
   schema "working_times" do
-    field :end, :naive_datetime
-    field :start, :naive_datetime
+    field(:end, :naive_datetime)
+    field(:start, :naive_datetime)
 
-    belongs_to :user, ApiProject.User
+    belongs_to(:user, ApiProject.User)
 
     timestamps()
   end

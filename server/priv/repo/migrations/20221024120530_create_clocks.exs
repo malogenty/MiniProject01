@@ -4,12 +4,10 @@ defmodule ApiProject.Repo.Migrations.CreateClocks do
   def change do
     create table(:clocks) do
       add(:time, :naive_datetime, null: false)
-      add(:status, :boolean, default: true, null: false)
-      add(:user_id, references(:users, on_delete: :nothing), null: false)
+      add(:status, :boolean, null: false)
+      add(:user_id, references(:users))
 
       timestamps()
     end
-
-    create(index(:clocks, [:user_id]))
   end
 end
