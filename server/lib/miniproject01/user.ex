@@ -7,6 +7,7 @@ defmodule ApiProject.User do
   import Ecto.Query, warn: false
   alias ApiProject.Repo
   alias ApiProject.User
+  @derive {Jason.Encoder, only: [:email, :username]}
 
   schema "users" do
     field(:email, :string)
