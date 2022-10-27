@@ -1,5 +1,5 @@
 <template>
-  <Bar
+  <Line
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
@@ -10,14 +10,31 @@
 </template>
 
 <script>
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Line } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement
+} from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement
+)
 
 export default {
-  name: 'BarChart',
-  components: { Bar },
+  name: 'LineChart',
+  components: { Line },
   props: {
     data: {
       type: Object,
@@ -48,11 +65,16 @@ export default {
     return {
       chartData: {
         labels: this.getKeys(this.data),
-        datasets: [{
-          label: this.dataLabel,
-          backgroundColor: '#236DC9',
-          data: this.getValues(this.data)
-        }]
+        datasets: [
+          {
+            label: this.dataLabel,
+            backgroundColor: '#236DC9',
+            borderColor: '#236DC9',
+            pointBackgroundColor: 'white',
+            data: this.getValues(this.data),
+            tension: 0.3
+          }
+        ]
       },
       chartOptions: {
         responsive: true
@@ -66,6 +88,6 @@ export default {
     getValues(obj) {
       return Object.values(obj)
     }
-  },
+  }
 }
 </script>
