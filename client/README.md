@@ -77,7 +77,7 @@ GETTER ``getAllUsers``
     id: Number,
     username: String,
     email: String,
-    workingTimes: Array,
-    clocks: Array
+    workingTimes: [{id: Number, start: Date, end: Date, user: Number}],
+    clocks: [{id: Number, status: Boolean, time: Date}]
 }
 ```
