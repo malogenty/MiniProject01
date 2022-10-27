@@ -125,9 +125,9 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 > Expects a payload as such  
 ```json
 {
-  "workingTime": {
+  "working_time": {
     "start": "2022-10-25 08:33:05",
-    "end": "2022-10-25 13:30:15",
+    "end": "2022-10-25 13:30:15"
   }
 }
 ```
@@ -145,7 +145,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 > Expects a payload as such  
 ```json
 {
-  "workingTime": {
+  "working_time": {
     "end": "2022-10-25 13:30:15"
   }
 }
