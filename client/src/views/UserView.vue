@@ -1,14 +1,12 @@
 <template>
   <div v-if="user.id">
-    <ClockView />
-    <ChartView />
-  </div>
+    <DashboardLayout/>
+    </div>
 </template>
 
 <script>
-import ChartView from "@/views/ChartView.vue";
-import ClockView from "@/views/ClockView.vue";
 import { mapActions, mapGetters } from "vuex";
+import DashboardLayout from '../components/Dashboard/DashboardLayout.vue';
 
 export default {
   async created() {
@@ -24,8 +22,7 @@ export default {
   },
   name: "UserView",
   components: {
-    ClockView,
-    ChartView,
+    DashboardLayout,
   },
   methods: {
     ...mapActions({

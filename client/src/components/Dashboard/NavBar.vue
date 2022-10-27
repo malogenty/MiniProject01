@@ -14,23 +14,25 @@
 <script>
 export default {
   props: {
-    fullscreen: Boolean
-  }
+    fullscreen: Boolean,
+    user: {}
+  },
+
 }
 </script>
 
 <style lang="scss" scoped>
 .controls {
-    padding: 1vw;
-    display: flex;
-    justify-content: space-between;
-    div.back,
-    div.full-screen {
-      cursor: pointer;
-      img {
-        width: 36px;
-        height: 36px;
-      }
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  div.back,
+  div.full-screen {
+    cursor: pointer;
+    img {
+      width: 36px;
+      height: 36px;
     }
   }
+}
 </style>

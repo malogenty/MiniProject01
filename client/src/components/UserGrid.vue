@@ -1,7 +1,8 @@
 <template>
-  <div> hello</div>
-  <div v-for="user in users" :key="user.id">
-    <UserCard @click="showUser(user.id)" class="cards__item" :user="user"/>
+  <div class="user-grid">
+    <div v-for="user in users" :key="user.id">
+      <UserCard @click="showUser(user.id)" class="cards__item" :user="user"/>
+    </div>
   </div>
 </template>
 

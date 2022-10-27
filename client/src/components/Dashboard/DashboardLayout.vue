@@ -1,19 +1,22 @@
 <template>
   <main class="dashboard">
-    <div
+    <ChartVisualisation
     @toggleFullScreen="toggleFullScreen"
     :fullscreen="fullscreen"
-    class="chart"
     />
-    <div v-if="!fullscreen"
-    class="actions (clock / working times)"
+    <UserTabs v-if="!fullscreen"
     />
   </main>
   </template>
 
 <script>
+import ChartVisualisation from './ChartVisualisation.vue';
+import UserTabs from './UserTabs.vue';
+
 export default {
   components: {
+    ChartVisualisation,
+    UserTabs
    },
    data() {
     return {
