@@ -1,7 +1,19 @@
 <template>
   <div class="about">
     <h1>Clock page for: {{this.$route.params.username}}</h1>
-    <h1>{{ user.clocks }}</h1>
+    <table style="">
+      <thead>
+        <tr>
+          <td>Time clocked</td>
+          <td>Status</td>
+        </tr>
+      </thead>
+      <tr v-for="clock in user.clocks" :key="clock.id">
+          <td>{{ clock.time }}</td>
+          <td>{{ clock.status }}</td>
+        </tr>
+    </table>
+     
     <button @click="clocked = !clocked"><p v-if="clocked">Clock In</p>
 <p v-else>Clock Out</p></button>
     
