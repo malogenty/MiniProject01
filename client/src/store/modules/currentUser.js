@@ -5,14 +5,14 @@ const getDefaultState = () => ({
   id: null,
   username: null,
   email: null,
-  workingTimes: [],
+  workingTimes: {},
   clocks: []
 })
 
 /**
- * This is the current user (the "parent" component. Once the user is fetched, the other data will be assigned to this user)
+ * This is the current user (the "parent" component). Once the user is fetched, the other data will be assigned to this user
  */
-const user = {
+const currentUser = {
   namespaced: true,
   state: () => (getDefaultState()),
 
@@ -29,23 +29,31 @@ const user = {
       state.email = email
     },
     // WORKING TIME-SPECIFIC
-    addWorkingTime(state, workingTime) {
-      state.workingTimes.push(workingTime)
-    },
     addMultipleWorkingTimes(state, workingTimes) {
-      workingTimes.forEach(wt => state.workingTimes.push(wt))
+      workingTimes.forEach(wt => state.workingTimes[wt.id] = wt)
     },
     updateWorkingTime(state, workingTime) {
-      state.workingTimes = state.workingTimes.map(wt => 
-        wt.id === workingTime.id ? ({start: workingTime.start, end: workingTime.end, ...wt}) : wt)
-    }
+      state.workingTimes[workingTime.id] = workingTime
+    },
+    deleteWorkingTime(state, workingTimeId) {
+      state.workingTimes[workingTimeId] = null
+    },
     // CLOCK-SPECIFIC
+    addClock(state, clock) {
+      state.clocks.push(clock)
+    },
+    addMultipleClocks(state, clocks) {
+      clocks.forEach(c => state.clocks.push(c))
+    }
 
   },
 
   // Actions discuss with the back-end and trigger mutations
   actions: {
     // USER-SPECIFIC
+    resetUser({commit}) {
+      commit('resetState')
+    },
     async fetchUser({commit}, {id}) {
       try {
         commit('resetState')
@@ -59,6 +67,14 @@ const user = {
       try {
         const {data} = await axios.put(`http://localhost:4000/api/users/${state.id}`, {user})
         commit('updateUser', data)
+      } catch(e) {
+        throw new Error(e)
+      }
+    },
+    async deleteUser({commit, state}) {
+      try {
+        await axios.delete(`http://localhost:4000/api/users/${state.id}`)
+        commit('resetState')
       } catch(e) {
         throw new Error(e)
       }
@@ -78,7 +94,7 @@ const user = {
     async fetchWorkingTime({commit, state}, {id}) {
       try {
         const {data} = await axios.get(`http://localhost:4000/api/workingtimes/${state.id}/${id}`)
-        commit('addWorkingTime', data)
+        commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
       }
@@ -88,7 +104,7 @@ const user = {
         const formatted_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
         const formatted_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
         const {data} = await axios.post(`http://localhost:4000/api/workingtimes/${state.id}`, {working_time: {start: formatted_start, end: formatted_end}})
-        commit('addWorkingTime', data)
+        commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
       }
@@ -103,14 +119,44 @@ const user = {
       } catch(e) {
         throw new Error(e)
       }
+    },
+    async deleteWorkingTime({commit}, workingTimeId) {
+      try {
+        await axios.delete(`api/workingtimes/${workingTimeId}`)
+        commit('deleteWorkingTime', workingTimeId)
+      } catch(e) {
+        throw new Error(e)
+      }
+    },
+    // CLOCKS SPECIFIC
+    async fetchClocks({commit, state}) {
+      try {
+        const {data} = await axios.get(`/api/clocks/${state.id}`)
+        commit('addMultipleClocks', data)
+      } catch(e) {
+        throw new Error(e)
+      }
+    },
+    async createClock({commit, state}, {status}) {
+      try {
+        const {data} = axios.post(`/api/clocks/${state.id}`, {clock: {status}})
+        commit('addClock', data)
+      } catch(e) {
+        throw new Error(e)
+      }
     }
-    
   },
   getters: {
-    getUser(state) {
-      return state
+    getUser({id, username, email, workingTimes, clocks}) {
+      return ({
+        id,
+        username,
+        email,
+        workingTimes: Object.values(workingTimes),
+        clocks
+      })
     }
   }
 }
 
-export default user
+export default currentUser

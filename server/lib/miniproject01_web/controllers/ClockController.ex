@@ -14,9 +14,9 @@ defmodule ApiProjectWeb.ClockController do
     end
   end
 
-  def create(conn, %{"userId" => userId}) do
+  def create(conn, %{"userId" => userId, "status" => status}) do
     with {:ok, %Clock{} = clock} <-
-           Clock.create(%{user: userId, time: NaiveDateTime.utc_now(), status: true}) do
+           Clock.create(%{user_id: userId, time: NaiveDateTime.utc_now(), status: status}) do
       render(conn, "clock.json", clock: clock)
     else
       :error ->
