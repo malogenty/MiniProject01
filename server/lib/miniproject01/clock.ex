@@ -10,7 +10,7 @@ defmodule ApiProject.Clock do
   schema "clocks" do
     field(:status, :boolean, default: true)
     field(:time, :naive_datetime)
-    belongs_to :user, User
+    belongs_to(:user, User)
 
     timestamps()
   end
@@ -18,12 +18,13 @@ defmodule ApiProject.Clock do
   @doc false
   def changeset(clock, attrs) do
     clock
-    |> cast(attrs, [:user, :time, :status])
-    |> validate_required([:user, :time, :status])
+    |> cast(attrs, [:user_id, :time, :status])
+    |> validate_required([:user_id, :time, :status])
   end
 
   def create(attrs \\ %{}) do
     %Clock{}
+    |> Repo.preload([:user])
     |> Clock.changeset(attrs)
     |> Repo.insert()
     |> case do
