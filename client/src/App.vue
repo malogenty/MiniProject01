@@ -2,9 +2,8 @@
   <div v-if="!loading">
     <nav>
       <router-link to="/">Home</router-link> |
-      <router-link to="/clock">About</router-link>
       <router-link :to="{ name: 'clock', params: { username: 'mark2021' } }" >
-      Profile
+      Clock test
       </router-link>
     </nav>
     <router-view/>
