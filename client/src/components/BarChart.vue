@@ -23,6 +23,10 @@ export default {
       type: Object,
       required: true
     },
+    dataLabel: {
+      type: String,
+      required: true
+    },
     chartId: {
       type: String,
       default: 'bar-chart'
@@ -45,7 +49,7 @@ export default {
       chartData: {
         labels: this.getKeys(this.data),
         datasets: [{
-          label: 'Heures de travail',
+          label: this.dataLabel,
           backgroundColor: '#236DC9',
           data: this.getValues(this.data)
         }]

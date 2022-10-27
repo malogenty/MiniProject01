@@ -1,8 +1,12 @@
 <template>
   <div class="chart">
-    <h1>Chart</h1>
-    <BarChart :data="daysData" />
-    <LineChart :data="daysData" />
+    <h1>Charts</h1>
+
+    <h2>Nombre d'heures de travail par jour</h2>
+    <BarChart :data="daysData" dataLabel="Heures de Travail" />
+
+    <h2>Nombre d'heures de travail par semaine</h2>
+    <LineChart :data="weekData" dataLabel="Heures de Travail" />
   </div>
 </template>
 
