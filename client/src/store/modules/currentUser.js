@@ -1,6 +1,8 @@
 import axios from 'axios'
 import moment from 'moment'
 
+const API_URL='http://localhost:4000/api'
+
 const getDefaultState = () => ({
   id: null,
   username: null,
@@ -57,7 +59,7 @@ const currentUser = {
     async fetchUser({commit}, {id}) {
       try {
         commit('resetState')
-        const {data} = await axios.get(`http://localhost:4000/api/users/${id}`)
+        const {data} = await axios.get(`${API_URL}/users/${id}`)
         commit('updateUser', data)
       } catch(e) {
         throw new Error(e)
@@ -65,7 +67,7 @@ const currentUser = {
     },
     async updateUser({commit, state}, user) {
       try {
-        const {data} = await axios.put(`http://localhost:4000/api/users/${state.id}`, {user})
+        const {data} = await axios.put(`${API_URL}/users/${state.id}`, {user})
         commit('updateUser', data)
       } catch(e) {
         throw new Error(e)
@@ -73,7 +75,7 @@ const currentUser = {
     },
     async deleteUser({commit, state}) {
       try {
-        await axios.delete(`http://localhost:4000/api/users/${state.id}`)
+        await axios.delete(`${API_URL}/users/${state.id}`)
         commit('resetState')
       } catch(e) {
         throw new Error(e)
@@ -82,9 +84,9 @@ const currentUser = {
     // WORKING TIME SPECIFIC
     async fetchWorkingTimesStartEnd({ commit, state }, {start, end}) {
       try {
-        const formatted_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
-        const formatted_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
-        const url = `http://localhost:4000/api/workingtimes/${state.id}?start=${formatted_start}&end=${formatted_end}`
+        const formatted_start = moment(start).startOf('day').format('YYYY-MM-DD%20HH:mm:ss')
+        const formatted_end = moment(end).endOf('day').format('YYYY-MM-DD%20HH:mm:ss')
+        const url = `${API_URL}/workingtimes/${state.id}?start=${formatted_start}&end=${formatted_end}`
         const {data} = await axios.get(url)
         commit('addMultipleWorkingTimes', data)
       } catch(e) {
@@ -93,7 +95,7 @@ const currentUser = {
     },
     async fetchWorkingTime({commit, state}, {id}) {
       try {
-        const {data} = await axios.get(`http://localhost:4000/api/workingtimes/${state.id}/${id}`)
+        const {data} = await axios.get(`${API_URL}/workingtimes/${state.id}/${id}`)
         commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
@@ -103,7 +105,7 @@ const currentUser = {
       try{
         const formatted_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
         const formatted_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
-        const {data} = await axios.post(`http://localhost:4000/api/workingtimes/${state.id}`, {working_time: {start: formatted_start, end: formatted_end}})
+        const {data} = await axios.post(`${API_URL}/workingtimes/${state.id}`, {working_time: {start: formatted_start, end: formatted_end}})
         commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
@@ -114,7 +116,7 @@ const currentUser = {
         let working_time = {}
         if (workingTime.start) working_time.start = moment(workingTime.start).format('YYYY-MM-DD%20hh:mm:ss')
         if (workingTime.end) working_time.end = moment(workingTime.end).format('YYYY-MM-DD%20hh:mm:ss')
-        const {data} = await axios.put(`http://localhost:4000/api/workingtimes/${workingTime.id}`, {working_time})
+        const {data} = await axios.put(`${API_URL}/workingtimes/${workingTime.id}`, {working_time})
         commit('updateWorkingTime', data)
       } catch(e) {
         throw new Error(e)
@@ -122,7 +124,7 @@ const currentUser = {
     },
     async deleteWorkingTime({commit}, workingTimeId) {
       try {
-        await axios.delete(`api/workingtimes/${workingTimeId}`)
+        await axios.delete(`${API_URL}/workingtimes/${workingTimeId}`)
         commit('deleteWorkingTime', workingTimeId)
       } catch(e) {
         throw new Error(e)
@@ -131,7 +133,7 @@ const currentUser = {
     // CLOCKS SPECIFIC
     async fetchClocks({commit, state}) {
       try {
-        const {data} = await axios.get(`/api/clocks/${state.id}`)
+        const {data} = await axios.get(`${API_URL}/clocks/${state.id}`)
         commit('addMultipleClocks', data)
       } catch(e) {
         throw new Error(e)
@@ -139,7 +141,7 @@ const currentUser = {
     },
     async createClock({commit, state}, {status}) {
       try {
-        const {data} = axios.post(`/api/clocks/${state.id}`, {clock: {status}})
+        const {data} = await axios.post(`${API_URL}/clocks/${state.id}`, {clock: {status}})
         commit('addClock', data)
       } catch(e) {
         throw new Error(e)
