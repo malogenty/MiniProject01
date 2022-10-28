@@ -65,10 +65,11 @@ const currentUser = {
         throw new Error(e)
       }
     },
-    async updateUser({commit, state}, user) {
+    async updateUser({commit, state, dispatch}, user) {
       try {
         const {data, status} = await axios.put(`${API_URL}/users/${state.id}`, {user})
         commit('updateUser', data)
+        await dispatch('users/fetchAllUsers', null, {root: true})
         return ({status})
       } catch(e) {
         return {status: e.response.status}
