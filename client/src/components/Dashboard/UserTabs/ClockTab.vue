@@ -14,7 +14,10 @@
         </tr>
     </table>
      
-    <button @click="clocked = !clocked;this.createClock({status: true})"><p v-if="clocked">Clock In</p><p v-else>Clock Out</p></button>
+    <button @click="createClock">
+      <span>Clock {{ clocked ? 'out' : 'in' }}</span>
+    </button>
+    
   </div>
 </template>
 
@@ -23,32 +26,28 @@
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
-
   async created() {
     await this.fetchUserClocks()
-    this.user = this.getCurrentUser
-    console.log(this.user)
-  },
-  async sendClock() {
-    console.log("Clocked 1")
-    this.createClock({status: true})
-    console.log("Clocked 2")
+    this.clocked =  this.user.clocks[this.user.clocks.length - 1].status
   },
   data() {
     return {
-      clocked: true,
-      user: {}
+      clocked: null
     }
   },
   methods: {
     ...mapActions({
       fetchUserClocks: 'currentUser/fetchClocks',
-      createClock: "currentUser/createClock"
-    })
+      createNewClock: 'currentUser/createClock'
+    }),
+    createClock() {
+      this.createNewClock({status: !this.clocked, lastClock: this.user.lastClock})
+      this.clocked = !this.clocked
+    }
   },
   computed: {
     ...mapGetters({
-      getCurrentUser: 'currentUser/getUser'
+      user: 'currentUser/getUser'
     })
   }
 }

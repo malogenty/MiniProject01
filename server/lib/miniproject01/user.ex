@@ -9,7 +9,7 @@ defmodule ApiProject.User do
   alias ApiProject.User
   alias ApiProject.WorkingTime
   alias ApiProject.Clock
-
+  
   schema "users" do
     field(:email, :string)
     field(:username, :string)
