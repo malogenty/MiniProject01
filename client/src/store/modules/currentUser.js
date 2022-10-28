@@ -8,7 +8,7 @@ const getDefaultState = () => ({
   username: null,
   email: null,
   workingTimes: {},
-  clocks: []
+  clocks: {}
 })
 
 /**
@@ -139,12 +139,13 @@ const currentUser = {
         throw new Error(e)
       }
     },
-    async createClock({commit, state, dispatch}, {status, lastClock}) {
+    async createClock({commit, state, dispatch, getters}, {status}) {
       try {
+        const {clocks} = getters['getUser']
         const {data} = await axios.post(`${API_URL}/clocks/${state.id}`, {status})
         commit('addClock', data)
         if(status === false) {
-          dispatch('createWorkingTime', {start: lastClock.time, end: data.time})
+          dispatch('createWorkingTime', {start: clocks[clocks.length - 1].time, end: data.time})
         }
       } catch(e) {
         throw new Error(e)
@@ -153,13 +154,13 @@ const currentUser = {
   },
   getters: {
     getUser({id, username, email, workingTimes, clocks}) {
-      let f_clocks = Object.values(clocks)
+
       return ({
         id,
         username,
         email,
         workingTimes: Object.values(workingTimes),
-        clocks: f_clocks,
+        clocks: Object.values(clocks),
       })
     }
   }

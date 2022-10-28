@@ -28,7 +28,7 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
   async created() {
     await this.fetchUserClocks()
-    this.clocked =  this.user.clocks[this.user.clocks.length - 1].status
+    this.clocked =  this.user.clocks[this.user.clocks.length - 1]?.status
   },
   data() {
     return {
