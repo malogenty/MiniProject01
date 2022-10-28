@@ -1,8 +1,14 @@
 <template>
   <main class="dashboard">
+    <NavBar
+    :fullscreen="fullscreen"
+    @toggleFullScreen="toggleFullScreen"
+    :user="user"
+    />
     <ChartVisualisation
     @toggleFullScreen="toggleFullScreen"
     :fullscreen="fullscreen"
+    :user="user"
     />
     <UserTabs v-if="!fullscreen"
     />
@@ -12,11 +18,14 @@
 <script>
 import ChartVisualisation from './ChartVisualisation.vue';
 import UserTabs from './UserTabs.vue';
+import NavBar from './NavBar.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
     ChartVisualisation,
-    UserTabs
+    UserTabs,
+    NavBar
    },
    data() {
     return {
@@ -27,7 +36,12 @@ export default {
     toggleFullScreen() {
       this.fullscreen = !this.fullscreen
     },
-  }
+  },
+  computed: {
+    ...mapGetters({
+      user: 'currentUser/getUser'
+    })
+  },
 }
 </script>
 
@@ -35,7 +49,7 @@ export default {
   main.dashboard {
     display: flex;
     flex-direction: column;
-    width: 100vw;
+    max-width: 100vw;
     height: 100vh;
   }
 </style>

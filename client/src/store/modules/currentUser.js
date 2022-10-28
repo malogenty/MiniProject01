@@ -67,18 +67,20 @@ const currentUser = {
     },
     async updateUser({commit, state}, user) {
       try {
-        const {data} = await axios.put(`${API_URL}/users/${state.id}`, {user})
+        const {data, status} = await axios.put(`${API_URL}/users/${state.id}`, {user})
         commit('updateUser', data)
+        return ({status})
       } catch(e) {
-        throw new Error(e)
+        return {status: e.response.status}
       }
     },
     async deleteUser({commit, state}) {
       try {
-        await axios.delete(`${API_URL}/users/${state.id}`)
+        const {status} = await axios.delete(`${API_URL}/users/${state.id}`)
         commit('resetState')
+        return {status}
       } catch(e) {
-        throw new Error(e)
+        return {status: e.response.status}
       }
     },
     // WORKING TIME SPECIFIC
