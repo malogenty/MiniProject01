@@ -86,8 +86,6 @@ const currentUser = {
       try {
         const formatted_start = moment(start).startOf('day').format('YYYY-MM-DD%20HH:mm:ss')
         const formatted_end = moment(end).endOf('day').format('YYYY-MM-DD%20HH:mm:ss')
-        console.log(formatted_start)
-        console.log(formatted_end)
         const url = `${API_URL}/workingtimes/${state.id}?start=${formatted_start}&end=${formatted_end}`
         const {data} = await axios.get(url)
         commit('addMultipleWorkingTimes', data)

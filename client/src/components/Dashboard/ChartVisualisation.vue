@@ -5,20 +5,22 @@
     @toggleFullScreen="$emit('toggleFullScreen')"
     :user="user"
     />
-    <h1>Charts</h1>
-    <select v-model="selected">
-      <option disabled value="">Please select one</option>
-      <option value="daysData">days</option>
-      <option value="weekData">weeks</option>
-      <option value="averageWeekData">Average weeks</option>
-    </select>
-
-    <h2>{{ result[selected].text }}</h2>
+    <div v-if="!loading">
+      <h1>Charts</h1>
+      <select v-model="selected">
+        <option disabled value="">Please select one</option>
+        <option value="daysData">days</option>
+        <option value="weekData">weeks</option>
+        <option value="averageWeekData">Average weeks</option>
+      </select>
+      
+      <h2>{{ result[selected].text }}</h2>
       <LineChart
       :key="result[selected].label"
       :data="result[selected].data"
       dataLabel="Heures de Travail"
       />
+    </div>
   </div>
 </template>
 
@@ -40,11 +42,11 @@ export default {
   },
   async created() {
     await this.fetchWorkingTimesStartEnd({start: moment().subtract(1, 'week'), end: moment()})
-    this.user = this.getUser
-    this.result.daysData.data = getDayDurationsByWeeks(this.user.workingTimes)['43']
+    const currWeek = moment().week() - 1
+    this.result.daysData.data = getDayDurationsByWeeks(this.user.workingTimes)[currWeek]
     this.result.weekData.data = getDurationByWeeks(this.user.workingTimes)
     this.result.averageWeekData.data = getAverageDurationByWeeks(this.user.workingTimes)
-
+    this.loading = false
   },
   props: {
     fullscreen: Boolean
@@ -57,6 +59,7 @@ export default {
   data() {
     return {
       selected: 'weekData',
+      loading: true,
       result: {
         daysData: {
           data: [],

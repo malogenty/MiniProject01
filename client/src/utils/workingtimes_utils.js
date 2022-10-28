@@ -1,67 +1,63 @@
-const datesToDuration = workingTime => new Date(workingTime.end) - new Date(workingTime.start);
+import moment from 'moment'
 
-const getWeekNumber = date => {
-	const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-	const dayNum = d.getUTCDay() || 7;
-	d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+export const datesToDuration = workingTime => new Date(workingTime.end) - new Date(workingTime.start);
 
-	return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+export const getWeekNumber = date => {
+	return moment(date).weeks() - 1
 };
 
-const secondsToHours = seconds => seconds / 60 / 60 / 1000;
+export const secondsToHours = seconds => seconds / 60 / 60 / 1000;
 
-const workingTimesToOrderedObject = workingTimes => {
+export const workingTimesToOrderedObject = workingTimes => {
 	const dates = {};
 	for (const workingTime of workingTimes) {
-		const date = workingTime.start.split(' ')[0];
+		const date = workingTime.start.split('T')[0];
 		const duration = datesToDuration(workingTime);
-		dates[date] = secondsToHours(duration);
+		if(!dates[date]) {
+			dates[date] = 0
+		}
+		dates[date] += secondsToHours(duration);
 	}
-	
 	return dates;
 };
 
-const orderByWeekNumbers = datesObject => {
+export const orderByWeekNumbers = datesObject => {
 	const weeks = {};
-	for (const date in datesObject) {
-		const weekNumber = getWeekNumber(new Date(date));
+	for (const [key, value] of  Object.entries(datesObject)) {
+		const weekNumber = getWeekNumber(key);
 		if (!weeks[weekNumber]) {
-			weeks[weekNumber] = [];
+			weeks[weekNumber] = {};
 		}
-		weeks[weekNumber] = { ...weeks[weekNumber], [date]: datesObject[date] };
+		weeks[weekNumber] = {...weeks[weekNumber], [key]: value}
 	}
-
 	return weeks;
 };
 
-const getDayDurationsByWeeks = workingTimes => {
+export const getDayDurationsByWeeks = workingTimes => {
 	const datesObject = workingTimesToOrderedObject(workingTimes);
 	const weeks = orderByWeekNumbers(datesObject);
 
 	return weeks;
 };
 
-const getDurationByWeeks = workingTimes => {
+export const getDurationByWeeks = workingTimes => {
     const weeks = getDayDurationsByWeeks(workingTimes);
 
-    for (const week in weeks) {
-        const totalDuration = Object.values(weeks[week]).reduce((acc, duration) => acc + duration, 0);
-        weeks[week] = totalDuration;
+    for (const [weekNumber, weekValues] of Object.entries(weeks)) {
+        const totalDuration = Object.values(weekValues).reduce((acc, duration) => acc + duration, 0);
+        weeks[weekNumber] = totalDuration;
     }
 
 	return weeks;
 };
 
-const getAverageDurationByWeeks = workingTimes => {
+export const getAverageDurationByWeeks = workingTimes => {
     const weeks = getDayDurationsByWeeks(workingTimes);
 
-    for (const week in weeks) {
-        const averageDuration = Object.values(weeks[week]).reduce((acc, duration) => acc + duration, 0) / Object.keys(weeks[week]).length;
-        weeks[week] = Math.round(averageDuration * 100) / 100;
+		for (const [weekNumber, weekValues] of Object.entries(weeks)) {
+			const averageDuration = Object.values(weekValues).reduce((acc, duration) => acc + duration, 0) / Object.keys(weeks[weekNumber]).length;
+			weeks[weekNumber] = Math.round(averageDuration * 100) / 100;
     }
+		return weeks;
 
-    return weeks;
 };
-
-module.exports = { getDayDurationsByWeeks, getDurationByWeeks, getAverageDurationByWeeks }
