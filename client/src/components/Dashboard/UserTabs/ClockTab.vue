@@ -28,13 +28,11 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
   async created() {
     await this.fetchUserClocks()
-    this.user = this.getCurrentUser
-    this.clocked = this.user.clocks[this.user.clocks.length - 1].status
+    this.clocked =  this.user.clocks[this.user.clocks.length - 1].status
   },
   data() {
     return {
-      clocked: null,
-      user: {}
+      clocked: null
     }
   },
   methods: {
@@ -43,13 +41,13 @@ export default {
       createNewClock: 'currentUser/createClock'
     }),
     createClock() {
-      this.createNewClock({status: !this.clocked})
+      this.createNewClock({status: !this.clocked, lastClock: this.user.lastClock})
       this.clocked = !this.clocked
     }
   },
   computed: {
     ...mapGetters({
-      getCurrentUser: 'currentUser/getUser'
+      user: 'currentUser/getUser'
     })
   }
 }

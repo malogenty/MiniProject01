@@ -42,11 +42,10 @@ const currentUser = {
     },
     // CLOCK-SPECIFIC
     addClock(state, clock) {
-      state.clocks.push(clock)
+      state.clocks[clock.id] = clock
     },
     addMultipleClocks(state, clocks) {
-      state.clocks = []
-      clocks.forEach(c => state.clocks.push(c))
+      clocks.forEach(c => state.clocks[c.id] = c)
     }
 
   },
@@ -106,8 +105,8 @@ const currentUser = {
     },
     async createWorkingTime({commit, state}, {start, end}) {
       try{
-        const formatted_start = moment(start).format('YYYY-MM-DD%20hh:mm:ss')
-        const formatted_end = moment(end).format('YYYY-MM-DD%20hh:mm:ss')
+        const formatted_start = moment(start).format('YYYY-MM-DD hh:mm:ss')
+        const formatted_end = moment(end).format('YYYY-MM-DD hh:mm:ss')
         const {data} = await axios.post(`${API_URL}/workingtimes/${state.id}`, {working_time: {start: formatted_start, end: formatted_end}})
         commit('updateWorkingTime', data)
       } catch(e) {
@@ -142,10 +141,13 @@ const currentUser = {
         throw new Error(e)
       }
     },
-    async createClock({commit, state}, {status}) {
+    async createClock({commit, state, dispatch}, {status, lastClock}) {
       try {
         const {data} = await axios.post(`${API_URL}/clocks/${state.id}`, {status})
         commit('addClock', data)
+        if(status === false) {
+          dispatch('createWorkingTime', {start: lastClock.time, end: data.time})
+        }
       } catch(e) {
         throw new Error(e)
       }
@@ -153,12 +155,13 @@ const currentUser = {
   },
   getters: {
     getUser({id, username, email, workingTimes, clocks}) {
+      let f_clocks = Object.values(clocks)
       return ({
         id,
         username,
         email,
         workingTimes: Object.values(workingTimes),
-        clocks
+        clocks: f_clocks,
       })
     }
   }

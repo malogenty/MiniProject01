@@ -26,7 +26,6 @@
 import moment from 'moment'
 import LineChart from '@/components/LineChart.vue'
 import NavBar from '@/components/Dashboard/NavBar.vue'
-import fakeWorkingTimes from '@/dummies/fakeWorkingTimes.json'
 import {
   getDayDurationsByWeeks,
   getDurationByWeeks,
@@ -40,7 +39,12 @@ export default {
     NavBar
   },
   async created() {
-    this.fetchWorkingTimesStartEnd({start: moment().subtract(1, 'week'), end: moment()})
+    await this.fetchWorkingTimesStartEnd({start: moment().subtract(1, 'week'), end: moment()})
+    this.user = this.getUser
+    this.result.daysData.data = getDayDurationsByWeeks(this.user.workingTimes)['43']
+    this.result.weekData.data = getDurationByWeeks(this.user.workingTimes)
+    this.result.averageWeekData.data = getAverageDurationByWeeks(this.user.workingTimes)
+
   },
   props: {
     fullscreen: Boolean
@@ -55,21 +59,21 @@ export default {
       selected: 'weekData',
       result: {
         daysData: {
-          data: getDayDurationsByWeeks(fakeWorkingTimes)['43'],
+          data: [],
           text: 'Heures de travail par jour',
           label: 'par jour',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)'
         },
         weekData: {
-          data: getDurationByWeeks(fakeWorkingTimes),
+          data: [],
           text: 'Heures de travail par semaine',
           label: 'par semaine',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)'
         },
         averageWeekData: {
-          data: getAverageDurationByWeeks(fakeWorkingTimes),
+          data: [],
           text: 'Moyenne des heures de travail par semaine',
           label: 'moyenne par semaine',
           backgroundColor: 'rgba(255, 99, 132, 0.2)',

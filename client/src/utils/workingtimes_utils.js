@@ -18,7 +18,7 @@ const workingTimesToOrderedObject = workingTimes => {
 		const duration = datesToDuration(workingTime);
 		dates[date] = secondsToHours(duration);
 	}
-
+	
 	return dates;
 };
 
