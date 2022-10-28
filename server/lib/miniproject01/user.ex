@@ -7,10 +7,14 @@ defmodule ApiProject.User do
   import Ecto.Query, warn: false
   alias ApiProject.Repo
   alias ApiProject.User
-
+  alias ApiProject.WorkingTime
+  alias ApiProject.Clock
+  
   schema "users" do
     field(:email, :string)
     field(:username, :string)
+    has_many(:workingtimes, WorkingTime)
+    has_many(:clocks, Clock)
 
     timestamps()
   end
