@@ -4,12 +4,12 @@ defmodule ApiProject.WorkingTime do
   import Ecto.Query, warn: false
   alias ApiProject.Repo
   alias ApiProject.WorkingTime
+  alias ApiProject.User
 
   schema "working_times" do
     field(:end, :naive_datetime)
     field(:start, :naive_datetime)
-
-    belongs_to(:user, ApiProject.User)
+    belongs_to(:user, User)
 
     timestamps()
   end

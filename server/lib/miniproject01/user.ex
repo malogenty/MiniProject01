@@ -7,11 +7,12 @@ defmodule ApiProject.User do
   import Ecto.Query, warn: false
   alias ApiProject.Repo
   alias ApiProject.User
-  @derive {Jason.Encoder, only: [:email, :username]}
+  alias ApiProject.WorkingTime
 
   schema "users" do
     field(:email, :string)
     field(:username, :string)
+    has_many(:workingtimes, WorkingTime)
 
     timestamps()
   end
