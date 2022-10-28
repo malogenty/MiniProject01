@@ -1,8 +1,8 @@
 <template>
-  <div class="user-grid">
-    <div v-for="user in users" :key="user.id">
-      <UserCard @click="showUser(user.id)" class="cards__item" :user="user"/>
-    </div>
+  <div> Search for a user</div>
+  <input type="text" v-model="filters.searchUserTextValue" />
+  <div class="cards__item" v-for="user in usersFiltered" :key="user.id">
+    <UserCard @click="showUser(user.id)" :user="user"/>
   </div>
 </template>
 
@@ -14,19 +14,31 @@ export default {
   name: "UserGrid",
   data() {
     return {
-      users: []
+      users: Array,
+      // usersFiltered: Array,
+      filters: {
+        searchUserTextValue: ''
+      }
+
     }
   },
   components: {
     UserCard
   },
   mounted() {
-    this.users = this.getUsers                     
+    this.users = this.getUsers
+    // this.usersFiltered = this.getUsers
   },
   computed: {
       ...mapGetters({
         getUsers: 'users/getAllUsers'
-      })
+      }),
+      usersFiltered: function() {
+        if (this.filters.searchUserTextValue === '') return this.users
+        return this.users.filter((user) => {
+          return user.username.match(this.filters.searchUserTextValue)
+        })
+      },
   },
 
   methods: {
@@ -41,7 +53,7 @@ export default {
 <style>
 .cards {
   display: flex;
-  flex: 1 1;
+  /* flex: 1 1; */
   flex-wrap: wrap;
   justify-content: space-between;
   flex-basis: auto;
@@ -50,8 +62,10 @@ export default {
 }
 
 .cards__item {
-  display: flex;
+  display: inline-block;
   padding: 1rem;
+  width: 25%;
+
   @media (min-width: 40rem) {
     width: 50%;
   }
