@@ -9,6 +9,5 @@ defmodule ApiProject.Repo.Migrations.CreateWorkingtimes do
 
       timestamps()
     end
-
   end
 end

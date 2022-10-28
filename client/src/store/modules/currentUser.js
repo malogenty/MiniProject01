@@ -74,10 +74,11 @@ const currentUser = {
         return {status: e.response.status}
       }
     },
-    async deleteUser({commit, state}) {
+    async deleteUser({commit, state, dispatch}) {
       try {
         const {status} = await axios.delete(`${API_URL}/users/${state.id}`)
         commit('resetState')
+        await dispatch('users/fetchAllUsers', null, {root: true})
         return {status}
       } catch(e) {
         return {status: e.response.status}
