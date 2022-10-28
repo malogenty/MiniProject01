@@ -41,7 +41,7 @@ export default {
       createNewClock: 'currentUser/createClock'
     }),
     createClock() {
-      this.createNewClock({status: !this.clocked, lastClock: this.user.lastClock})
+      this.createNewClock({status: !this.clocked})
       this.clocked = !this.clocked
     }
   },
