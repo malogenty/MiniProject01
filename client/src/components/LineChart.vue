@@ -1,12 +1,12 @@
 <template>
-  <Line
+    <Line
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
-    :width="width"
     :height="height"
-  />
+    :width="width"
+    />
 </template>
 
 <script>
@@ -54,11 +54,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 300
+      default: 100
     },
     height: {
       type: Number,
-      default: 100
+      default: 150
     }
   },
   data() {
@@ -77,7 +77,8 @@ export default {
         ]
       },
       chartOptions: {
-        responsive: true
+        responsive: true,
+        maintainAspectRatio: false
       }
     }
   },

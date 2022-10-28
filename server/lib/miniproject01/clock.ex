@@ -22,7 +22,6 @@ defmodule ApiProject.Clock do
 
   def get_clocks_by_user(%{user_id: user_id}) do
     Clock
-    |> Ecto.Query.preload([:user])
     |> where([c], c.user_id == ^user_id)
     |> Repo.all()
   end
