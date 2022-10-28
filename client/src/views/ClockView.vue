@@ -14,9 +14,7 @@
         </tr>
     </table>
      
-    <button @click="clocked = !clocked"><p v-if="clocked">Clock In</p>
-<p v-else>Clock Out</p></button>
-    
+    <button @click="clocked = !clocked;this.createClock({status: true})"><p v-if="clocked">Clock In</p><p v-else>Clock Out</p></button>
   </div>
 </template>
 
@@ -31,6 +29,11 @@ export default {
     this.user = this.getCurrentUser
     console.log(this.user)
   },
+  async sendClock() {
+    console.log("Clocked 1")
+    this.createClock({status: true})
+    console.log("Clocked 2")
+  },
   data() {
     return {
       clocked: true,
@@ -39,7 +42,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      fetchUserClocks: 'currentUser/fetchClocks'
+      fetchUserClocks: 'currentUser/fetchClocks',
+      createClock: "currentUser/createClock"
     })
   },
   computed: {
