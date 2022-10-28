@@ -1,7 +1,8 @@
 <template>
   <div v-if="user.id">
     <DashboardLayout/>
-    </div>
+  </div>
+  <span v-else>Sorry, this user does not exist.</span>
 </template>
 
 <script>

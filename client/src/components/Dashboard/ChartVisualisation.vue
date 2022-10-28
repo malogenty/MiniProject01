@@ -1,10 +1,5 @@
 <template>
   <div class="chart">
-    <NavBar
-    :fullscreen="fullscreen"
-    @toggleFullScreen="$emit('toggleFullScreen')"
-    :user="user"
-    />
     <div v-if="!loading">
       <h1>Charts</h1>
       <select v-model="selected">
@@ -27,18 +22,16 @@
 <script>
 import moment from 'moment'
 import LineChart from '@/components/LineChart.vue'
-import NavBar from '@/components/Dashboard/NavBar.vue'
 import {
   getDayDurationsByWeeks,
   getDurationByWeeks,
   getAverageDurationByWeeks
 } from '@/utils/workingtimes_utils.js'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   name: 'HomeView',
   components: {
-    LineChart,
-    NavBar
+    LineChart
   },
   async created() {
     await this.fetchWorkingTimesStartEnd({start: moment().subtract(1, 'week'), end: moment()})
@@ -49,12 +42,8 @@ export default {
     this.loading = false
   },
   props: {
-    fullscreen: Boolean
-  },
-  computed: {
-    ...mapGetters({
-      user: 'currentUser/getUser'
-    })
+    fullscreen: Boolean,
+    user: {}
   },
   data() {
     return {

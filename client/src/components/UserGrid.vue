@@ -1,14 +1,23 @@
 <template>
-  <div>Search for a user</div>
-  <input type="text" v-model="filters.searchUserTextValue" />
-  <div class="cards__item" v-for="user in usersFiltered" :key="user.id">
-    <UserCard @click="showUser(user.id)" :user="user" />
+  <div>
+    <CreateUser @closeModal="modal = !modal" v-if="modal"/>
+    <div class="controls">
+      <div class="search">
+        <div>Search for a user</div>
+        <input type="text" v-model="filters.searchUserTextValue" />
+      </div>
+      <button @click="modal = !modal" class="add_user">Add a new user</button>
+    </div>
+    <div class="cards__item" v-for="user in usersFiltered" :key="user.id">
+      <UserCard @click="showUser(user.id)" :user="user" />
+    </div>
   </div>
 </template>
 
 <script>
 import UserCard from "@/components/UserCard.vue";
 import { mapGetters } from "vuex";
+import CreateUser from '@/components/Modals/CreateUser.vue';
 
 export default {
   name: "UserGrid",
@@ -18,10 +27,12 @@ export default {
       filters: {
         searchUserTextValue: "",
       },
+      modal: false
     };
   },
   components: {
     UserCard,
+    CreateUser,
   },
   mounted() {
     this.users = this.getUsers;
@@ -46,7 +57,20 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.controls {
+  display: flex;
+  justify-content: space-between;
+  .add_user {
+    background: burlywood;
+    width: max-content;
+    padding: 4px;
+    margin: 0 4px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+}
+
 .cards {
   display: flex;
   flex-wrap: wrap;
