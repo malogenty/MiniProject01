@@ -4,8 +4,6 @@
     :chart-data="chartData"
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
-    :height="height"
-    :width="width"
     />
 </template>
 
@@ -92,3 +90,6 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+</style>

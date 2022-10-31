@@ -1,5 +1,7 @@
 <template>
+  <div class="tabs">
     <ClockTab/>
+  </div>
 </template>
 
 <script>
@@ -12,6 +14,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.tabs {
+  height: 29vh;
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="navbar">
     <UserModal v-if="editingUser" @closeModal="editingUser = !editingUser"/>
     <div class="controls">
       <div class="back" @click="goBackHome">
@@ -40,21 +40,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.controls {
-  height: 40px;
-  display: flex;
-  justify-content: space-between;
-  div.back,
-  div.full-screen {
-    cursor: pointer;
-    img {
-      width: 36px;
-      height: 36px;
+.navbar {
+background: red;
+  .controls {
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    div.back,
+    div.full-screen {
+      cursor: pointer;
+      img {
+        width: 36px;
+        height: 36px;
+      }
     }
-  }
-  span.user {
-    cursor: pointer;
-    align-self: center;
+    span.user {
+      cursor: pointer;
+      align-self: center;
+    }
   }
 }
 </style>

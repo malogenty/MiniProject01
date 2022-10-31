@@ -1,7 +1,5 @@
 <template>
-  <div class="chart">
-    <div v-if="!loading">
-      <h1>Charts</h1>
+  <div class="chart-vue"  v-if="!loading">
       <select v-model="selected">
         <option disabled value="">Please select one</option>
         <option value="daysData">days</option>
@@ -10,12 +8,28 @@
       </select>
       
       <h2>{{ result[selected].text }}</h2>
-      <LineChart
-      :key="result[selected].label"
-      :data="result[selected].data"
-      dataLabel="Heures de Travail"
-      />
-    </div>
+      <div class="charts">
+        <div class="chart">
+          <LineChart
+          :key="result[selected].label"
+          :data="result[selected].data"
+          dataLabel="Heures de Travail"
+          />
+        </div>
+        <div class="chart">
+          <BarChart
+          :key="result[selected].label"
+          :data="result[selected].data"
+          dataLabel="Heures de travail"
+          />
+        </div>
+          <div class="chart">
+            <DoughnutChart
+            :key="result[selected].label"
+            :data="result[selected].data"
+            dataLabel="Heures de travail"/>
+          </div>
+      </div>
   </div>
 </template>
 
@@ -28,12 +42,17 @@ import {
   getAverageDurationByWeeks
 } from '@/utils/workingtimes_utils.js'
 import { mapActions } from 'vuex'
+import BarChart from '../BarChart.vue'
+import DoughnutChart from '../DoughnutChart.vue'
 export default {
   name: 'HomeView',
   components: {
-    LineChart
+    LineChart,
+    BarChart,
+    DoughnutChart
   },
-  async created() {
+  async created()
+   {
     await this.fetchWorkingTimesStartEnd({start: moment().subtract(1, 'week'), end: moment()})
     const currWeek = moment().week() - 1
     this.result.daysData.data = getDayDurationsByWeeks(this.user.workingTimes)[currWeek]
@@ -83,7 +102,27 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .chart {
-    height: 100%;
+  .chart-vue {
+    display: flex;
+    flex-direction: column;
+    select {
+      width: min-content;
+    }
+    .charts {
+      height: 100%;
+      display: flex;
+      gap: 1vw;
+      width: 100%;
+      align-items: flex-end;
+      .chart {
+        width: 33%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        > div {
+          max-width: 100%;
+        }
+      }
+    }
   }
 </style>
