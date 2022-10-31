@@ -20,4 +20,10 @@ defmodule ApiProjectWeb.WorkingTimeView do
       user_id: working_time.user_id
     }
   end
+
+  def render("error.json", %{reason: reason}) do
+    %{
+      error: reason
+    }
+  end
 end
