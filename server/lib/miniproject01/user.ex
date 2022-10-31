@@ -9,10 +9,12 @@ defmodule ApiProject.User do
   alias ApiProject.User
   alias ApiProject.WorkingTime
   alias ApiProject.Clock
-  
+
   schema "users" do
     field(:email, :string)
     field(:username, :string)
+    field(:role, Ecto.Enum, values: [:general_manager, :manager, :employee])
+    field(:hour_rate, :float)
     has_many(:workingtimes, WorkingTime)
     has_many(:clocks, Clock)
 
