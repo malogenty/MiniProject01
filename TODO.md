@@ -5,7 +5,7 @@ BACK-END CHECK RIGHTS
 
 ## Hugo
 
-- [ ] Create table team 
+- [x] Create table team 
 	- Name (string)
 	- ID
 	- Nightshift pay (float)
@@ -13,13 +13,17 @@ BACK-END CHECK RIGHTS
 	- start_of_day (time)
 	- end_of_day (time) 
 
-- [ ] associate_team_users
+- [x] associate_team_users
   - user_id
   - team_id
 
-- [ ] Users
+- [x] Users
 	- hour_rate (float, default)
 	- role (string: 'general_manager' || 'manager' || 'employee')
+
+
+- [ ] Create and update routes accordingly (check rights)
+- [ ] Update front-end store accordingly
 ## End-Hugo
 
 On front-end, when clock_out with +4 hours difference clock_in, add confirmation && option to custom clock_out (changing clock_out hour/date)
