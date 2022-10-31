@@ -37,12 +37,30 @@ export default {
 </script>
 
 <style lang="scss">
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-  }
-  * {
-    box-sizing: border-box;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: #f0f0f0;
+}
+
+body {
+  /* color: @gray; */
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  padding: 0;
+  margin: 0;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
 </style>

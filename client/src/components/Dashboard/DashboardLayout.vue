@@ -5,13 +5,15 @@
     @toggleFullScreen="toggleFullScreen"
     :user="user"
     />
-    <ChartVisualisation
-    @toggleFullScreen="toggleFullScreen"
-    :fullscreen="fullscreen"
-    :user="user"
-    />
-    <UserTabs v-if="!fullscreen"
-    />
+    <div class="container">
+      <ChartVisualisation
+      @toggleFullScreen="toggleFullScreen"
+      :fullscreen="fullscreen"
+      :user="user"
+      />
+      <UserTabs v-if="!fullscreen"
+      />
+    </div>
   </main>
   </template>
 
@@ -51,5 +53,8 @@ export default {
     flex-direction: column;
     max-width: 100vw;
     height: 100vh;
+    .container {
+      padding: 1vw;
+    }
   }
 </style>

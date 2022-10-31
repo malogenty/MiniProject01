@@ -30,34 +30,6 @@ export default {
 </script>
 
 <style>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  background-color: #f0f0f0;
-}
-
-body {
-  /* color: @gray; */
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  letter-spacing: 0;
-  padding: 1rem;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -moz-font-feature-settings: "liga" on;
-}
-
-img {
-  height: auto;
-  max-width: 100%;
-  vertical-align: middle;
-}
 
 .btn {
   background-color: white;
