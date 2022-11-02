@@ -5,16 +5,16 @@ defmodule ApiProject.User do
   import EctoCommons.EmailValidator
 
   import Ecto.Query, warn: false
-  alias ApiProject.Repo
-  alias ApiProject.User
-  alias ApiProject.WorkingTime
-  alias ApiProject.Clock
-  
+  alias ApiProject.{Repo, User, WorkingTime, Clock, Team, TeamsUsers}
+
   schema "users" do
     field(:email, :string)
     field(:username, :string)
+    field(:role, Ecto.Enum, values: [:general_manager, :manager, :employee])
+    field(:hour_rate, :float, default: 7.5)
     has_many(:workingtimes, WorkingTime)
     has_many(:clocks, Clock)
+    many_to_many(:teams, Team, join_through: "teams_users")
 
     timestamps()
   end
@@ -22,9 +22,9 @@ defmodule ApiProject.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email])
+    |> cast(attrs, [:username, :email, :role, :hour_rate])
     |> validate_email(:email, checks: [:html_input])
-    |> validate_required([:username, :email])
+    |> validate_required([:username, :email, :role, :hour_rate])
     |> unique_constraint(:username, message: "This username is already taken")
   end
 
@@ -44,6 +44,21 @@ defmodule ApiProject.User do
     %User{}
     |> User.changeset(user_params)
     |> Repo.insert()
+  end
+
+  def get_user_teams(user_id) do
+    query =
+      from(
+        t in Team,
+        join: tu in TeamsUsers,
+        on: t.id == tu.team_id,
+        join: u in User,
+        on: u.id == tu.user_id,
+        where: tu.user_id == ^user_id,
+        select: t
+      )
+
+    Repo.all(query)
   end
 
   def update_user(%User{} = user, user_params) do
