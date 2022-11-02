@@ -20,7 +20,11 @@ defmodule ApiProjectWeb.HoursWorkedView do
     %{
       id: hours_worked.id,
       date: hours_worked.date,
-      normal_hours: hours_worked.normal_hours
+      normal_hours: hours_worked.normal_hours,
+      night_hours: hours_worked.night_hours,
+      overtime_hours: hours_worked.overtime_hours,
+      expected_worked_hours: hours_worked.expected_worked_hours,
+      user: hours_worked.user_id
     }
   end
 
