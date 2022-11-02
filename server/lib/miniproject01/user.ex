@@ -9,7 +9,7 @@ defmodule ApiProject.User do
   alias ApiProject.User
   alias ApiProject.WorkingTime
   alias ApiProject.Clock
-  
+
   schema "users" do
     field(:email, :string)
     field(:username, :string)
@@ -38,6 +38,13 @@ defmodule ApiProject.User do
 
   def get_user(id) do
     Repo.get(User, id)
+  end
+
+  def get_user!(id) do
+    case Repo.get(User, id) do
+      nil -> {:not_found, "User not found", 404}
+      user -> {:ok, user}
+    end
   end
 
   def create_user(user_params \\ %{}) do

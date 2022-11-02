@@ -23,4 +23,10 @@ defmodule ApiProjectWeb.HoursWorkedView do
       normal_hours: hours_worked.normal_hours
     }
   end
+
+  def render("error.json", %{reason: reason}) do
+    %{
+      error: reason
+    }
+  end
 end

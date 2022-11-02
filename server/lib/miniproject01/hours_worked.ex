@@ -26,12 +26,22 @@ defmodule ApiProject.HoursWorked do
     Repo.all(HoursWorked)
   end
 
-  def get_hours_worked!(id), do: Repo.get!(HoursWorked, id)
+  def get_hours_worked(id) do
+    case Repo.get(HoursWorked, id) do
+      nil -> {:hours_not_found, "Hours not found", 404}
+      hours -> {:ok, hours}
+    end
+  end
 
-  def get_hours_worked_by_user!(user_id) do
-    HoursWorked
+  def get_hours_worked_by_user(user_id) do
+    hours_worked = HoursWorked
     |> where([h], h.user_id == ^user_id)
     |> Repo.all()
+    case hours_worked do
+      nil -> {:not_found, "Hours not found for this user", 404}
+      [] -> {:not_found, "This user don't have hours worked", 404}
+      hours -> {:ok, hours}
+    end
   end
 
   def create_hours_worked(attrs \\ %{}) do
