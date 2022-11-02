@@ -9,12 +9,15 @@ defmodule ApiProject.User do
   alias ApiProject.User
   alias ApiProject.WorkingTime
   alias ApiProject.Clock
+  alias ApiProject.HoursWorked
+
 
   schema "users" do
     field(:email, :string)
     field(:username, :string)
     has_many(:workingtimes, WorkingTime)
     has_many(:clocks, Clock)
+    has_many(:hours_worked, HoursWorked)
 
     timestamps()
   end
