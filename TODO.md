@@ -41,7 +41,7 @@ si le clock_out > schedule.end --> alors excess : overtime_hours
 le reste -> normal_hours
 if clock_in.date !== clock_out.date, separate
 
-- [ ] Hours_Worked instead of working times
+- [x] Hours_Worked instead of working times
 	- date (date) 2022-10-31
 	- normal_hours (float)
 	- night_hours (float)
