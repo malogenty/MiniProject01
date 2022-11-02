@@ -60,7 +60,18 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 	- user_id
 	- start (date-time)
 	- end (date-time)
-	- title (string, default: work)
+	- title (work || holiday || sick, default: work)
+- get for 1 user from date to date
+- post for 1 user
+	-> check from date && to date
+	-> check if for that date there is hours_worked
+		- if no, create and set expected_hours
+		- if yes, set expected_hours += schedule.hours
+	- edge case where event spreads on several days
+- update
+	-> update hours_worked
+- delete
+	-> update hours_worked
 
 # Front-end
 - Install && setup https://antoniandre.github.io/vue-cal/ with dummy data (taking into account the form it is supposed to have given the DB)
