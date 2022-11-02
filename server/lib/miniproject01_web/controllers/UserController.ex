@@ -74,6 +74,11 @@ defmodule ApiProjectWeb.UserController do
     end
   end
 
+  def list_user_teams(conn, %{"userId" => user_id}) do
+    teams = User.get_user_teams(user_id)
+    render(conn, "user_teams.json", teams: teams)
+  end
+
   # delete user with given id
   def delete(conn, %{"userId" => id}) do
     user = User.get_user(id)

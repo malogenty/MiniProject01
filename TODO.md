@@ -5,7 +5,7 @@ BACK-END CHECK RIGHTS
 
 ## Hugo
 
-- [ ] Create table team 
+- [x] Create table team 
 	- Name (string)
 	- ID
 	- Nightshift pay (float)
@@ -13,13 +13,19 @@ BACK-END CHECK RIGHTS
 	- start_of_day (time)
 	- end_of_day (time) 
 
-- [ ] associate_team_users
+- [x] associate_team_users
   - user_id
   - team_id
 
-- [ ] Users
+- [x] Users
 	- hour_rate (float, default)
 	- role (string: 'general_manager' || 'manager' || 'employee')
+
+
+- [x] Create and update routes accordingly 
+- [x] Update schemas
+- [ ] Check rights before insertion / getting
+- [ ] Update front-end store accordingly
 ## End-Hugo
 
 On front-end, when clock_out with +4 hours difference clock_in, add confirmation && option to custom clock_out (changing clock_out hour/date)
@@ -30,6 +36,7 @@ On front-end, when clock_out with +4 hours difference clock_in, add confirmation
 	- check that given time < curr_time before insert
 
 On clock out, check : si le clock out > end_of_day --> alors excess : night_hours
+clock out available 12hrs onward from expected clockout (given schedule)
 si le clock_out > schedule.end --> alors excess : overtime_hours
 le reste -> normal_hours
 if clock_in.date !== clock_out.date, separate
@@ -70,12 +77,15 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 
 
 All users can :
-• Edittheiraccountinformation.
-• Deletetheiraccount.
-• Reporttheirdepartureandarrivaltimes. • Viewtheirdashboards.
+• Edit their account information.
+• Delete their account.
+• Report their departure and arrival times. 
+• View their dashboards.
 The managers and general manager can :
-• Managetheirteam(s).
-• Viewtheaveragesofthedailyandweeklyhoursoftheteamoveragivenperiod. • Viewthedailyandweeklyworkinghoursofanemployeeoveraperiodoftime. • Viewtheiremployees’dashboards.
+• Manage their team(s).
+• View the averages of the daily and weekly hours of the team over a given period. 
+• View the daily and weekly workinghours of an employee over a period of time. • View their employees dashboards.
 The general manager can :
-• Promoteauserfromtherankofemployeetomanager. • Viewthedashboardsofallusers.
-• Deleteaccountsfromallusers.
+• Promote a user from the rank of employee to manager. 
+• View the dashboards of all users.
+• Delete accounts from all users.
