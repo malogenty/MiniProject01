@@ -21,6 +21,18 @@ defmodule ApiProjectWeb.TeamView do
     end
   end
 
+  def render("teams_users.json", %{users: users}) do
+    for user <- users do
+      %{
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        hour_rate: user.hour_rate
+      }
+    end
+  end
+
   def render("error.json", %{reason: reason}) do
     %{
       error: reason

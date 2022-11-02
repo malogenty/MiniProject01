@@ -1,7 +1,7 @@
 defmodule ApiProjectWeb.TeamController do
   require Logger
   use ApiProjectWeb, :controller
-  alias ApiProject.Team
+  alias ApiProject.{Team, User, TeamsUsers}
 
   def read(conn, %{"teamId" => team_id}) do
     team = Team.get_team!(team_id)
@@ -15,8 +15,23 @@ defmodule ApiProjectWeb.TeamController do
     end
   end
 
+  def create_relation(conn, %{"relation" => relation}) do
+    user = User.get_user(relation["user_id"])
+    team = Team.get_team!(relation["team_id"])
+
+    if team && user do
+      TeamsUsers.create_relation(%{user_id: user.id, team_id: team.id})
+      render(conn, "team.json", team: team)
+    else
+      conn
+      |> put_status(400)
+      |> render("error.json", reason: "Team or User does not exist")
+    end
+  end
+
   def list_team_users(conn, %{"teamId" => team_id}) do
     users = Team.get_team_users(team_id)
+    render(conn, "teams_users.json", users: users)
   end
 
   def create(conn, %{"team" => team_params}) do
@@ -31,7 +46,7 @@ defmodule ApiProjectWeb.TeamController do
   end
 
   def update(conn, %{"teamId" => team_id, "team" => team_params}) do
-    team = Team.get_team(team_id)
+    team = Team.get_team!(team_id)
 
     if team do
       with {:ok, %Team{} = updated} <- Team.update_team(team, team_params) do

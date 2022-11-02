@@ -9,6 +9,7 @@ defmodule ApiProjectWeb.Router do
     pipe_through(:api)
     get("/users", UserController, :list)
     get("/users/:userId", UserController, :read)
+    get("/users/:userId/teams", UserController, :list_user_teams)
     post("/users", UserController, :create)
     put("/users/:userId", UserController, :update)
     delete("/users/:userId", UserController, :delete)
@@ -25,6 +26,7 @@ defmodule ApiProjectWeb.Router do
     get("/teams/:teamId", TeamController, :read)
     get("/teams/:teamId/users", TeamController, :list_team_users)
     post("/teams", TeamController, :create)
+    post("/teams/associate_user", TeamController, :create_relation)
     put("/teams/:teamId", TeamController, :update)
     delete("/teams/:teamId", TeamController, :delete)
   end

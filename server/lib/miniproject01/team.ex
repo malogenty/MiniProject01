@@ -2,10 +2,9 @@ defmodule ApiProject.Team do
   require Logger
   use Ecto.Schema
   import Ecto.Changeset
-  alias ApiProject.Team
+  alias ApiProject.{Repo, Team, User, TeamsUsers}
 
   import Ecto.Query, warn: false
-  alias ApiProject.Repo
 
   schema "teams" do
     field(:name, :string)
@@ -13,6 +12,7 @@ defmodule ApiProject.Team do
     field(:overtime_multiplicator, :float, default: 2.0)
     field(:start_of_day, :time)
     field(:end_of_day, :time)
+    many_to_many(:users, User, join_through: "teams_users")
 
     timestamps()
   end
@@ -37,6 +37,21 @@ defmodule ApiProject.Team do
 
   def get_team!(id) do
     Repo.get(Team, id)
+  end
+
+  def get_team_users(team_id) do
+    query =
+      from(
+        u in User,
+        join: tu in TeamsUsers,
+        on: u.id == tu.user_id,
+        join: t in Team,
+        on: tu.team_id == t.id,
+        where: tu.team_id == ^team_id,
+        select: u
+      )
+
+    Repo.all(query)
   end
 
   def create_team(team_params \\ %{}) do
