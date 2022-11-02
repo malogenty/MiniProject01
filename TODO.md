@@ -26,6 +26,7 @@ BACK-END CHECK RIGHTS
 - [x] Update schemas
 - [ ] Check rights before insertion / getting
 - [ ] Update front-end store accordingly
+- [ ] Update front-end store accordingly
 ## End-Hugo
 
 On front-end, when clock_out with +4 hours difference clock_in, add confirmation && option to custom clock_out (changing clock_out hour/date)
