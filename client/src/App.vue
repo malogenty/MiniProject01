@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -22,17 +21,8 @@ export default {
     }
   },
   async created() {
-    await this.fetchUsers()
     this.loading = false;
   },
-  methods: {
-    ...mapActions({
-      'fetchAllUsers': 'users/fetchAllUsers'
-    }),
-    async fetchUsers() {
-      await this.fetchAllUsers()
-    }
-  }
 }
 </script>
 
