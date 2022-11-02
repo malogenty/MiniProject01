@@ -22,10 +22,10 @@ BACK-END CHECK RIGHTS
 	- role (string: 'general_manager' || 'manager' || 'employee')
 
 
-- [ ] Create and update routes accordingly (check rights)
+- [x] Create and update routes accordingly 
+- [x] Update schemas
+- [ ] Check rights before insertion / getting
 - [ ] Update front-end store accordingly
-- [ ] Update schemas
-- [ ] Update user side for insertion (expecting team, now)
 ## End-Hugo
 
 On front-end, when clock_out with +4 hours difference clock_in, add confirmation && option to custom clock_out (changing clock_out hour/date)
@@ -36,6 +36,7 @@ On front-end, when clock_out with +4 hours difference clock_in, add confirmation
 	- check that given time < curr_time before insert
 
 On clock out, check : si le clock out > end_of_day --> alors excess : night_hours
+clock out available 12hrs onward from expected clockout (given schedule)
 si le clock_out > schedule.end --> alors excess : overtime_hours
 le reste -> normal_hours
 if clock_in.date !== clock_out.date, separate

@@ -29,6 +29,25 @@ defmodule ApiProjectWeb.TeamController do
     end
   end
 
+  def delete_relation(conn, %{"teamId" => team_id, "userId" => user_id}) do
+    relation = TeamsUsers.get_relation(%{user_id: user_id, team_id: team_id})
+
+    if(relation) do
+      with {:ok, deleted} <- TeamsUsers.delete_relation(relation) do
+        send_resp(conn, 204, "")
+      else
+        {:error, %Ecto.Changeset{}} ->
+          conn
+          |> put_status(418)
+          |> render("error.json", reason: "An error has occured 🫖")
+      end
+    else
+      conn
+      |> put_status(404)
+      |> render("error.json", reason: "The association does not exist")
+    end
+  end
+
   def list_team_users(conn, %{"teamId" => team_id}) do
     users = Team.get_team_users(team_id)
     render(conn, "teams_users.json", users: users)

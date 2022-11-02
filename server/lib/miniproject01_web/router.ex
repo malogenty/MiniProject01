@@ -29,5 +29,6 @@ defmodule ApiProjectWeb.Router do
     post("/teams/associate_user", TeamController, :create_relation)
     put("/teams/:teamId", TeamController, :update)
     delete("/teams/:teamId", TeamController, :delete)
+    delete("/teams/:teamId/:userId", TeamController, :delete_relation)
   end
 end
