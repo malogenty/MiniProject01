@@ -76,12 +76,15 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 
 
 All users can :
-• Edittheiraccountinformation.
-• Deletetheiraccount.
-• Reporttheirdepartureandarrivaltimes. • Viewtheirdashboards.
+• Edit their account information.
+• Delete their account.
+• Report their departure and arrival times. 
+• View their dashboards.
 The managers and general manager can :
-• Managetheirteam(s).
-• Viewtheaveragesofthedailyandweeklyhoursoftheteamoveragivenperiod. • Viewthedailyandweeklyworkinghoursofanemployeeoveraperiodoftime. • Viewtheiremployees’dashboards.
+• Manage their team(s).
+• View the averages of the daily and weekly hours of the team over a given period. 
+• View the daily and weekly workinghours of an employee over a period of time. • View their employees dashboards.
 The general manager can :
-• Promoteauserfromtherankofemployeetomanager. • Viewthedashboardsofallusers.
-• Deleteaccountsfromallusers.
+• Promote a user from the rank of employee to manager. 
+• View the dashboards of all users.
+• Delete accounts from all users.
