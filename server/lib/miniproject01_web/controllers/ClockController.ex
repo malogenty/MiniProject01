@@ -16,15 +16,26 @@ defmodule ApiProjectWeb.ClockController do
     end
   end
 
-  def create(conn, %{"userId" => userId, "status" => status}) do
-    with {:ok, %Clock{} = clock} <-
-           Clock.create(%{user_id: userId, time: NaiveDateTime.utc_now(), status: status}) do
-      render(conn, "clock.json", clock: clock)
+  def create(conn, %{"userId" => user_id, "status" => status}) do
+    with {:ok, clock} <- Clock.get_last_clock_by_user(%{user_id: user_id}),
+         {true, _x} <- {status != clock.status, clock.status},
+         {:ok, %Clock{} = clock} <-
+           Clock.create(%{user_id: user_id, time: NaiveDateTime.utc_now(), status: status}) do
+      conn |> put_status(201) |> render("clock.json", clock: clock)
     else
       :error ->
         conn
         |> put_status(400)
         |> render("error.json", reason: "The payload does not match the expected pattern")
+
+      {:not_found, reason, status} ->
+        conn |> put_status(status) |> render("error.json", reason: reason)
+
+      {false, false} ->
+        conn |> put_status(400) |> render("error.json", reason: "You already clocked out")
+
+      {false, true} ->
+        conn |> put_status(400) |> render("error.json", reason: "You already clocked in")
     end
   end
 end
