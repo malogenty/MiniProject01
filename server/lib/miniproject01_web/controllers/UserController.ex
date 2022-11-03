@@ -1,7 +1,7 @@
 defmodule ApiProjectWeb.UserController do
   require Logger
   use ApiProjectWeb, :controller
-  alias ApiProject.User
+  alias ApiProject.{User, Token}
 
   # list one user with params: email & username
   def list(conn, params) do
@@ -10,7 +10,8 @@ defmodule ApiProjectWeb.UserController do
         User.get_user_with_credentials(%{email: params["email"], username: params["username"]})
 
       if user do
-        render(conn, "user.json", user: user)
+        {:ok, token, bclaims} = Token.generate_and_sign(%{user_id: user.id})
+        render(conn, "user.json", user: user, token: token)
       else
         conn
         |> put_status(404)

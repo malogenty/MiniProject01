@@ -56,13 +56,15 @@ const currentUser = {
     resetUser({commit}) {
       commit('resetState')
     },
-    async fetchUser({commit}, {id}) {
+    async fetchUser({commit}, {username, email}) {
       try {
         commit('resetState')
-        const {data} = await axios.get(`${API_URL}/users/${id}`)
+        const {data, status} = await axios.get(`${API_URL}/users?username=${username}&email=${email}`)
         commit('updateUser', data)
-      } catch(e) {
-        throw new Error(e)
+        this.$cookies.set("jwt", data.token, 60 * 60 * 2)
+        return {status}
+      } catch({response}) {
+        return {error: response.error, status: response.status}
       }
     },
     async updateUser({commit, state, dispatch}, user) {
