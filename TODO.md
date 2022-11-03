@@ -42,7 +42,7 @@ si le clock_out > schedule.end --> alors excess : overtime_hours
 le reste -> normal_hours
 if clock_in.date !== clock_out.date, separate
 
-- [ ] Hours_Worked instead of working times
+- [x] Hours_Worked instead of working times
 	- date (date) 2022-10-31
 	- normal_hours (float)
 	- night_hours (float)
@@ -73,8 +73,11 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 	-> update hours_worked
 - delete
 	-> update hours_worked
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
 
 # Front-end
 - Install && setup https://antoniandre.github.io/vue-cal/ with dummy data (taking into account the form it is supposed to have given the DB)

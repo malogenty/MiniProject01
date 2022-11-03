@@ -3,9 +3,10 @@ defmodule ApiProject.User do
   use Ecto.Schema
   import Ecto.Changeset
   import EctoCommons.EmailValidator
-
   import Ecto.Query, warn: false
-  alias ApiProject.{Repo, User, WorkingTime, Clock, Team, TeamsUsers}
+  
+  alias ApiProject.{Repo, User, WorkingTime, Clock, Team, TeamsUsers, HoursWorked}
+
 
   schema "users" do
     field(:email, :string)
@@ -14,6 +15,7 @@ defmodule ApiProject.User do
     field(:hour_rate, :float, default: 7.5)
     has_many(:workingtimes, WorkingTime)
     has_many(:clocks, Clock)
+    has_many(:hours_worked, HoursWorked)
     many_to_many(:teams, Team, join_through: "teams_users")
 
     timestamps()
@@ -38,6 +40,13 @@ defmodule ApiProject.User do
 
   def get_user(id) do
     Repo.get(User, id)
+  end
+
+  def get_user!(id) do
+    case Repo.get(User, id) do
+      nil -> {:not_found, "User not found", 404}
+      user -> {:ok, user}
+    end
   end
 
   def create_user(user_params \\ %{}) do
