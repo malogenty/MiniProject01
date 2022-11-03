@@ -29,6 +29,8 @@ defmodule ApiProjectWeb.Router do
     get("/clocks/:userId", ClockController, :read)
     post("/clocks/:userId", ClockController, :create)
 
+    get("/schedule/:userId", ScheduleController, :list)
+
     get("/teams/:teamId", TeamController, :read)
     get("/teams/:teamId/users", TeamController, :list_team_users)
     post("/teams", TeamController, :create)
