@@ -1,7 +1,8 @@
 defmodule ApiProjectWeb.UserController do
   require Logger
   use ApiProjectWeb, :controller
-  alias ApiProject.User
+  alias ApiProject.{User, Token}
+  alias ApiProjectWeb.Auth
 
   # list one user with params: email & username
   def list(conn, params) do
@@ -10,7 +11,8 @@ defmodule ApiProjectWeb.UserController do
         User.get_user_with_credentials(%{email: params["email"], username: params["username"]})
 
       if user do
-        render(conn, "user.json", user: user)
+        {:ok, token, claims} = Token.generate_and_sign(%{user_id: user.id})
+        render(conn, "user.json", user: user, token: token)
       else
         conn
         |> put_status(404)
@@ -59,13 +61,23 @@ defmodule ApiProjectWeb.UserController do
     user = User.get_user(id)
 
     if user do
-      with {:ok, %User{} = updated} <- User.update_user(user, user_params) do
-        render(conn, "user.json", user: updated)
+      if Auth.has_right(%{
+           bearer_token: user_params["token"],
+           target: user,
+           action: "edit_user"
+         }) do
+        with {:ok, %User{} = updated} <- User.update_user(user, user_params) do
+          render(conn, "user.json", user: updated, token: nil)
+        else
+          {:error, %Ecto.Changeset{}} ->
+            conn
+            |> put_status(400)
+            |> render("error.json", reason: "The payload does not match the expected pattern")
+        end
       else
-        {:error, %Ecto.Changeset{}} ->
-          conn
-          |> put_status(400)
-          |> render("error.json", reason: "The payload does not match the expected pattern")
+        conn
+        |> put_status(401)
+        |> render("error.json", reason: "You are not allowed to perform this action.")
       end
     else
       conn

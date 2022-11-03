@@ -2,13 +2,14 @@ defmodule ApiProjectWeb.UserView do
   use ApiProjectWeb, :view
   alias ApiProjectWeb.UserView
 
-  def render("user.json", %{user: user}) do
+  def render("user.json", %{user: user, token: token}) do
     %{
       id: user.id,
       username: user.username,
       email: user.email,
       role: user.role,
-      hour_rate: user.hour_rate
+      hour_rate: user.hour_rate,
+      token: token
     }
   end
 
