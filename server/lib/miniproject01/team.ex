@@ -54,6 +54,21 @@ defmodule ApiProject.Team do
     Repo.all(query)
   end
 
+  def are_same_team(%{u1_id: u1_id, u2_id: u2_id}) do
+    child_query = from(tu in TeamsUsers, where: tu.user_id == ^u2_id, select: tu.team_id)
+
+    query =
+      from(
+        tu in TeamsUsers,
+        where: tu.user_id == ^u1_id,
+        where: tu.team_id in subquery(child_query),
+        select: tu
+      )
+
+    res = Repo.all(query)
+    length(res) > 0
+  end
+
   def create_team(team_params \\ %{}) do
     %Team{}
     |> Team.changeset(team_params)

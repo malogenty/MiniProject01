@@ -36,14 +36,15 @@ const currentUser = {
     logout({commit}) {
       commit('resetState')
     },
-    async login({commit, dispatch}, {id}) {
+    async fetchUser({commit}, {username, email}) {
       try {
-        const {data, status} = await axios.get(`${API_URL}/users/${id}`)
-        commit ('setUser', data)
-        if(data.role === 'manager' || data.role === 'general_manager') dispatch('fetchTeams')
-        return {status};
+        commit('resetState')
+        const {data, status} = await axios.get(`${API_URL}/users?username=${username}&email=${email}`)
+        commit('updateUser', data)
+        this.$cookies.set("jwt", data.token, 60 * 60 * 2)
+        return {status}
       } catch({response}) {
-        return {error: response.data.error, status: response.status}
+        return {error: response.error, status: response.status}
       }
     },
     async fetchTeams({commit, state}) {

@@ -94,18 +94,27 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 
 
 All users can :
-• Edit their account information.
-• Delete their account.
-• Report their departure and arrival times. 
-• View their dashboards.
+X Edit their account information.
+X Delete their account.
+X Report their departure and arrival times. 
+X View their dashboards.
+
 The managers and general manager can :
 • Manage their team(s).
-• View the averages of the daily and weekly hours of the team over a given period. 
-• View the daily and weekly workinghours of an employee over a period of time. • View their employees dashboards.
+X View the averages of the daily and weekly hours of the team over a given period. 
+X View the daily and weekly workinghours of an employee over a period of time. 
+X View their employees dashboards.
+
 The general manager can :
+<<<<<<< HEAD
 • Promote a user from the rank of employee to manager. 
 • View the dashboards of all users.
 • Delete accounts from all users.
 
 
 - [ ] api request to get total hours of team for a given period
+=======
+X Promote a user from the rank of employee to manager. 
+X View the dashboards of all users.
+X Delete accounts from all users.
+>>>>>>> master

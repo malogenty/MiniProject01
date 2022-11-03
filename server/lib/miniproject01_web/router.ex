@@ -20,14 +20,16 @@ defmodule ApiProjectWeb.Router do
     put("/workingtimes/:id", WorkingTimeController, :update)
     delete("/workingtimes/:id", WorkingTimeController, :delete)
 
-    get "/hoursworked", HoursWorkedController, :index
-    get "/hoursworked/:user_id", HoursWorkedController, :getByUser
-    post "/hoursworked/:user_id", HoursWorkedController, :create
-    put "/hoursworked/:id", HoursWorkedController, :update
-    delete "/hoursworked/:id", HoursWorkedController, :delete
+    get("/hoursworked", HoursWorkedController, :index)
+    get("/hoursworked/:user_id", HoursWorkedController, :getByUser)
+    post("/hoursworked/:user_id", HoursWorkedController, :create)
+    put("/hoursworked/:id", HoursWorkedController, :update)
+    delete("/hoursworked/:id", HoursWorkedController, :delete)
 
     get("/clocks/:userId", ClockController, :read)
     post("/clocks/:userId", ClockController, :create)
+
+    get("/schedule/:userId", ScheduleController, :list)
 
     get("/teams/:teamId", TeamController, :read)
     get("/teams/:teamId/users", TeamController, :list_team_users)
