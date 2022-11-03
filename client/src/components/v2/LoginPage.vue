@@ -1,8 +1,8 @@
 <template>
   <container-layout>
-    <button @click="loginUser">
-      Login
-    </button>
+    <button @click="loginUser(3)">Login employee</button>
+    <button @click="loginUser(2)">Login manager</button>
+    <button @click="loginUser(1)">Login general_manager</button>
   </container-layout>
 </template>
 
@@ -16,8 +16,8 @@ export default {
     ...mapActions({
       login: 'currentUser/login'
     }),
-    async loginUser() {
-      const res = await this.login({id: 1})
+    async loginUser(id) {
+      const res = await this.login({id})
       if(res.status === 200) {
         this.$router.push('/')
       } else {
