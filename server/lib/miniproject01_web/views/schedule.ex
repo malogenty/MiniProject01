@@ -13,6 +13,16 @@ defmodule ApiProjectWeb.ScheduleView do
     end
   end
 
+  def render("schedule.json", %{schedule: schedule}) do
+    %{
+      id: schedule.id,
+      start: schedule.start,
+      end: schedule.end,
+      user: schedule.user_id,
+      title: schedule.title
+    }
+  end
+
   def render("error.json", %{reason: reason}) do
     %{
       error: reason
