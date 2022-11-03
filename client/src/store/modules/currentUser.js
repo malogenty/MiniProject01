@@ -21,7 +21,7 @@ const currentUser = {
     resetState (state) {
       Object.assign(state, getDefaultState())
     },
-    updateUser (state, {id, username, email, role, hour_rate}) {
+    setUser (state, {id, username, email, role, hour_rate}) {
       state.id = id
       state.username = username
       state.email = email
@@ -39,7 +39,7 @@ const currentUser = {
     async login({commit, dispatch}, {id}) {
       try {
         const {data, status} = await axios.get(`${API_URL}/users/${id}`)
-        commit ('updateUser', data)
+        commit ('setUser', data)
         if(data.role === 'manager' || data.role === 'general_manager') dispatch('fetchTeams')
         return {status};
       } catch({response}) {

@@ -14,6 +14,7 @@ export default {
 @import "@/styles/colors.scss";
   .card {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 300px;

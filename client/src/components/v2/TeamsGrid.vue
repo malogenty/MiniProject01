@@ -1,6 +1,6 @@
 <template>
   <div class="teams-grid">
-    <CardLayout v-for="team in teams" :key="team.id" @click="this.$router.push(`/teams/${team.id}`)">
+    <CardLayout v-for="team in teams" :key="team.id" @click="goToTeam(team.id)">
       {{team.name}}
     </CardLayout>
   </div>
@@ -8,6 +8,7 @@
 
 <script>
 import CardLayout from '@/components/Layout/CardLayout.vue';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -15,6 +16,15 @@ export default {
   },
   props: {
     teams: Array
+  },
+  methods: {
+    ...mapActions({
+      fetchTeam: 'watchedTeam/fetchTeam'
+    }),
+    async goToTeam(id) {
+      await this.fetchTeam(id)
+      this.$router.push(`/team/${id}`)
+    }
   }
 }
 </script>

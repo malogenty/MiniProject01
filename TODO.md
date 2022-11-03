@@ -106,3 +106,6 @@ The general manager can :
 • Promote a user from the rank of employee to manager. 
 • View the dashboards of all users.
 • Delete accounts from all users.
+
+
+- [ ] api request to get total hours of team for a given period

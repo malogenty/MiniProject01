@@ -15,7 +15,7 @@ const routes = [
   {
     path: '/user/:id',
     name: 'user',
-    component: () => import('@/views/UserView.vue')
+    component: () => import('@/views/UserViewV2.vue')
   },
   {
     path: '/team/:id',
