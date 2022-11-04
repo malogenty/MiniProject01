@@ -17,4 +17,14 @@ defmodule ApiProjectWeb.ScheduleController do
       render(conn, "list.json", schedules: schedules)
     end
   end
+
+  def create(conn, %{"userId" => user_id, "title" => title, "start" => start_datetime, "end" => end_datetime}) do
+    with {:ok, %Schedule{} = schedule} <-
+      Schedule.create(
+        %{"user_id" => user_id, "title" => title, "start" => start_datetime, "end" => end_datetime}
+      ) do
+      conn
+      |> render("schedule.json", schedule: schedule)
+    end
+  end
 end
