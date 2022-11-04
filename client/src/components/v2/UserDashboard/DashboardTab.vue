@@ -2,13 +2,13 @@
   <ContainerLayout>
     <div class="dashboard-tab">
       <span class="header">{{user.username}}'s dashboard</span>
-      <select v-model="selected" @change="updateRange">
+      <select v-model="selected">
         <option disabled value="">Please select one</option>
         <option value="perDay">Hours worked per day</option>
         <option value="perWeek">Hours worked per week</option>
       </select>
       <div class="date-picker">
-        <DatePicker @dateChange="fetchNewValues"/>
+        <DatePicker @dateChange="updateRange"/>
       </div>
       <div class="dashboard-grid">
         <div class="graph one">
@@ -74,6 +74,7 @@ async created() {
       fetchHoursWorked: 'watchedUser/fetchHoursWorked'
     }),
     async updateRange(range) {
+      console.log(range)
       this.range = [moment(range[0]).format("YYYY-MM-DD"), moment(range[1]).format("YYYY-MM-DD")]
       await this.fetchNewValues()
     },
