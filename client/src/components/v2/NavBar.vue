@@ -1,6 +1,8 @@
 <template>
   <header>
-    <button @click="$router.back()">go back</button>
+    <div>
+      <button @click="$router.back()" v-if="showBackButton">go back</button>
+    </div>
     <span>A beautiful website indeed</span>
     <button @click="logout">Logout</button>
   </header>
@@ -13,6 +15,11 @@ export default {
     ...mapActions({
       logout: 'currentUser/logout'
     })
+  },
+  computed: {
+    showBackButton() {
+      return this.$route.href !== "/" && this.$route.href !== "/login"
+    }
   }
 }
 </script>

@@ -8,8 +8,10 @@ const getDefaultState = () => ({
   id: null,
   username: null,
   email: null,
-  workingTimes: {},
-  clocks: {}
+  role: null,
+  hourRate: null,
+  hours_worked: [],
+  clocks: []
 })
 
 const watchedUser = {

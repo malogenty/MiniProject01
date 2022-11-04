@@ -4,6 +4,7 @@
     :chart-data="chartData"
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
+    cssClasses="canvas-wrapper"
     />
 </template>
 
@@ -52,11 +53,11 @@ export default {
     },
     width: {
       type: Number,
-      default: 100
+      default: 200
     },
     height: {
       type: Number,
-      default: 150
+      default: 100
     }
   },
   data() {
@@ -76,6 +77,7 @@ export default {
       },
       chartOptions: {
         responsive: true,
+        aspectRatio: 600 | 400,
         maintainAspectRatio: false
       }
     }
@@ -92,4 +94,9 @@ export default {
 </script>
 
 <style scoped>
+.canvas-wrapper {
+  width: 90%; 
+  height: 90%; 
+  margin: auto;
+}
 </style>

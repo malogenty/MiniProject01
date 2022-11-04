@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import DashboardTab from './DashboardTab.vue'
 import ScheduleTab from './ScheduleTab.vue'
 import SettingsTab from './SettingsTab.vue'
@@ -27,11 +28,20 @@ export default {
       tab: "dashboard"
     }
   },
+  async created() {
+    if(!this.watchedUser?.id) await this.fetchUser(this.user.id)
+  },
+  computed: {
+    watchedUser: 'watchedUser/getUser'
+  },
   methods: {
+    ...mapActions({
+      fetchUser: 'watchedUser/fetchUser'
+    }),
     setTab(tab) {
       this.tab = tab
     }
-  }
+  },
 }
 </script>
 
