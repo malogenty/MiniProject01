@@ -6,11 +6,11 @@ defmodule ApiProject.HoursWorked do
   alias ApiProject.HoursWorked
 
   schema "hours_worked" do
-    field :date, :naive_datetime
-    field :normal_hours, :float
-    field :night_hours, :float
-    field :overtime_hours, :float
-    field :expected_worked_hours, :float
+    field(:date, :naive_datetime)
+    field(:normal_hours, :float)
+    field(:night_hours, :float)
+    field(:overtime_hours, :float)
+    field(:expected_worked_hours, :float)
     belongs_to(:user, User)
 
     timestamps()
@@ -18,8 +18,22 @@ defmodule ApiProject.HoursWorked do
 
   def changeset(hours_worked, attrs) do
     hours_worked
-    |> cast(attrs, [:date, :normal_hours, :night_hours, :overtime_hours, :expected_worked_hours, :user_id])
-    |> validate_required([:date, :normal_hours, :night_hours, :overtime_hours, :expected_worked_hours, :user_id])
+    |> cast(attrs, [
+      :date,
+      :normal_hours,
+      :night_hours,
+      :overtime_hours,
+      :expected_worked_hours,
+      :user_id
+    ])
+    |> validate_required([
+      :date,
+      :normal_hours,
+      :night_hours,
+      :overtime_hours,
+      :expected_worked_hours,
+      :user_id
+    ])
   end
 
   def list_hours_worked do
@@ -34,9 +48,11 @@ defmodule ApiProject.HoursWorked do
   end
 
   def get_hours_worked_by_user(user_id) do
-    hours_worked = HoursWorked
-    |> where([h], h.user_id == ^user_id)
-    |> Repo.all()
+    hours_worked =
+      HoursWorked
+      |> where([h], h.user_id == ^user_id)
+      |> Repo.all()
+
     case hours_worked do
       nil -> {:not_found, "Hours not found for this user", 404}
       [] -> {:not_found, "This user don't have hours worked", 404}
@@ -44,16 +60,31 @@ defmodule ApiProject.HoursWorked do
     end
   end
 
-  def get_hours_workeds_by_day(%{"userId" => user_id, "start" => start_datetime, "end" => end_datetime}) do
-    hours_worked = HoursWorked
-    |> where([h], h.user_id == ^user_id)
-    |> where([h], h.date == ^start_datetime.day or h.date == ^end_datetime.day)
-    |> Repo.all()
+  def get_hours_workeds_by_day(%{
+        "userId" => user_id,
+        "start" => start_datetime,
+        "end" => end_datetime
+      }) do
+    hours_worked =
+      HoursWorked
+      |> where([h], h.user_id == ^user_id)
+      |> where([h], h.date == ^start_datetime.day or h.date == ^end_datetime.day)
+      |> Repo.all()
+
     case hours_worked do
       nil -> {:not_found, "Hours not found for this user", 404}
       [] -> {:not_found, "This user don't have hours worked", 404}
       hours -> {:ok, hours}
     end
+  end
+
+  def get_hours_worked_from_to(%{user_id: user_id, from: from, to: to}) do
+    HoursWorked
+    |> where([hw], hw.user_id == ^user_id)
+    # this should be corrected, no need to store dateTime in DB, we want date .
+    |> where([hw], fragment("?::date", hw.date) >= ^from)
+    |> where([hw], fragment("?::date", hw.date) <= ^to)
+    |> Repo.all()
   end
 
   def create_hours_worked(attrs \\ %{}) do
