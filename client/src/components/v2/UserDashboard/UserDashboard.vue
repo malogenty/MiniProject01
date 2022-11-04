@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import DashboardTab from './DashboardTab.vue'
 import ScheduleTab from './ScheduleTab.vue'
 import SettingsTab from './SettingsTab.vue'
@@ -29,10 +29,12 @@ export default {
     }
   },
   async created() {
-    if(!this.watchedUser?.id) await this.fetchUser(this.user.id)
+    if(!this.watchedUser.id) await this.fetchUser(this.user.id)
   },
   computed: {
-    watchedUser: 'watchedUser/getUser'
+    ...mapGetters({
+      watchedUser: 'watchedUser/getUser'
+    })
   },
   methods: {
     ...mapActions({

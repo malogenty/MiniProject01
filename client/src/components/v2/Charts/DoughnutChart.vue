@@ -1,39 +1,32 @@
 <template>
-    <Line
+  <Doughnut
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
-    cssClasses="canvas-wrapper"
-    />
+    v-if="hasData"
+  />
+  <div class="canvas-wrapper" v-else>
+    Sorry, no data to display.
+  </div>
 </template>
 
 <script>
-import { Line } from 'vue-chartjs'
+import { Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   Title,
   Tooltip,
   Legend,
-  LineElement,
+  ArcElement,
   CategoryScale,
-  LinearScale,
-  PointElement
 } from 'chart.js'
 
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement
-)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default {
-  name: 'LineChart',
-  components: { Line },
+  name: 'BarChart',
+  components: { Doughnut },
   props: {
     data: {
       type: Object,
@@ -53,7 +46,7 @@ export default {
     },
     width: {
       type: Number,
-      default: 200
+      default: 300
     },
     height: {
       type: Number,
@@ -64,21 +57,14 @@ export default {
     return {
       chartData: {
         labels: this.getKeys(this.data),
-        datasets: [
-          {
-            label: this.dataLabel,
-            backgroundColor: '#236DC9',
-            borderColor: '#236DC9',
-            pointBackgroundColor: 'white',
-            data: this.getValues(this.data),
-            tension: 0.3
-          }
-        ]
+        datasets: [{
+          label: this.dataLabel,
+          backgroundColor: '#236DC9',
+          data: this.getValues(this.data)
+        }]
       },
       chartOptions: {
-        responsive: true,
-        aspectRatio: 600 | 400,
-        maintainAspectRatio: false
+        responsive: true
       }
     }
   },
@@ -89,14 +75,11 @@ export default {
     getValues(obj) {
       return Object.values(obj)
     }
+  },
+  computed: {
+    hasData() {
+      return Object.values(this.data).length > 0
+    }
   }
 }
 </script>
-
-<style scoped>
-.canvas-wrapper {
-  width: 90%; 
-  height: 90%; 
-  margin: auto;
-}
-</style>

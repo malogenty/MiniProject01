@@ -5,7 +5,11 @@
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
     cssClasses="canvas-wrapper"
+    v-if="hasData"
   />
+  <div class="canvas-wrapper no-data" v-else>
+    Sorry, no data to display.
+  </div>
 </template>
 
 <script>
@@ -68,14 +72,24 @@ export default {
       return Object.values(obj)
     }
   },
+  computed: {
+    hasData() {
+      return Object.values(this.data).length > 0
+    }
+  }
 }
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
 .canvas-wrapper {
   width: 90%; 
   height: 90%; 
   margin: auto;
+  &.no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 </style>

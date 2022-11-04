@@ -13,11 +13,11 @@
       <div class="dashboard-grid">
         <div class="graph one">
           <span class="title">Graph one</span>
-          <LineChart :data="graph[0].data" dataLabel="test"/>
+          <LineChart :data="graph[selected].data" dataLabel="test" :key="selected"/>
         </div>
         <div class="graph two">
           <span class="title">Graph two</span>
-          <BarChart :data="graph[0].data" dataLabel="test"/>
+          <BarChart :data="graph[selected].data" dataLabel="test" :key="selected"/>
         </div>
         <div class="clock"><span>Clock in</span></div>
       </div>
@@ -26,9 +26,9 @@
 </template>
 
 <script>
-import BarChart from '@/components/BarChart.vue'
+import BarChart from '@/components/v2/Charts/BarChart.vue'
 import ContainerLayout from '@/components/Layout/ContainerLayout.vue'
-import LineChart from '@/components/LineChart.vue'
+import LineChart from '@/components/v2/Charts/LineChart.vue'
 import DatePicker from '@/components/v2/UserDashboard/DatePicker.vue'
 
 import moment from 'moment'
@@ -47,14 +47,17 @@ export default {
     return {
       user: this.givenUser,
       selected: "perDay",
-      graph: [
-        {
-          data: {}
+      graph: {
+        perDay: {
+          data: {
+            "2022-12-24": 240, 
+            "2022-12-25": 250, 
+          }
         },
-        {
+        perWeek: {
           data: {}
         }
-      ],
+      },
       range: [
         moment().subtract(1, "month").format(),
         moment().format()
