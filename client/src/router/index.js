@@ -1,24 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeViewV2 from '@/views/HomeViewV2.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeViewV2
   },
   {
-    path: '/clock/:username',
-    name: 'clock',
-    component: () => import('../views/ClockView.vue')
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/AuthView.vue')
   },
   {
     path: '/user/:id',
-    props: {
-      id: Number
-    },
     name: 'user',
-    component: () => import('@/views/UserView.vue')
+    component: () => import('@/views/UserViewV2.vue')
+  },
+  {
+    path: '/team/:id',
+    name: 'team',
+    component: () => import('@/views/TeamPanel.vue')
   }
 ]
 

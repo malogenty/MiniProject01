@@ -22,16 +22,13 @@ export default {
     }
   },
   async created() {
-    await this.fetchUsers()
+    await this.tokenLogin()
     this.loading = false;
   },
   methods: {
     ...mapActions({
-      'fetchAllUsers': 'users/fetchAllUsers'
-    }),
-    async fetchUsers() {
-      await this.fetchAllUsers()
-    }
+      tokenLogin: 'currentUser/tokenLogin'
+    })
   }
 }
 </script>

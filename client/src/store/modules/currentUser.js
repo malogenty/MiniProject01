@@ -1,5 +1,6 @@
 import axios from 'axios'
-import moment from 'moment'
+import VueCookies from 'vue-cookies'
+
 
 const API_URL='http://localhost:4000/api'
 
@@ -7,167 +8,77 @@ const getDefaultState = () => ({
   id: null,
   username: null,
   email: null,
-  workingTimes: {},
-  clocks: {}
+  role: null,
+  hourRate: null,
+  hoursWorked: [],
+  clocks: [],
+  teams: []
 })
 
-/**
- * This is the current user (the "parent" component). Once the user is fetched, the other data will be assigned to this user
- */
 const currentUser = {
   namespaced: true,
   state: () => (getDefaultState()),
-
-  // Mutations change the state, so it can trigger a re-rendering on some components that are linked.
   mutations: {
-    // This is so we can start on fresh grounds when changing user.
     resetState (state) {
       Object.assign(state, getDefaultState())
     },
-    // USER-SPECIFIC
-    updateUser(state, {id, username, email}) {
+    setUser (state, {id, username, email, role, hour_rate}) {
       state.id = id
       state.username = username
       state.email = email
+      state.role = role
+      state.hourRate = hour_rate
     },
-    // WORKING TIME-SPECIFIC
-    addMultipleWorkingTimes(state, workingTimes) {
-      workingTimes.forEach(wt => state.workingTimes[wt.id] = wt)
-    },
-    updateWorkingTime(state, workingTime) {
-      state.workingTimes[workingTime.id] = workingTime
-    },
-    deleteWorkingTime(state, workingTimeId) {
-      state.workingTimes[workingTimeId] = null
-    },
-    // CLOCK-SPECIFIC
-    addClock(state, clock) {
-      state.clocks[clock.id] = clock
-    },
-    addMultipleClocks(state, clocks) {
-      clocks.forEach(c => state.clocks[c.id] = c)
+    updateTeams(state, teams) {
+      state.teams = teams
     }
-
   },
-
-  // Actions discuss with the back-end and trigger mutations
   actions: {
-    // USER-SPECIFIC
-    resetUser({commit}) {
+    logout({commit}) {
       commit('resetState')
     },
-    async fetchUser({commit}, {username, email}) {
+    async login({commit, dispatch}, {username, email}) {
       try {
         commit('resetState')
         const {data, status} = await axios.get(`${API_URL}/users?username=${username}&email=${email}`)
-        commit('updateUser', data)
-        this.$cookies.set("jwt", data.token, 60 * 60 * 2)
+        commit('setUser', data)
+        VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
+        axios.defaults.headers.common["Authorization"] = data.token
+        if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
         return {status}
       } catch({response}) {
         return {error: response.error, status: response.status}
       }
     },
-    async updateUser({commit, state, dispatch}, user) {
+    async tokenLogin({commit, dispatch}) {
+      const token = VueCookies.get("jwt")
+      if (!token) return false
       try {
-        const {data, status} = await axios.put(`${API_URL}/users/${state.id}`, {user})
-        commit('updateUser', data)
-        await dispatch('users/fetchAllUsers', null, {root: true})
-        return ({status})
-      } catch(e) {
-        return {status: e.response.status}
-      }
-    },
-    async deleteUser({commit, state, dispatch}) {
-      try {
-        const {status} = await axios.delete(`${API_URL}/users/${state.id}`)
+        axios.defaults.headers.common["Authorization"] = token
         commit('resetState')
-        await dispatch('users/fetchAllUsers', null, {root: true})
+        const {data, status} = await axios.get(`${API_URL}/users`)
+        commit('setUser', data)
+        if (data.role === "general_manager" || data.role === "manager") {
+          console.log("manager or gen manager")
+          dispatch('fetchTeams')}
         return {status}
-      } catch(e) {
-        return {status: e.response.status}
+      } catch({response}) {
+        return {error: response.error, status: response.status}
       }
     },
-    // WORKING TIME SPECIFIC
-    async fetchWorkingTimesStartEnd({ commit, state }, {start, end}) {
+    async fetchTeams({commit, state}) {
       try {
-        const formatted_start = moment(start).startOf('day').format('YYYY-MM-DD%20HH:mm:ss')
-        const formatted_end = moment(end).endOf('day').format('YYYY-MM-DD%20HH:mm:ss')
-        const url = `${API_URL}/workingtimes/${state.id}?start=${formatted_start}&end=${formatted_end}`
-        const {data} = await axios.get(url)
-        commit('addMultipleWorkingTimes', data)
-      } catch(e) {
-        throw new Error(e)
-      }
-    },
-    async fetchWorkingTime({commit, state}, {id}) {
-      try {
-        const {data} = await axios.get(`${API_URL}/workingtimes/${state.id}/${id}`)
-        commit('updateWorkingTime', data)
-      } catch(e) {
-        throw new Error(e)
-      }
-    },
-    async createWorkingTime({commit, state}, {start, end}) {
-      try{
-        const formatted_start = moment(start).format('YYYY-MM-DD hh:mm:ss')
-        const formatted_end = moment(end).format('YYYY-MM-DD hh:mm:ss')
-        const {data} = await axios.post(`${API_URL}/workingtimes/${state.id}`, {working_time: {start: formatted_start, end: formatted_end}})
-        commit('updateWorkingTime', data)
-      } catch(e) {
-        throw new Error(e)
-      }
-    },
-    async updateWorkingTime({commit}, workingTime) {
-      try{
-        let working_time = {}
-        if (workingTime.start) working_time.start = moment(workingTime.start).format('YYYY-MM-DD%20hh:mm:ss')
-        if (workingTime.end) working_time.end = moment(workingTime.end).format('YYYY-MM-DD%20hh:mm:ss')
-        const {data} = await axios.put(`${API_URL}/workingtimes/${workingTime.id}`, {working_time})
-        commit('updateWorkingTime', data)
-      } catch(e) {
-        throw new Error(e)
-      }
-    },
-    async deleteWorkingTime({commit}, workingTimeId) {
-      try {
-        await axios.delete(`${API_URL}/workingtimes/${workingTimeId}`)
-        commit('deleteWorkingTime', workingTimeId)
-      } catch(e) {
-        throw new Error(e)
-      }
-    },
-    // CLOCKS SPECIFIC
-    async fetchClocks({commit, state}) {
-      try {
-        const {data} = await axios.get(`${API_URL}/clocks/${state.id}`)
-        commit('addMultipleClocks', data)
-      } catch(e) {
-        throw new Error(e)
-      }
-    },
-    async createClock({commit, state, dispatch, getters}, {status}) {
-      try {
-        const {clocks} = getters['getUser']
-        const {data} = await axios.post(`${API_URL}/clocks/${state.id}`, {status})
-        commit('addClock', data)
-        if(status === false) {
-          dispatch('createWorkingTime', {start: clocks[clocks.length - 1].time, end: data.time})
-        }
-      } catch(e) {
-        throw new Error(e)
+        const {data, status} = await axios.get(`${API_URL}/users/${state.id}/teams`)
+        commit('updateTeams', data)
+        return {status}
+      } catch ({response}) {
+        return {error: response.data.error, status: response.status}
       }
     }
   },
   getters: {
-    getUser({id, username, email, workingTimes, clocks}) {
-
-      return ({
-        id,
-        username,
-        email,
-        workingTimes: Object.values(workingTimes),
-        clocks: Object.values(clocks),
-      })
+    getUser(state) {
+      return state
     }
   }
 }
