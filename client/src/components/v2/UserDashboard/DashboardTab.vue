@@ -2,7 +2,7 @@
   <ContainerLayout>
     <div class="dashboard-tab">
       <span class="header">{{user.username}}'s dashboard</span>
-      <select v-model="selected" @change="handleChange">
+      <select v-model="selected" @change="updateRange">
         <option disabled value="">Please select one</option>
         <option value="perDay">Hours worked per day</option>
         <option value="perWeek">Hours worked per week</option>
@@ -12,12 +12,12 @@
       </div>
       <div class="dashboard-grid">
         <div class="graph one">
-          <span class="title">Graph one</span>
-          <LineChart :data="graph[selected].data" dataLabel="test" :key="selected"/>
+          <span class="title">Total hours worked</span>
+          <LineChart :datas="graph[selected].summed" :labels="graph[selected].labels" dataLabel="test" :key="update"/>
         </div>
         <div class="graph two">
-          <span class="title">Graph two</span>
-          <BarChart :data="graph[selected].data" dataLabel="test" :key="selected"/>
+          <span class="title">Sorted hours worked</span>
+          <BarChart :datas="graph[selected].sorted" :labels="graph[selected].labels" dataLabel="test" :key="update"/>
         </div>
         <div class="clock"><span>Clock in</span></div>
       </div>
@@ -30,8 +30,10 @@ import BarChart from '@/components/v2/Charts/BarChart.vue'
 import ContainerLayout from '@/components/Layout/ContainerLayout.vue'
 import LineChart from '@/components/v2/Charts/LineChart.vue'
 import DatePicker from '@/components/v2/UserDashboard/DatePicker.vue'
+import { sortedData, summedData } from '@/utils/hoursworked_utils'
 
 import moment from 'moment'
+import { mapActions } from 'vuex'
 
 export default {
   props: {
@@ -43,39 +45,55 @@ export default {
     BarChart,
     DatePicker
 },
+async created() {
+  await this.fetchNewValues()
+},
   data() {
     return {
       user: this.givenUser,
       selected: "perDay",
+      update: 0,
       graph: {
         perDay: {
-          data: {
-            "2022-12-24": 240, 
-            "2022-12-25": 250, 
-          }
+          sorted: [],
+          summed: [],
+          labels: []
         },
         perWeek: {
           data: {}
         }
       },
       range: [
-        moment().subtract(1, "month").format(),
-        moment().format()
+        moment().subtract(1, "month").format("YYYY-MM-DD"),
+        moment().format("YYYY-MM-DD")
       ]
     }
   },
-  computed: {
-    isX() {
-      return true
-    }
-  },
   methods: {
-    async fetchNewValues(range) {
-      this.range = [moment(range[0]).format(), moment(range[1]).format()]
-    }
+    ...mapActions({
+      fetchHoursWorked: 'watchedUser/fetchHoursWorked'
+    }),
+    async updateRange(range) {
+      this.range = [moment(range[0]).format("YYYY-MM-DD"), moment(range[1]).format("YYYY-MM-DD")]
+      await this.fetchNewValues()
+    },
+    async fetchNewValues() {
+      const res = await this.fetchHoursWorked({u_id: this.user.id, from: this.range[0], to: this.range[1]})
+      if(res.status === 200) {
+        const {data, labels} = sortedData(res.data)
+        const summed = summedData(res.data)
+        this.graph.perDay.sorted = data
+        this.graph.perDay.summed = summed
+        this.graph.perDay.labels = labels
+      }
+      this.update++
+    },
+    
   }
 }
 </script>
+
+
 
 <style scoped lang="scss">
 @import "@/styles/colors.scss";
@@ -110,6 +128,8 @@ export default {
         width: 600px;
         background-color: $beige;
         margin: 0 auto;
+        padding: 12px;
+        border-radius: 4px;
         .title {
           display: block;
           text-align: center;

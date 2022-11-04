@@ -24,6 +24,9 @@ const watchedUser = {
       state.email = email
       state.role = role
       state.hourRate = hour_rate
+    },
+    setHoursWorked(state, hw) {
+      state.hours_worked = hw
     }
   },
   actions: {
@@ -56,6 +59,16 @@ const watchedUser = {
           router.back()
         }
         return {status}
+      } catch ({response}) {
+        return {error: response.error, status: response.status}
+      }
+    },
+    async fetchHoursWorked({commit}, {u_id, from, to}) {
+      try {
+        let id = 1 || u_id
+        const {data, status} = await axios.get(`${API_URL}/hoursworked/${id}/fromto?from=${from}&to=${to}`)
+        commit('setHoursWorked', data)
+        return {status, data}
       } catch ({response}) {
         return {error: response.error, status: response.status}
       }

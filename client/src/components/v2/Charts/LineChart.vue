@@ -39,8 +39,12 @@ export default {
   name: 'LineChart',
   components: { Line },
   props: {
-    data: {
-      type: Object,
+    datas: {
+      type: Array,
+      required: true
+    },
+    labels: {
+      type: Array,
       required: true
     },
     dataLabel: {
@@ -67,22 +71,24 @@ export default {
   data() {
     return {
       chartData: {
-        labels: this.getKeys(this.data),
+        labels: this.labels,
         datasets: [
-          {
-            label: this.dataLabel,
-            backgroundColor: '#236DC9',
-            borderColor: '#236DC9',
-            pointBackgroundColor: 'white',
-            data: this.getValues(this.data),
-            tension: 0.3
-          }
-        ]
+          ...this.datas.map(data => ({
+            label: data.label,
+            backgroundColor: data.color,
+            data: this.getValues(data.datas)
+          }))
+      ]
       },
       chartOptions: {
         responsive: true,
         aspectRatio: 600 | 400,
-        maintainAspectRatio: false
+        maintainAspectRation: false,
+        scale: {
+          ticks: {
+            precision: 0
+          }
+        }
       }
     }
   },
@@ -96,8 +102,12 @@ export default {
   },
   computed: {
     hasData() {
-      return Object.values(this.data).length > 0
-    }
+      for(let data of this.datas) {
+        if(Object.keys(data.datas).length > 0) return true
+      }
+      return false
+    },
+    
   }
 }
 </script>
