@@ -1,5 +1,6 @@
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
+import router from '@/router'
 
 
 const API_URL='http://localhost:4000/api'
@@ -34,9 +35,6 @@ const currentUser = {
     }
   },
   actions: {
-    logout({commit}) {
-      commit('resetState')
-    },
     async login({commit, dispatch}, {username, email}) {
       try {
         commit('resetState')
@@ -65,6 +63,11 @@ const currentUser = {
       } catch({response}) {
         return {error: response.error, status: response.status}
       }
+    },
+    logout({commit}) {
+      VueCookies.remove("jwt")
+      commit('resetState')
+      router.push('/login')
     },
     async fetchTeams({commit, state}) {
       try {
