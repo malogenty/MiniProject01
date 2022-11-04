@@ -1,3 +1,4 @@
+import router from '@/router'
 import axios from 'axios'
 
 
@@ -32,7 +33,30 @@ const watchedUser = {
       } catch ({response}) {
         return {error: response.error, status: response.status}
       }
-
+    },
+    async promoteUser({commit}, id) {
+      try {
+        const {data, status} = await axios.put(`${API_URL}/users/${id}/promote`)
+        commit('setUser', data)
+        return {status}
+      } catch ({response}) {
+        return {error: response.error, status: response.status}
+      }
+    },
+    async deleteUser({rootGetters, dispatch, commit}, id) {
+      const curr = rootGetters['currentUser/getUser']
+      try {
+        const {status} = await axios.delete(`${API_URL}/users/${id}`)
+        if(curr.id === id) {
+          dispatch('currentUser/logout', null, {root: true})
+        } else {
+          commit('resetState')
+          router.back()
+        }
+        return {status}
+      } catch ({response}) {
+        return {error: response.error, status: response.status}
+      }
     }
   },
   getters: {
@@ -41,5 +65,6 @@ const watchedUser = {
     }
   }
 }
+
 
 export default watchedUser
