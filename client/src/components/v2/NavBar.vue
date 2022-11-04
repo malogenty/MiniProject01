@@ -1,5 +1,6 @@
 <template>
   <header>
+    <button @click="$router.back()">go back</button>
     <span>A beautiful website indeed</span>
     <button @click="logout">Logout</button>
   </header>
