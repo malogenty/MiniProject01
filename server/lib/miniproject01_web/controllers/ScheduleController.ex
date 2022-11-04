@@ -27,4 +27,20 @@ defmodule ApiProjectWeb.ScheduleController do
       |> render("schedule.json", schedule: schedule)
     end
   end
+
+  def update(conn, %{"id" => id, "schedule" => schedule_params}) do
+    schedule = Schedule.get(id)
+    with {:ok, %Schedule{} = schedule} <-
+        Schedule.update(schedule, schedule_params) do
+      render(conn, "schedule.json", schedule: schedule)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    schedule = Schedule.get(id)
+    with {:ok, %Schedule{}} <- Schedule.delete(schedule) do
+      send_resp(conn, :no_content, "")
+    end
+  end
+
 end

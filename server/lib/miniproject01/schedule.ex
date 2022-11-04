@@ -4,12 +4,13 @@ defmodule ApiProject.Schedule do
   import Ecto.Query, warn: false
   alias ApiProject.Repo
   alias ApiProject.Schedule
+  alias ApiProject.User
 
   schema "schedule" do
     field :end, :naive_datetime
     field :start, :naive_datetime
     field :title, :string
-    field :user_id, :integer
+    belongs_to(:user, User)
 
     timestamps()
   end
@@ -41,18 +42,17 @@ defmodule ApiProject.Schedule do
     |> Repo.all()
   end
 
-
   def create(schedule_params \\ %{}) do
     %Schedule{}
     |> Schedule.changeset(schedule_params)
     |> Repo.insert()
   end
 
-  #def update(%Schedule = schedule, schedule_params) do
-  #  schedule
-  #  |> Schedule.changeset(schedule_params)
-  #  |> Repo.update()
-  #end
+  def update(%Schedule{} = schedule, schedule_params) do
+    schedule
+    |> Schedule.changeset(schedule_params)
+    |> Repo.update()
+  end
 
   def delete(schedule) do
     Repo.delete(schedule)

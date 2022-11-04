@@ -31,6 +31,8 @@ defmodule ApiProjectWeb.Router do
 
     get("/schedule/:userId", ScheduleController, :list)
     post("/schedule/:userId", ScheduleController, :create)
+    put("/schedule/:id", ScheduleController, :update)
+    delete("/schedule/:id", ScheduleController, :delete)
 
     get("/teams/:teamId", TeamController, :read)
     get("/teams/:teamId/users", TeamController, :list_team_users)
