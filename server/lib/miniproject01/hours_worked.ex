@@ -44,6 +44,18 @@ defmodule ApiProject.HoursWorked do
     end
   end
 
+  def get_hours_workeds_by_day(%{"userId" => user_id, "start" => start_datetime, "end" => end_datetime}) do
+    hours_worked = HoursWorked
+    |> where([h], h.user_id == ^user_id)
+    |> where([h], h.date == ^start_datetime.day or h.date == ^end_datetime.day)
+    |> Repo.all()
+    case hours_worked do
+      nil -> {:not_found, "Hours not found for this user", 404}
+      [] -> {:not_found, "This user don't have hours worked", 404}
+      hours -> {:ok, hours}
+    end
+  end
+
   def create_hours_worked(attrs \\ %{}) do
     %HoursWorked{}
     |> HoursWorked.changeset(attrs)
