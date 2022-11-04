@@ -1,4 +1,5 @@
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 
 const API_URL='http://localhost:4000/api'
@@ -36,12 +37,30 @@ const currentUser = {
     logout({commit}) {
       commit('resetState')
     },
-    async fetchUser({commit}, {username, email}) {
+    async login({commit, dispatch}, {username, email}) {
       try {
         commit('resetState')
         const {data, status} = await axios.get(`${API_URL}/users?username=${username}&email=${email}`)
-        commit('updateUser', data)
-        this.$cookies.set("jwt", data.token, 60 * 60 * 2)
+        commit('setUser', data)
+        VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
+        axios.defaults.headers.common["Authorization"] = data.token
+        if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
+        return {status}
+      } catch({response}) {
+        return {error: response.error, status: response.status}
+      }
+    },
+    async tokenLogin({commit, dispatch}) {
+      const token = VueCookies.get("jwt")
+      if (!token) return false
+      try {
+        axios.defaults.headers.common["Authorization"] = token
+        commit('resetState')
+        const {data, status} = await axios.get(`${API_URL}/users`)
+        commit('setUser', data)
+        if (data.role === "general_manager" || data.role === "manager") {
+          console.log("manager or gen manager")
+          dispatch('fetchTeams')}
         return {status}
       } catch({response}) {
         return {error: response.error, status: response.status}

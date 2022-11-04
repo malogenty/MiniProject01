@@ -73,11 +73,6 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 	-> update hours_worked
 - delete
 	-> update hours_worked
-<<<<<<< HEAD
-
-
-=======
->>>>>>> master
 
 # Front-end
 - Install && setup https://antoniandre.github.io/vue-cal/ with dummy data (taking into account the form it is supposed to have given the DB)
@@ -106,15 +101,6 @@ X View the daily and weekly workinghours of an employee over a period of time.
 X View their employees dashboards.
 
 The general manager can :
-<<<<<<< HEAD
-• Promote a user from the rank of employee to manager. 
-• View the dashboards of all users.
-• Delete accounts from all users.
-
-
-- [ ] api request to get total hours of team for a given period
-=======
 X Promote a user from the rank of employee to manager. 
 X View the dashboards of all users.
 X Delete accounts from all users.
->>>>>>> master

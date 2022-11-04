@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -21,8 +22,14 @@ export default {
     }
   },
   async created() {
+    await this.tokenLogin()
     this.loading = false;
   },
+  methods: {
+    ...mapActions({
+      tokenLogin: 'currentUser/tokenLogin'
+    })
+  }
 }
 </script>
 
