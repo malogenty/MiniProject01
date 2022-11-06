@@ -1,7 +1,7 @@
 <template>
   <ContainerLayout>
     <div class="settings">
-      <span class="header">Edit {{user.username}} settings</span>
+      <span class="header">{{user.username}}'s settings</span>
       <form @submit.prevent="handleFormSubmission">
         <label>
           username
@@ -90,6 +90,7 @@ export default {
     .header {
       text-align: center;
       font-weight: bold;
+      font-size: 1.2em;
     }
     form {
       margin-top: 24px;

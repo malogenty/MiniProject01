@@ -10,8 +10,6 @@ const getDefaultState = () => ({
   username: null,
   email: null,
   role: null,
-  hourRate: null,
-  hoursWorked: [],
   clocks: [],
   teams: []
 })

@@ -4,7 +4,12 @@
     :chart-data="chartData"
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
+    cssClasses="canvas-wrapper"
+    v-if="hasData"
     />
+    <div class="canvas-wrapper no-data" v-else>
+      Sorry, no data to display.
+    </div>
 </template>
 
 <script>
@@ -34,8 +39,12 @@ export default {
   name: 'LineChart',
   components: { Line },
   props: {
-    data: {
-      type: Object,
+    datas: {
+      type: Array,
+      required: true
+    },
+    labels: {
+      type: Array,
       required: true
     },
     dataLabel: {
@@ -52,31 +61,34 @@ export default {
     },
     width: {
       type: Number,
-      default: 100
+      default: 200
     },
     height: {
       type: Number,
-      default: 150
+      default: 100
     }
   },
   data() {
     return {
       chartData: {
-        labels: this.getKeys(this.data),
+        labels: this.labels,
         datasets: [
-          {
-            label: this.dataLabel,
-            backgroundColor: '#236DC9',
-            borderColor: '#236DC9',
-            pointBackgroundColor: 'white',
-            data: this.getValues(this.data),
-            tension: 0.3
-          }
-        ]
+          ...this.datas.map(data => ({
+            label: data.label,
+            backgroundColor: data.color,
+            data: this.getValues(data.datas)
+          }))
+      ]
       },
       chartOptions: {
         responsive: true,
-        maintainAspectRatio: false
+        aspectRatio: 600 | 400,
+        maintainAspectRation: false,
+        scale: {
+          ticks: {
+            precision: 0
+          }
+        }
       }
     }
   },
@@ -87,9 +99,28 @@ export default {
     getValues(obj) {
       return Object.values(obj)
     }
+  },
+  computed: {
+    hasData() {
+      for(let data of this.datas) {
+        if(Object.keys(data.datas).length > 0) return true
+      }
+      return false
+    },
+    
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.canvas-wrapper {
+  width: 90%; 
+  height: 90%; 
+  margin: auto;
+  &.no-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
 </style>
