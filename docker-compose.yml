@@ -1,0 +1,46 @@
+version: '3'
+services:
+  # Service web
+  web:
+    # Build file for server is in that folder
+    build: server/
+    ports:
+      - 4000:4000
+      # This service needs postgres service to be up.
+    depends_on:
+      - db
+
+  # # Service client
+  client:
+    # Build file for client is in that folder
+    build: client/
+    # Expose container port 80 to host port 80
+    ports:
+      - "80:80"
+    depends_on:
+      # For this service to work, servie web should be up.
+      - web
+
+  # Database service
+  db:
+    image: postgres
+    # command: ["postgres", "-c", "config_file=/etc/postgresql.conf"]
+    volumes:
+      # Mount ./data fro host to /var/lib/postgresql/data in container
+      - pgdata:/var/lib/postgresql/data
+    # Environment variables to be passed to postgres
+    environment:
+      POSTGRES_DB: miniproject01_dev
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: miniapiproject
+      PGDATA: /var/lib/postgresql/data/pgdata
+    # Map 5432 port from container to port 5434 in host
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "q", "-U", "postgres" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+volumes:
+   pgdata:
