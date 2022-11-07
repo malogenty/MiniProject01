@@ -14,7 +14,7 @@ sudo docker-compose -f docker-compose.build.yml push
 # sudo ./aws/install
 
 sudo docker context create ecs deploy --from-env
-sudo docker context create ecs --from-env deploy
+# sudo docker context create ecs --from-env deploy
 sudo docker context use deploy
 sudo docker compose -f docker-compose.prod.yml up
 

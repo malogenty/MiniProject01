@@ -3,7 +3,7 @@
 
 [![N|Solid](https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Epitech.png/320px-Epitech.png)](https://www.epitech.eu/)
 
-[![Build Status](https://app.travis-ci.com/malogenty/miniproject01.svg?branch=master)](https://travis-ci.org/malogenty/miniproject01)
+[![Build Status](https://app.travis-ci.com/splyters/miniproject01.svg?branch=master)](https://travis-ci.org/splyters/miniproject01)
 
 Time Manager is a nice and useful time tracking application.
 
