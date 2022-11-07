@@ -1,9 +1,7 @@
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import router from '@/router'
-
-
-const API_URL='http://localhost:4000/api'
+import { API_URL } from '@/store/index.js'
 
 const getDefaultState = () => ({
   id: null,

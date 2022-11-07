@@ -1,8 +1,6 @@
 import router from '@/router'
 import axios from 'axios'
-
-
-const API_URL='http://localhost:4000/api'
+import { API_URL } from '@/store/index.js'
 
 const getDefaultState = () => ({
   id: null,
