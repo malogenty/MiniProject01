@@ -1,6 +1,7 @@
 defmodule ApiProjectWeb.ScheduleController do
   use ApiProjectWeb, :controller
   alias ApiProject.Schedule
+  alias ApiProject.HoursWorked
 
   action_fallback(ApiProjectWeb.FallbackController)
 
@@ -23,6 +24,13 @@ defmodule ApiProjectWeb.ScheduleController do
       Schedule.create(
         %{"user_id" => user_id, "title" => title, "start" => start_datetime, "end" => end_datetime}
       ) do
+      hours_workeds = HoursWorked.get_hours_workeds_by_day(%{"userId" => user_id, "start" => start_datetime, "end" => end_datetime})
+      case hours_workeds do
+        hours_workeds -> {for hour <- hours_workeds do
+          HoursWorked.update_hours_worked(hour, %{"expected_worked_hours" => DateTime.diff(start_datetime, end_datetime)})
+        end}
+        nil -> {HoursWorked.create_hours_worked(%{"user_id" => user_id, "date" => Ecto.DateTime.cast(start_datetime).day, "expected_worked_hours" => DateTime.diff(start_datetime, end_datetime)})}
+      end
       conn
       |> render("schedule.json", schedule: schedule)
     end
