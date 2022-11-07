@@ -4,9 +4,14 @@
 docker login --username $DOCKER_HUB_USER --password $DOCKER_HUB_PASS
 
 # Push Dockerfile to DockerHub
-curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
+sudo curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
 docker-compose -f docker-compose.build.yml build
 docker-compose -f docker-compose.build.yml push
+
+# # Installing AWS CLI
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip > /dev/null
+# sudo ./aws/install
 
 docker version
 docker context create --help
@@ -15,10 +20,6 @@ docker context create ecs deploy --from-env
 docker context create ecs --from-env deploy
 docker context use deploy
 docker-compose -f docker-compose.prod.yml up
-# # Installing AWS CLI
-# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-# unzip awscliv2.zip > /dev/null
-# sudo ./aws/install
 
 # # Login AWS
 # aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
