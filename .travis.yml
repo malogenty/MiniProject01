@@ -3,14 +3,13 @@ sudo: required
 services:
   - docker
 
-before_script:
+before-script:
   - pip install docker-compose
-
 script:
   - echo "test"
 
 deploy:
   provider: script
-  script: bash scripts/deploy.sh
+  script: bash travis-deploy.sh
   on:
-    branch: main
+    branch: master
