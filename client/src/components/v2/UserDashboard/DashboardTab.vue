@@ -30,7 +30,7 @@ import BarChart from '@/components/v2/Charts/BarChart.vue'
 import ContainerLayout from '@/components/Layout/ContainerLayout.vue'
 import LineChart from '@/components/v2/Charts/LineChart.vue'
 import DatePicker from '@/components/v2/UserDashboard/DatePicker.vue'
-import { sortedData, summedData } from '@/utils/hoursworked_utils'
+import { sortedData, summedData, sortedWeekly, summedWeekly } from '@/utils/hoursworked_utils'
 
 import moment from 'moment'
 import { mapActions } from 'vuex'
@@ -60,7 +60,9 @@ async created() {
           labels: []
         },
         perWeek: {
-          data: {}
+          sorted: [],
+          summed: [],
+          labels: []
         }
       },
       range: [
@@ -86,10 +88,21 @@ async created() {
         this.graph.perDay.sorted = data
         this.graph.perDay.summed = summed
         this.graph.perDay.labels = labels
+
+        const {weekData, weekLabels} = sortedWeekly(res.data)
+        const weekSummed = summedWeekly(res.data)
+        this.graph.perWeek.sorted = weekData
+        this.graph.perWeek.summed = weekSummed
+        this.graph.perWeek.labels = weekLabels
       }
       this.update++
     },
     
+  },
+  watch: {
+    selected() {
+      this.update++
+    }
   }
 }
 </script>
