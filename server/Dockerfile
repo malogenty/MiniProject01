@@ -35,8 +35,6 @@ RUN mix local.hex --force && \
 
 # set build ENV
 ENV MIX_ENV="prod"
-ENV DATABASE_URL=ecto://miniapiproject:password@db/miniproject01_dev
-ENV SECRET_KEY_BASE=QIrzzcQy3jcATblzFfZ48fphnCdNZZqboLSCvp4OQSbhNx4TOYVBQFkvqhkv3uR9
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
@@ -71,6 +69,9 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
+ARG DATABASE_URL
+ARG SECRET_KEY_BASE
+
 RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
@@ -82,20 +83,22 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 WORKDIR "/app"
+COPY entrypoint.sh /app
 RUN chown nobody /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
-ENV DATABASE_URL=ecto://miniapiproject:password@db/miniproject01_dev
-ENV SECRET_KEY_BASE=QIrzzcQy3jcATblzFfZ48fphnCdNZZqboLSCvp4OQSbhNx4TOYVBQFkvqhkv3uR9
+ENV DATABASE_URL ${DATABASE_URL}
+ENV SECRET_KEY_BASE ${SECRET_KEY_BASE}
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/miniproject01 ./
 
-USER nobody
-
-COPY entrypoint.sh .
 # RUN /app/bin/miniproject01 eval "ApiProject.Release.migrate"
 
 # CMD ["/app/bin/server"]
-CMD ["./entrypoint.sh"]
+USER root
+
+RUN chmod +x /app/entrypoint.sh /app/bin/server
+
+CMD ["/app/entrypoint.sh"]
