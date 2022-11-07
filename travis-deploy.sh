@@ -4,12 +4,11 @@
 docker login --username $DOCKER_HUB_USER --password $DOCKER_HUB_PASS
 
 # Push Dockerfile to DockerHub
+curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
 docker-compose -f docker-compose.build.yml build
 docker-compose -f docker-compose.build.yml push
 
-curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
-
-docker context update
+docker context create ecs --help
 docker context create ecs deploy --from-env
 docker context use deploy
 docker-compose -f docker-compose.prod.yml up
