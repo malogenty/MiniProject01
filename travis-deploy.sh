@@ -8,8 +8,11 @@ curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/instal
 docker-compose -f docker-compose.build.yml build
 docker-compose -f docker-compose.build.yml push
 
+docker version
+docker context create --help
 docker context create ecs --help
 docker context create ecs deploy --from-env
+docker context create ecs --from-env deploy
 docker context use deploy
 docker-compose -f docker-compose.prod.yml up
 # # Installing AWS CLI
