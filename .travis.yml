@@ -1,0 +1,16 @@
+sudo: required
+
+services:
+  - docker
+
+before_script:
+  - pip install docker-compose
+
+script:
+  - echo "test"
+
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
+  on:
+    branch: main

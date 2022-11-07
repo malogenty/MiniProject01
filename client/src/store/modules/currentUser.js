@@ -57,7 +57,6 @@ const currentUser = {
         const {data, status} = await axios.get(`${API_URL}/users`)
         commit('setUser', data)
         if (data.role === "general_manager" || data.role === "manager") {
-          console.log("manager or gen manager")
           dispatch('fetchTeams')}
         return {status}
       } catch({response}) {
@@ -67,6 +66,7 @@ const currentUser = {
     logout({commit}) {
       VueCookies.remove("jwt")
       commit('resetState')
+      axios.defaults.headers.common["Authorization"] = null
       router.push('/login')
     },
     async fetchTeams({commit, state}) {
@@ -77,8 +77,18 @@ const currentUser = {
       } catch ({response}) {
         return {error: response.data.error, status: response.status}
       }
+    },
+    async editUser({commit, state}, user) {
+      const token = VueCookies.get("jwt")
+      try {
+        const {data, status} = await axios.put(`${API_URL}/users/${state.id}`, {user: {...user, token}})
+        commit('setUser', data)
+        return {status}
+      } catch ({response}) {
+        return {error: response.data.error, status: response.status}
+      }
     }
-  },
+   },
   getters: {
     getUser(state) {
       return state
