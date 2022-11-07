@@ -28,7 +28,7 @@ services:
       context: client/
       dockerfile: Dockerfile
       args:
-      - AWS_DNS_NAME=$AWS_DNS_NAME
+      - VUE_APP_AWS_DNS_NAME=$VUE_APP_AWS_DNS_NAME
     # Expose container port 80 to host port 80
     ports:
       - "80:80"
