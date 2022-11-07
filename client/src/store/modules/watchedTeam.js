@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL= process.env.AWS_DNS_NAME || 'http://localhost:4000/api'
+const API_URL= process.env.VUE_APP_AWS_DNS_NAME || 'http://localhost:4000/api'
 
 
 const getDefaultState = () => ({
