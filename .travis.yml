@@ -1,0 +1,15 @@
+sudo: required
+
+services:
+  - docker
+
+before-script:
+  - pip install docker-compose
+script:
+  - echo "test"
+
+deploy:
+  provider: script
+  script: bash travis-deploy.sh
+  on:
+    branch: master

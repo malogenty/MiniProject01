@@ -15,6 +15,7 @@
     "sass": "^1.55.0",
     "sass-loader": "^13.1.0",
     "vue": "^3.2.13",
+    "vue-cal": "^4.8.1",
     "vue-chartjs": "^4.1.2",
     "vue-cookies": "^1.8.2",
     "vue-datepicker-ui": "^3.1.1",

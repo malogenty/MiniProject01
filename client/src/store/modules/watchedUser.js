@@ -1,8 +1,24 @@
 import router from '@/router'
 import axios from 'axios'
+import moment from 'moment'
+const ARR = {
+  1: {
+    id: 1,
+    title: "Work",
+    start: moment().toDate(),
+    duration: Math.abs(moment().diff(moment().add(5, "hour"))) / 60 / 1000
+  },
 
+  2: { 
+    id: 2,
+    title: "Work",
+    start: moment().add(1, "day").toDate(),
+    duration: Math.abs(moment().add(1, "day").diff(moment().add(1, "day").add(4, "hour"))) / 60 / 1000
+  }
+}
 
-const API_URL='http://localhost:4000/api'
+const API_URL= process.env.AWS_DNS_NAME || 'http://localhost:4000/api'
+
 
 const getDefaultState = () => ({
   id: null,
@@ -11,7 +27,8 @@ const getDefaultState = () => ({
   role: null,
   hourRate: null,
   hours_worked: [],
-  clocks: []
+  clocks: [],
+  schedule: {}
 })
 
 const watchedUser = {
@@ -27,6 +44,9 @@ const watchedUser = {
     },
     setHoursWorked(state, hw) {
       state.hours_worked = hw
+    },
+    setSchedules(state, schedule) {
+      state.schedule = schedule
     }
   },
   actions: {
@@ -72,6 +92,27 @@ const watchedUser = {
       } catch ({response}) {
         return {error: response.error, status: response.status}
       }
+    },
+    // eslint-disable-next-line no-unused-vars
+    async fetchSchedule({commit}, {u_id, from, to}) {
+      console.log("fetched schedule")
+      // let id = 1 || u_id
+      // const res= await axios.get(`${API_URL}/schedules/${id}/fromto?from=${from}&to=${to}`)
+      // if (!res) {
+        commit('setSchedules', ARR)
+      // }
+    },
+    // eslint-disable-next-line no-unused-vars
+    async createScheduleEvent({commit}, {title, start, end, u_id }) {
+      console.log(u_id, start.getHours(), end.getHours(), title)
+    },
+    // eslint-disable-next-line no-unused-vars
+    async updateScheduleEvent({commit}, {u_id, ev_id, title, start, end}) {
+      console.log(u_id, start.getHours(), end.getHours(), title, ev_id)
+    },
+    // eslint-disable-next-line no-unused-vars
+    async deleteScheduleEvent({commit}, id) {
+      console.log(id)
     }
   },
   getters: {
