@@ -19,7 +19,7 @@
           <span class="title">Sorted hours worked</span>
           <BarChart :datas="graph[selected].sorted" :labels="graph[selected].labels" dataLabel="test" :key="update"/>
         </div>
-        <div class="clock"><span>Clock in</span></div>
+        <div class="clock" @click="sendClock"><span>Clock {{ clocked ? "out" : "in" }}</span></div>
       </div>
     </div>
   </ContainerLayout>
@@ -33,7 +33,7 @@ import DatePicker from '@/components/v2/UserDashboard/DatePicker.vue'
 import { sortedData, summedData, sortedWeekly, summedWeekly } from '@/utils/hoursworked_utils'
 
 import moment from 'moment'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -71,10 +71,22 @@ async created() {
       ]
     }
   },
+  computed: {
+    ...mapGetters({
+      watchedUser: "watchedUser/getUser"
+    }),
+    clocked() {
+      return this.watchedUser.clocks[this.watchedUser.clocks.length - 1]?.status
+    }
+  },
   methods: {
     ...mapActions({
-      fetchHoursWorked: 'watchedUser/fetchHoursWorked'
+      fetchHoursWorked: 'watchedUser/fetchHoursWorked',
+      sendClockAction: "currentUser/sendClock"
     }),
+    async sendClock() {
+      await this.sendClockAction()
+    },
     async updateRange(range) {
       console.log(range)
       this.range = [moment(range[0]).format("YYYY-MM-DD"), moment(range[1]).format("YYYY-MM-DD")]

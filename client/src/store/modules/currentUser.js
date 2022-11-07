@@ -85,6 +85,9 @@ const currentUser = {
       } catch ({response}) {
         return {error: response.data.error, status: response.status}
       }
+    },
+    async sendClock() {
+      // const {data, status} = await axios.post(`${API_URL}/clocks/${state.id}`)
     }
    },
   getters: {
