@@ -2,6 +2,7 @@ defmodule ApiProjectWeb.ScheduleController do
   require Logger
   use ApiProjectWeb, :controller
   alias ApiProject.Schedule
+  alias ApiProject.HoursWorked
 
   action_fallback(ApiProjectWeb.FallbackController)
 
