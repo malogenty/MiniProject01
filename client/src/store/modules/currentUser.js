@@ -1,7 +1,9 @@
 import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import router from '@/router'
-import { API_URL } from '@/store/index.js'
+
+const API_URL= process.env.AWS_DNS_NAME || 'http://localhost:4000/api'
+
 
 const getDefaultState = () => ({
   id: null,
