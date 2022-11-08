@@ -3,7 +3,7 @@ defmodule ApiProject.Repo.Migrations.CreateHoursWorked do
 
   def change do
     create table(:hours_worked) do
-      add :date, :naive_datetime
+      add :date, :date
       add :normal_hours, :float
       add :night_hours, :float
       add :overtime_hours, :float

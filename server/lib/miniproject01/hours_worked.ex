@@ -6,7 +6,7 @@ defmodule ApiProject.HoursWorked do
   alias ApiProject.HoursWorked
 
   schema "hours_worked" do
-    field :date, :naive_datetime
+    field :date, :date
     field :normal_hours, :float
     field :night_hours, :float
     field :overtime_hours, :float
