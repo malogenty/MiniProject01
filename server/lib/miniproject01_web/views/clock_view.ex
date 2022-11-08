@@ -20,9 +20,27 @@ defmodule ApiProjectWeb.ClockView do
     end
   end
 
+  def render("hours_worked.json", %{hours_worked: hours_worked}) do
+    %{
+      id: hours_worked.id,
+      date: hours_worked.date,
+      normal_hours: hours_worked.normal_hours,
+      night_hours: hours_worked.night_hours,
+      overtime_hours: hours_worked.overtime_hours,
+      expected_worked_hours: hours_worked.expected_worked_hours,
+      user: hours_worked.user_id
+    }
+  end
+
   def render("error.json", %{reason: reason}) do
     %{
       error: reason
+    }
+  end
+
+  def render("message.json", %{message: message}) do
+    %{
+      message: message
     }
   end
 end
