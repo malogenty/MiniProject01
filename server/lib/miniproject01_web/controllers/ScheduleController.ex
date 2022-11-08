@@ -10,8 +10,8 @@ defmodule ApiProjectWeb.ScheduleController do
       schedules =
         Schedule.get_by_time(%{
           user_id: params["userId"],
-          start: params["start"],
-          end: params["end"]
+          start: Date.from_iso8601!(params["start"]),
+          end: Date.from_iso8601!(params["end"])
         })
 
       render(conn, "list.json", schedules: schedules)
@@ -124,7 +124,9 @@ defmodule ApiProjectWeb.ScheduleController do
         "schedule" => schedule_params
       }) do
     {:ok, start_datetime} = NaiveDateTime.from_iso8601(schedule_params["start"])
-    user_schedule = Map.put(schedule_params, "user_id", user_id)
+    schedule_params = Map.put(schedule_params, "user_id", user_id)
+    duration_hrs = schedule_params["duration"] / 60
+    user_schedule = Map.put(schedule_params, "duration", duration_hrs)
 
     with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
       if schedule_params["title"] == "work" do
@@ -148,14 +150,21 @@ defmodule ApiProjectWeb.ScheduleController do
     # from x to work
     if (schedule.title == :work && is_nil(schedule_params["title"])) ||
          schedule_params["title"] == "work" do
-      {:ok, start_datetime} =
+      start_datetime =
         if !is_nil(schedule_params["start"]) do
           NaiveDateTime.from_iso8601!(schedule_params["start"])
         else
-          {:ok, schedule.start}
+          schedule.start
         end
 
-      duration = schedule_params["duration"] || schedule.duration
+      duration =
+        if !is_nil(schedule_params["duration"]) do
+          schedule_params["duration"] / 60
+        else
+          schedule.duration
+        end
+
+      schedule_params = Map.put(schedule_params, "duration", duration)
 
       update_one_or_two_days_exp_hours(%{
         start: schedule.start,

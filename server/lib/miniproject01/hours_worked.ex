@@ -77,8 +77,8 @@ defmodule ApiProject.HoursWorked do
     HoursWorked
     |> where([hw], hw.user_id == ^user_id)
     # this should be corrected, no need to store dateTime in DB, we want date .
-    |> where([hw], fragment("?::date", hw.date) >= ^from)
-    |> where([hw], fragment("?::date", hw.date) <= ^to)
+    |> where([hw], hw.date >= ^from)
+    |> where([hw], hw.date <= ^to)
     |> Repo.all()
   end
 
