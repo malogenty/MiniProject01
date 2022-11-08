@@ -24,7 +24,7 @@ Repo.insert!(%HoursWorked{
   normal_hours: 0.0,
   night_hours: 0.0,
   overtime_hours: 0.0,
-  expected_worked_hours: 8,
+  expected_worked_hours: 8.0,
   user_id: 3
 })
 
@@ -33,7 +33,7 @@ Repo.insert!(%HoursWorked{
   normal_hours: 0.0,
   night_hours: 0.0,
   overtime_hours: 0.0,
-  expected_worked_hours: 8,
+  expected_worked_hours: 8.0,
   user_id: 3
 })
 
@@ -42,6 +42,6 @@ Repo.insert!(%HoursWorked{
   normal_hours: 0.0,
   night_hours: 0.0,
   overtime_hours: 0.0,
-  expected_worked_hours: 8,
+  expected_worked_hours: 8.0,
   user_id: 3
 })
