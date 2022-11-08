@@ -1,6 +1,6 @@
 <template>
   <ContainerLayout>
-    <UserDashboard :user="user"/>
+    <UserDashboard v-if="this.user.id" :user="user"/>
   </ContainerLayout>
 </template>
 
