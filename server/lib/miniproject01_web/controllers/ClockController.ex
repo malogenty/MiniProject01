@@ -18,16 +18,21 @@ defmodule ApiProjectWeb.ClockController do
   end
 
   def create(conn, %{"userId" => user_id, "status" => status}) do
-    with {:ok, clock} <- Clock.get_last_clock_by_user(%{user_id: user_id}),
-         {:check_status, true, _x} <- {:check_status, status != clock.status, clock.status},
+    schedule_end = ~N[2022-11-05 02:00:00]
+    schedule_start = ~N[2022-11-04 22:00:00]
+    with {:ok, last} <- Clock.get_last_clock_by_user(%{user_id: user_id}),
+         {:check_status, true, _x} <- {:check_status, status != last.status, last.status},
          {:ok, %Clock{} = clock} <- Clock.create(%{user_id: user_id, time: NaiveDateTime.utc_now(), status: status}),
          {:is_clock_out, true} <- {:is_clock_out, !status},
+         result <- Clock.get_hours(%{clock_in: ~N[2022-11-04 23:00:00], clock_out: ~N[2022-11-05 05:00:00], schedule_end: schedule_end, schedule_start: schedule_start}),
+        #  do conn |> render("message.json", message: result)
          {:ok, %HoursWorked{} = hours_worked} <- HoursWorked.create_hours_worked(%{
-              date: "2022-11-02 00:00:00",
-              normal_hours: 6.00,
-              night_hours: 1.00,
-              overtime_hours: 0.00,
-              expected_worked_hours: 7.5,
+              date: NaiveDateTime.utc_now(),
+              normal_hours: result.normal_hours,
+              night_hours: result.night_hours,
+              overtime_hours: result.overtime,
+              # night_overtime: night_overtime,
+              expected_worked_hours: NaiveDateTime.diff(schedule_end, schedule_start, :minute) / 60,
               user_id: user_id
           }) do
           conn |> put_status(201) |> render("hours_worked.json", hours_worked: hours_worked)
@@ -46,7 +51,7 @@ defmodule ApiProjectWeb.ClockController do
       {:check_status, false, true} ->
         conn |> put_status(400) |> render("error.json", reason: "You already clocked in")
 
-      {:is_clock_out, false} -> conn |> put_status(400) |> render("message.json", message: "You have successfully clocked in")
+      {:is_clock_out, false} -> conn |> put_status(200) |> render("message.json", message: "You have successfully clocked in")
     end
   end
 end
