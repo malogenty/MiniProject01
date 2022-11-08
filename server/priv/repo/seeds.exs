@@ -10,7 +10,7 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-defmodule Seeder do
+defmodule ApiProject.Seeder do
   def insert_all do
     Repo.insert!(%User{
       username: "test01",
