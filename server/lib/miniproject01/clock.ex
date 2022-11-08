@@ -63,7 +63,12 @@ defmodule ApiProject.Clock do
     end
   end
 
-  def getLateDayOvertime(%{clock_out: clock_out, late_date: late_date, schedule_end: schedule_end, is_day_two: is_day_two}) do
+  def getLateDayOvertime(%{
+        clock_out: clock_out,
+        late_date: late_date,
+        schedule_end: schedule_end,
+        is_day_two: is_day_two
+      }) do
     case {
       clock_out < late_date,
       schedule_end < clock_out,
@@ -83,7 +88,7 @@ defmodule ApiProject.Clock do
         clock_out: clock_out,
         clock_in: clock_in,
         schedule_end: schedule_end,
-        is_day_two: is_day_two,
+        is_day_two: is_day_two
       }) do
     case {
       late_date < clock_out,
@@ -144,10 +149,8 @@ defmodule ApiProject.Clock do
         day: day,
         is_day_two: is_day_two
       }) do
-
     {:ok, late_date} = NaiveDateTime.new(day, ~T[22:00:00])
     {:ok, early_date} = NaiveDateTime.new(day, ~T[05:00:00])
-
 
     # Day 1 night hours : 22h < hours
     late_day_1_night =
@@ -180,7 +183,12 @@ defmodule ApiProject.Clock do
 
     # Calculate day overtime : overtime < 22h
     late_day_overtime =
-      getLateDayOvertime(%{clock_out: clock_out, late_date: late_date, schedule_end: schedule_end, is_day_two: is_day_two})
+      getLateDayOvertime(%{
+        clock_out: clock_out,
+        late_date: late_date,
+        schedule_end: schedule_end,
+        is_day_two: is_day_two
+      })
 
     # Calculate day overtime : 5h < overtime
     early_day_overtime =
@@ -197,16 +205,6 @@ defmodule ApiProject.Clock do
 
     night_hours =
       late_day_1_night + early_day_1_night - early_night_overtime - late_night_overtime
-
-      if day == ~D[2022-11-05] do
-        IO.inspect({
-          late_date < clock_out,
-          schedule_end < clock_out,
-          late_date < schedule_end,
-          is_day_two
-        })
-        IO.inspect(late_night_overtime)
-      end
 
     overtime = early_day_overtime + late_day_overtime
     night_overtime = early_night_overtime + late_night_overtime
@@ -283,10 +281,16 @@ defmodule ApiProject.Clock do
           }
       end
 
-      IO.inspect(day_two_hours)
     night_hours = day_one_hours.night_hours + day_two_hours.night_hours
-    overtime = day_one_hours.late_day_overtime + day_two_hours.late_day_overtime + day_one_hours.early_day_overtime + day_two_hours.early_day_overtime
-    night_overtime = day_one_hours.early_night_overtime + day_two_hours.early_night_overtime + day_one_hours.late_night_overtime + day_two_hours.late_night_overtime
+
+    overtime =
+      day_one_hours.late_day_overtime + day_two_hours.late_day_overtime +
+        day_one_hours.early_day_overtime + day_two_hours.early_day_overtime
+
+    night_overtime =
+      day_one_hours.early_night_overtime + day_two_hours.early_night_overtime +
+        day_one_hours.late_night_overtime + day_two_hours.late_night_overtime
+
     %{
       # early_night_overtime: day_one_hours.early_night_overtime + day_two_hours.early_night_overtime,
       # late_night_overtime: day_one_hours.late_night_overtime + day_two_hours.late_night_overtime,
