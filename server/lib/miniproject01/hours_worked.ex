@@ -6,10 +6,10 @@ defmodule ApiProject.HoursWorked do
 
   schema "hours_worked" do
     field(:date, :date)
-    field(:normal_hours, :float, default: 0)
-    field(:night_hours, :float, default: 0)
-    field(:overtime_hours, :float, default: 0)
-    field(:expected_worked_hours, :float, default: 0)
+    field(:normal_hours, :float, default: 0.0)
+    field(:night_hours, :float, default: 0.0)
+    field(:overtime_hours, :float, default: 0.0)
+    field(:expected_worked_hours, :float, default: 0.0)
     belongs_to(:user, User)
 
     timestamps()

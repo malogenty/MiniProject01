@@ -21,45 +21,86 @@ defmodule ApiProjectWeb.ScheduleController do
     end
   end
 
+  # Helper method
+  def update_expected_hours(%{user_id: user_id, expected_hours: expected_hours, date: date}) do
+    with {:ok, hours} <-
+           HoursWorked.get_hours_workeds_by_day(%{userId: user_id, date: date}) do
+      with {:ok, updated} <-
+             HoursWorked.update_hours_worked(hours, %{expected_worked_hours: expected_hours}) do
+        %{updated: %{id: updated.id, expected: updated.expected_worked_hours}}
+      else
+        {:error, %Ecto.Changeset{}} -> %{error: "unable to update"}
+      end
+    else
+      {:not_found, reason, status} ->
+        with {:ok, %HoursWorked{} = hours} <-
+               HoursWorked.create_hours_worked(%{
+                 user_id: user_id,
+                 date: date,
+                 expected_worked_hours: expected_hours
+               }) do
+          %{created: %{id: hours.id, expected: hours.expected_worked_hours}}
+        end
+    end
+  end
+
   def create(conn, %{
         "userId" => user_id,
         "schedule" => schedule_params
       }) do
-    {:ok, st_date} = NaiveDateTime.from_iso8601(schedule_params["start"])
+    {:ok, st_date_hour} = NaiveDateTime.from_iso8601(schedule_params["start"])
+    day_1 = NaiveDateTime.to_date(st_date_hour)
 
-    
-    if st_date.hour + schedule_params["duration"] / 60 <= 24 do
-      cond do
-        schedule_params["title"] == "work" ->
-          user_schedule = Map.put(schedule_params, "user_id", user_id)
-          with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
-            duration_hours = schedule_params["duration"] / 60
-            with {:ok, hours} <- HoursWorked.get_hours_workeds_by_day(%{userId: user_id, date: NaiveDateTime.to_date(st_date)}) do
-              HoursWorked.update_hours_worked(%{user_id: user_id, date: NaiveDateTime.to_date(st_date), expected_worked_hours: duration_hours})
-              render(conn, "schedule.json", schedule: schedule)       
-            else {:not_found, reason, status} -> 
-              HoursWorked.create_hours_worked(%{user_id: user_id, date: NaiveDateTime.to_date(st_date), expected_worked_hours: duration_hours})
-              json(conn, %{status: reason})
-            end
-          else {:error, %Ecto.Changeset{}} -> json(conn, %{error: "unable to create"})
+    if schedule_params["title"] == "work" do
+      user_schedule = Map.put(schedule_params, "user_id", user_id)
 
+      with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
+        if st_date_hour.hour + schedule_params["duration"] / 60 <= 24 do
+          duration_hours = schedule_params["duration"] / 60
+
+          res =
+            update_expected_hours(%{user_id: user_id, expected_hours: duration_hours, date: day_1})
+
+          json(conn, res)
+
+          # not same day ! needs to check time before && after midnight
+        else
+          {:ok, st_midnight} =
+            NaiveDateTime.new(day_1.year, day_1.month, day_1.day, 23, 59, 59, 999)
+
+          day_1_hours =
+            round(abs(NaiveDateTime.diff(st_date_hour, st_midnight, :second) / 60 / 60))
+
+          day_2_hours = schedule_params["duration"] / 60 - day_1_hours
+
+          cond do
+            day_2_hours < 24 ->
+              day_1_res =
+                update_expected_hours(%{
+                  user_id: user_id,
+                  expected_hours: day_1_hours,
+                  date: day_1
+                })
+
+              day_2_res =
+                update_expected_hours(%{
+                  user_id: user_id,
+                  expected_hours: day_2_hours,
+                  date: Date.add(day_1, 1)
+                })
+
+              json(conn, %{
+                day_1: day_1_res,
+                day_2: day_2_res,
+                schedule: %{id: schedule.id, duration: schedule.duration}
+              })
+
+            true ->
+              send_resp(conn, 401, "Too Long")
           end
-      end
-
-      # not same day ! needs to check time before && after midnight
-    else
-      {:ok, st_midnight} =
-        NaiveDateTime.new(st_date.year, st_date.month, st_date.day, 23, 59, 59, 999)
-
-      day_1_hours = round(abs(NaiveDateTime.diff(st_date, st_midnight, :second) / 60 / 60))
-      day_2_hours = schedule_params["duration"] / 60 - day_1_hours
-
-      cond do
-        day_2_hours < 24 ->
-          json(conn, %{day1: day_1_hours, day2: day_2_hours})
-
-        true ->
-          send_resp(conn, 401, "Too Long")
+        end
+      else
+        {:error, %Ecto.Changeset{}} -> json(conn, %{error: "unable to create"})
       end
     end
   end
