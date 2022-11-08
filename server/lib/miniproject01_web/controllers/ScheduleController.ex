@@ -26,7 +26,9 @@ defmodule ApiProjectWeb.ScheduleController do
     with {:ok, hours} <-
            HoursWorked.get_hours_workeds_by_day(%{userId: user_id, date: date}) do
       with {:ok, updated} <-
-             HoursWorked.update_hours_worked(hours, %{expected_worked_hours: expected_hours}) do
+             HoursWorked.update_hours_worked(hours, %{
+               expected_worked_hours: hours.expected_worked_hours + expected_hours
+             }) do
         %{updated: %{id: updated.id, expected: updated.expected_worked_hours}}
       else
         {:error, %Ecto.Changeset{}} -> %{error: "unable to update"}
