@@ -36,13 +36,19 @@ export const sortedUserDaily = (dates) => {
 export const summedUserDaily = (dates) => {
   let data_normal = {
     label: "Total hours",
-    color: "#392F5A",
+    color: "#DBB3B1",
+    datas: {}
+  }
+  let data_expected = {
+    label: "Expected hours",
+    color: "#2C1A1D",
     datas: {}
   }
   dates.forEach(date => {
     data_normal.datas[moment(date.date).format("YYYY-MM-DD")] = date.normal_hours + date.night_hours + date.overtime_hours
+    data_expected.datas[moment(date.date).format("YYYY-MM-DD")] = date.expected_worked_hours
   })
-  return [data_normal]
+  return [data_normal, data_expected]
 }
 
 export const sortedUserWeekly = (dates) => {
@@ -84,14 +90,22 @@ export const sortedUserWeekly = (dates) => {
 export const summedUserWeekly = (dates) => {
   let data_normal = {
     label: "Total hours",
-    color: "#392F5A",
+    color: "#DBB3B1",
+    datas: {}
+  }
+  let data_expected = {
+    label: "Expected hours",
+    color: "#2C1A1D",
     datas: {}
   }
   dates.forEach(date => {
-    if(!data_normal.datas[moment(date.date).week()]) data_normal.datas[moment(date.date).week()] = 0
-    data_normal.datas[moment(date.date).week()] += date.normal_hours + date.night_hours + date.overtime_hours
+    let w = moment(date.date).week()
+    if(!data_normal.datas[w]) data_normal.datas[w] = 0
+    data_normal.datas[w] += date.normal_hours + date.night_hours + date.overtime_hours
+    if(!data_expected.datas[w]) data_expected.datas[w] = 0
+    data_expected.datas[w] += date.expected_worked_hours
   })
-  return [data_normal]
+  return [data_normal, data_expected]
 }
 
 
