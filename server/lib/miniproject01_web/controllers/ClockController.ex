@@ -24,7 +24,7 @@ defmodule ApiProjectWeb.ClockController do
          {:check_status, true, _x} <- {:check_status, status != last.status, last.status},
          {:ok, %Clock{} = clock} <- Clock.create(%{user_id: user_id, time: NaiveDateTime.utc_now(), status: status}),
          {:is_clock_out, true} <- {:is_clock_out, !status},
-         result <- Clock.get_hours(%{clock_in: ~N[2022-11-04 23:00:00], clock_out: ~N[2022-11-05 05:00:00], schedule_end: schedule_end, schedule_start: schedule_start}),
+         result <- Clock.get_hours(%{clock_in: last.time, clock_out: clock.time, schedule_end: schedule_end, schedule_start: schedule_start}),
         #  do conn |> render("message.json", message: result)
          {:ok, %HoursWorked{} = hours_worked} <- HoursWorked.create_hours_worked(%{
               date: NaiveDateTime.utc_now(),
