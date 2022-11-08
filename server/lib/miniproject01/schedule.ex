@@ -7,9 +7,9 @@ defmodule ApiProject.Schedule do
   alias ApiProject.User
 
   schema "schedule" do
-    field :end, :naive_datetime
-    field :start, :naive_datetime
-    field :title, :string
+    field(:start, :naive_datetime)
+    field(:duration, :float, default: 4.0)
+    field(:title, :string)
     belongs_to(:user, User)
 
     timestamps()
@@ -18,20 +18,21 @@ defmodule ApiProject.Schedule do
   @doc false
   def changeset(schedule, attrs) do
     schedule
-    |> cast(attrs, [:user_id, :start, :end, :title])
-    |> validate_required([:user_id, :start, :end, :title])
+    |> cast(attrs, [:user_id, :start, :duration, :title])
+    |> validate_required([:user_id, :start, :duration, :title])
   end
 
   def get(id) do
-    Repo.get(Schedule, id)
+    Schedule
+    |> Repo.get(id)
   end
 
-  def get_by_time(%{user_id: user_id, start: start_datetime, end: end_datetime}) do
+  def get_by_time(%{user_id: user_id, start: start_date, end: end_date}) do
     Schedule
     |> Ecto.Query.preload([:user])
     |> where([w], w.user_id == ^user_id)
-    |> where([w], w.start >= ^start_datetime)
-    |> where([w], w.end <= ^end_datetime)
+    |> where([w], fragment("?::date", w.start) >= ^start_date)
+    |> where([w], fragment("?::date", w.start) <= ^end_date)
     |> Repo.all()
   end
 

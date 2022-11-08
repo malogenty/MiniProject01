@@ -1,8 +1,7 @@
 defmodule ApiProjectWeb.ScheduleController do
   require Logger
   use ApiProjectWeb, :controller
-  alias ApiProject.Schedule
-  alias ApiProject.HoursWorked
+  alias ApiProject.{Schedule, HoursWorked}
 
   action_fallback(ApiProjectWeb.FallbackController)
 
@@ -26,25 +25,25 @@ defmodule ApiProjectWeb.ScheduleController do
         "userId" => user_id,
         "schedule" => schedule_params
       }) do
-    # with {:ok, %Schedule{} = schedule} <-
-    #        Schedule.create(%{
-    #          "user_id" => user_id,
-    #          "title" => title,
-    #          "start" => start_datetime,
-    #          "end" => end_datetime
-    #        }) do
-    #   conn
-    #   |> render("schedule.json", schedule: schedule)
-    # end
     {:ok, st_date} = NaiveDateTime.from_iso8601(schedule_params["start"])
-    {:ok, e_date} = NaiveDateTime.from_iso8601(schedule_params["end"])
 
-    if st_date.day == e_date.day && st_date.month == e_date.month && st_date.year == e_date.year do
+    
+    if st_date.hour + schedule_params["duration"] / 60 <= 24 do
       cond do
         schedule_params["title"] == "work" ->
-          hrs_to_work = NaiveDateTime.diff(e_date, st_date, :second) / 60 / 60
-          obj = %{hrs_: hrs_to_work}
-          json(conn, obj)
+          user_schedule = Map.put(schedule_params, "user_id", user_id)
+          with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
+            duration_hours = schedule_params["duration"] / 60
+            with {:ok, hours} <- HoursWorked.get_hours_workeds_by_day(%{userId: user_id, date: NaiveDateTime.to_date(st_date)}) do
+              HoursWorked.update_hours_worked(%{user_id: user_id, date: NaiveDateTime.to_date(st_date), expected_worked_hours: duration_hours})
+              render(conn, "schedule.json", schedule: schedule)       
+            else {:not_found, reason, status} -> 
+              HoursWorked.create_hours_worked(%{user_id: user_id, date: NaiveDateTime.to_date(st_date), expected_worked_hours: duration_hours})
+              json(conn, %{status: reason})
+            end
+          else {:error, %Ecto.Changeset{}} -> json(conn, %{error: "unable to create"})
+
+          end
       end
 
       # not same day ! needs to check time before && after midnight
@@ -53,7 +52,7 @@ defmodule ApiProjectWeb.ScheduleController do
         NaiveDateTime.new(st_date.year, st_date.month, st_date.day, 23, 59, 59, 999)
 
       day_1_hours = round(abs(NaiveDateTime.diff(st_date, st_midnight, :second) / 60 / 60))
-      day_2_hours = round(abs(NaiveDateTime.diff(e_date, st_midnight, :second) / 60 / 60))
+      day_2_hours = schedule_params["duration"] / 60 - day_1_hours
 
       cond do
         day_2_hours < 24 ->
@@ -62,8 +61,6 @@ defmodule ApiProjectWeb.ScheduleController do
         true ->
           send_resp(conn, 401, "Too Long")
       end
-
-      json(conn, %{start: st_date, midnight: st_midnight})
     end
   end
 
