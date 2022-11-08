@@ -100,6 +100,7 @@ defmodule ApiProject.Clock do
       {true, true, true, false, _} -> NaiveDateTime.diff(clock_out, schedule_end, :minute)
       {true, true, false, false, _} -> NaiveDateTime.diff(clock_out, late_date, :minute)
       {false, true, false, true, true} -> NaiveDateTime.diff(early_date, schedule_end, :minute)
+      {false, true, false, true, false} -> NaiveDateTime.diff(clock_out, schedule_end, :minute)
       _ -> 0
     end
   end
@@ -170,7 +171,6 @@ defmodule ApiProject.Clock do
       })
 
     # Calculate night overtime : 22h < overtime
-    # When clock out > day2 00H  => limit = Day 2 00h
     late_night_overtime =
       getLateNightOvertime(%{
         late_date: late_date,
@@ -198,10 +198,6 @@ defmodule ApiProject.Clock do
         clock_in: clock_in,
         schedule_start: schedule_start
       })
-
-    # When clock out > Day2 00h
-    # => get night overtime : 00h -> 05h
-    # => get day overtime : 05h -> 22h
 
     night_hours =
       late_day_1_night + early_day_1_night - early_night_overtime - late_night_overtime
@@ -292,10 +288,6 @@ defmodule ApiProject.Clock do
         day_one_hours.late_night_overtime + day_two_hours.late_night_overtime
 
     %{
-      # early_night_overtime: day_one_hours.early_night_overtime + day_two_hours.early_night_overtime,
-      # late_night_overtime: day_one_hours.late_night_overtime + day_two_hours.late_night_overtime,
-      # early_day_overtime: day_one_hours.early_day_overtime + day_two_hours.early_day_overtime,
-      # late_day_overtime: day_one_hours.late_day_overtime + day_two_hours.late_day_overtime,
       night_overtime: night_overtime,
       overtime: overtime,
       night_hours: day_one_hours.night_hours + day_two_hours.night_hours,

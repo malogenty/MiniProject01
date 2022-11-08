@@ -18,8 +18,8 @@ defmodule ApiProjectWeb.ClockController do
   end
 
   def create(conn, %{"userId" => user_id, "status" => status}) do
-    schedule_end = ~N[2022-11-05 02:00:00]
-    schedule_start = ~N[2022-11-04 22:00:00]
+    schedule_end = ~N[2022-11-05 04:00:00]
+    schedule_start = ~N[2022-11-04 23:00:00]
     with {:ok, last} <- Clock.get_last_clock_by_user(%{user_id: user_id}),
          {:check_status, true, _x} <- {:check_status, status != last.status, last.status},
          {:ok, %Clock{} = clock} <- Clock.create(%{user_id: user_id, time: NaiveDateTime.utc_now(), status: status}),
