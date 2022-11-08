@@ -197,6 +197,13 @@ defmodule ApiProjectWeb.ScheduleController do
   def delete(conn, %{"id" => id}) do
     schedule = Schedule.get(id)
 
+    update_one_or_two_days_exp_hours(%{
+      start: schedule.start,
+      duration: schedule.duration,
+      user_id: schedule.user_id,
+      delete: true
+    })
+
     with {:ok, %Schedule{}} <- Schedule.delete(schedule) do
       send_resp(conn, :no_content, "")
     end
