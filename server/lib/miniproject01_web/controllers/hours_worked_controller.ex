@@ -49,10 +49,11 @@ defmodule ApiProjectWeb.HoursWorkedController do
   end
 
   def delete(conn, %{"id" => id}) do
-    hours_worked = HoursWorked.get_hours_worked!(id)
-
-    with {:ok, %HoursWorked{}} <- HoursWorked.delete_hours_worked(hours_worked) do
+    with  {:ok, hours_worked} <- HoursWorked.get_hours_worked(id),
+    {:ok, %HoursWorked{}} <- HoursWorked.delete_hours_worked(hours_worked) do
       send_resp(conn, :no_content, "")
+    else
+      {:hours_not_found, reason, status} -> conn |> put_status(status) |> render("error.json", reason: reason)
     end
   end
 end
