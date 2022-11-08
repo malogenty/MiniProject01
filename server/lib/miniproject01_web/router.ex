@@ -13,7 +13,6 @@ defmodule ApiProjectWeb.Router do
     post("/users", UserController, :create)
     put("/users/:userId", UserController, :update)
     delete("/users/:userId", UserController, :delete)
-
     get("/workingtimes/:userId", WorkingTimeController, :readAll)
     get("/workingtimes/:userId/:id", WorkingTimeController, :readOne)
     post("/workingtimes/:userId", WorkingTimeController, :create)

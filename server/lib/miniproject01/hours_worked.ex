@@ -2,15 +2,14 @@ defmodule ApiProject.HoursWorked do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias ApiProject.Repo
-  alias ApiProject.HoursWorked
+  alias ApiProject.{Repo, HoursWorked, User}
 
   schema "hours_worked" do
-    field(:date, :naive_datetime)
-    field(:normal_hours, :float)
-    field(:night_hours, :float)
-    field(:overtime_hours, :float)
-    field(:expected_worked_hours, :float)
+    field(:date, :date)
+    field(:normal_hours, :float, default: 0.0)
+    field(:night_hours, :float, default: 0.0)
+    field(:overtime_hours, :float, default: 0.0)
+    field(:expected_worked_hours, :float, default: 0.0)
     belongs_to(:user, User)
 
     timestamps()
@@ -60,12 +59,12 @@ defmodule ApiProject.HoursWorked do
     end
   end
 
-  def get_hours_workeds_by_day(%{"userId" => user_id, "date" => date}) do
+  def get_hours_workeds_by_day(%{userId: user_id, date: date}) do
     hours_worked =
       HoursWorked
       |> where([h], h.user_id == ^user_id)
       |> where([h], h.date == ^date)
-      |> Repo.all()
+      |> Repo.one()
 
     case hours_worked do
       nil -> {:not_found, "Hours not found for this user", 404}

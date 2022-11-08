@@ -26,6 +26,14 @@ defmodule ApiProject.Clock do
     |> Repo.all()
   end
 
+  def get_last_clock_by_user(%{user_id: user_id}) do
+    clock = Repo.one(from c in Clock, where: c.user_id == ^user_id, order_by: [desc: c.time], limit: 1)
+    case clock do
+      nil -> {:not_found, "Clocks not found for this user", 404}
+      clock -> {:ok, clock}
+    end
+  end
+
   def create(attrs \\ %{}) do
     %Clock{}
     |> Repo.preload([:user])
