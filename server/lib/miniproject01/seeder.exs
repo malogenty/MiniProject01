@@ -8,7 +8,7 @@ alias ApiProject.HoursWorked
 defmodule ApiProject.Seeder do
   @app :miniproject01
 
-  def insert_all do
+  def insertall do
     Repo.insert!(%User{
       username: "test01",
       email: "test01@gmail.com",
