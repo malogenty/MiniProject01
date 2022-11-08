@@ -1,6 +1,7 @@
 #  First temporary container to build the vuejs app
 FROM node:17 as build-node
-
+ARG VUE_APP_AWS_DNS_NAME
+ENV VUE_APP_AWS_DNS_NAME ${VUE_APP_AWS_DNS_NAME}
 # prepare build dir
 RUN mkdir -p /app/assets
 WORKDIR /app
