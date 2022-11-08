@@ -44,63 +44,98 @@ defmodule ApiProjectWeb.ScheduleController do
     end
   end
 
+  def update_one_or_two_days_exp_hours(%{
+        start: start_datetime,
+        duration: duration,
+        user_id: user_id,
+        delete: delete
+      }) do
+    date = NaiveDateTime.to_date(start_datetime)
+
+    if start_datetime.hour + duration / 60 <= 24 do
+      duration_hours = duration / 60
+
+      if(!delete) do
+        update_expected_hours(%{user_id: user_id, expected_hours: duration_hours, date: date})
+      else
+        update_expected_hours(%{user_id: user_id, expected_hours: 0, date: date})
+      end
+
+      # not same day ! needs to check time before && after midnight
+    else
+      {:ok, st_midnight} = NaiveDateTime.new(date.year, date.month, date.day, 23, 59, 59, 999)
+
+      day_1_hours = round(abs(NaiveDateTime.diff(start_datetime, st_midnight, :second) / 60 / 60))
+
+      day_2_hours = duration / 60 - day_1_hours
+
+      cond do
+        day_2_hours < 24 ->
+          if(!delete) do
+            day_1_res =
+              update_expected_hours(%{
+                user_id: user_id,
+                expected_hours: day_1_hours,
+                date: date
+              })
+
+            day_2_res =
+              update_expected_hours(%{
+                user_id: user_id,
+                expected_hours: day_2_hours,
+                date: Date.add(date, 1)
+              })
+
+            %{
+              day_1: day_1_res,
+              day_2: day_2_res
+            }
+          else
+            day_1_res =
+              update_expected_hours(%{
+                user_id: user_id,
+                expected_hours: 0,
+                date: date
+              })
+
+            day_2_res =
+              update_expected_hours(%{
+                user_id: user_id,
+                expected_hours: 0,
+                date: Date.add(date, 1)
+              })
+
+            %{
+              day_1: day_1_res,
+              day_2: day_2_res
+            }
+          end
+
+        true ->
+          %{error: "Too long"}
+      end
+    end
+  end
+
   def create(conn, %{
         "userId" => user_id,
         "schedule" => schedule_params
       }) do
-    {:ok, st_date_hour} = NaiveDateTime.from_iso8601(schedule_params["start"])
-    day_1 = NaiveDateTime.to_date(st_date_hour)
+    {:ok, start_datetime} = NaiveDateTime.from_iso8601(schedule_params["start"])
+    user_schedule = Map.put(schedule_params, "user_id", user_id)
 
-    if schedule_params["title"] == "work" do
-      user_schedule = Map.put(schedule_params, "user_id", user_id)
+    with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
+      if schedule_params["title"] == "work" do
+        update_one_or_two_days_exp_hours(%{
+          start: start_datetime,
+          duration: schedule_params["duration"],
+          user_id: user_id,
+          delete: false
+        })
 
-      with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
-        if st_date_hour.hour + schedule_params["duration"] / 60 <= 24 do
-          duration_hours = schedule_params["duration"] / 60
-
-          res =
-            update_expected_hours(%{user_id: user_id, expected_hours: duration_hours, date: day_1})
-
-          json(conn, res)
-
-          # not same day ! needs to check time before && after midnight
-        else
-          {:ok, st_midnight} =
-            NaiveDateTime.new(day_1.year, day_1.month, day_1.day, 23, 59, 59, 999)
-
-          day_1_hours =
-            round(abs(NaiveDateTime.diff(st_date_hour, st_midnight, :second) / 60 / 60))
-
-          day_2_hours = schedule_params["duration"] / 60 - day_1_hours
-
-          cond do
-            day_2_hours < 24 ->
-              day_1_res =
-                update_expected_hours(%{
-                  user_id: user_id,
-                  expected_hours: day_1_hours,
-                  date: day_1
-                })
-
-              day_2_res =
-                update_expected_hours(%{
-                  user_id: user_id,
-                  expected_hours: day_2_hours,
-                  date: Date.add(day_1, 1)
-                })
-
-              json(conn, %{
-                day_1: day_1_res,
-                day_2: day_2_res,
-                schedule: %{id: schedule.id, duration: schedule.duration}
-              })
-
-            true ->
-              send_resp(conn, 401, "Too Long")
-          end
-        end
+        render(conn, "schedule.json", schedule: schedule)
       else
-        {:error, %Ecto.Changeset{}} -> json(conn, %{error: "unable to create"})
+        render(conn, "schedule.json", schedule: schedule)
       end
     end
   end
@@ -108,9 +143,54 @@ defmodule ApiProjectWeb.ScheduleController do
   def update(conn, %{"id" => id, "schedule" => schedule_params}) do
     schedule = Schedule.get(id)
 
-    with {:ok, %Schedule{} = schedule} <-
-           Schedule.update(schedule, schedule_params) do
-      render(conn, "schedule.json", schedule: schedule)
+    # from x to work
+    if (schedule.title == :work && is_nil(schedule_params["title"])) ||
+         schedule_params["title"] == "work" do
+      {:ok, start_datetime} =
+        if !is_nil(schedule_params["start"]) do
+          NaiveDateTime.from_iso8601!(schedule_params["start"])
+        else
+          {:ok, schedule.start}
+        end
+
+      duration = schedule_params["duration"] || schedule.duration
+
+      update_one_or_two_days_exp_hours(%{
+        start: schedule.start,
+        duration: schedule.duration,
+        user_id: schedule.user_id,
+        delete: true
+      })
+
+      update_one_or_two_days_exp_hours(%{
+        start: start_datetime,
+        duration: duration,
+        user_id: schedule.user_id,
+        delete: false
+      })
+
+      with {:ok, schedule} <- Schedule.update(schedule, schedule_params) do
+        render(conn, "schedule.json", schedule: schedule)
+      end
+    else
+      # work to other
+      if schedule.title == :work do
+        update_one_or_two_days_exp_hours(%{
+          start: schedule.start,
+          duration: schedule.duration,
+          user_id: schedule.user_id,
+          delete: true
+        })
+
+        with {:ok, schedule} <- Schedule.update(schedule, schedule_params) do
+          render(conn, "schedule.json", schedule: schedule)
+        end
+      else
+        # other to other
+        with {:ok, schedule} <- Schedule.update(schedule, schedule_params) do
+          render(conn, "schedule.json", schedule: schedule)
+        end
+      end
     end
   end
 

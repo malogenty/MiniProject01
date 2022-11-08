@@ -9,7 +9,7 @@ defmodule ApiProject.Schedule do
   schema "schedule" do
     field(:start, :naive_datetime)
     field(:duration, :float, default: 4.0)
-    field(:title, :string)
+    field(:title, Ecto.Enum, values: [:work, :holiday, :sick])
     belongs_to(:user, User)
 
     timestamps()
