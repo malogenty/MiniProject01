@@ -80,7 +80,7 @@ const watchedUser = {
     },
     async fetchHoursWorked({commit}, {u_id, from, to}) {
       try {
-        const {data, status} = await axios.get(`${API_URL}/hoursworked/${u_id}/fromto?from=${from}&to=${to}`)
+        const {data, status} = await axios.get(`${API_URL}/hoursworked/${u_id}?from=${from}&to=${to}`)
         commit('setHoursWorked', data)
         return {status, data}
       } catch ({response}) {
