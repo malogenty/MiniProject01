@@ -65,6 +65,7 @@ defmodule ApiProject.HoursWorked do
         group_by: h.date,
         select: %{
           date: h.date,
+          avg_expected: avg(h.expected_worked_hours),
           avg_normal: avg(h.normal_hours),
           avg_night: avg(h.night_hours),
           avg_overtime: avg(h.overtime_hours)
