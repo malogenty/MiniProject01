@@ -22,6 +22,7 @@ defmodule ApiProjectWeb.HoursWorkedView do
         avg_night: a.avg_night,
         avg_normal: a.avg_normal,
         avg_overtime: a.avg_overtime,
+        avg_expected: a.avg_expected,
         date: a.date,
       }
     end
