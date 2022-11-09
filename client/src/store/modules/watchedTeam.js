@@ -50,8 +50,7 @@ const watchedTeam = {
     },
     // eslint-disable-next-line no-unused-vars
     async fetchHoursWorked({commit}, {team_id, from, to}) {
-      let id = 1 || team_id
-      const {data, status} = await axios.get(`${API_URL}/hoursworked/${id}?from=${from}&to=${to}`)
+      const {data, status} = await axios.get(`${API_URL}/hoursworked/teams/${team_id}?from=${from}&to=${to}`)
       commit('setTeamHoursWorked', data)
       return {status}
     }
