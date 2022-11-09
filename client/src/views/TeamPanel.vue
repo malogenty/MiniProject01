@@ -1,6 +1,6 @@
 <template>
   <ContainerLayout>
-    <TeamMetrics :givenTeam="team"/>
+    <TeamMetrics  v-if="team.id" :givenTeam="team"/>
     <div class="users-grid">
       <CardLayout v-for="user in team.users" :key="user.id" @click="goToUser(user.id)">
         <span>

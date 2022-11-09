@@ -3,6 +3,7 @@ defmodule ApiProjectWeb.HoursWorkedController do
   require Logger
 
   alias ApiProject.HoursWorked
+  alias ApiProject.Team
   alias ApiProject.User
   alias ApiProject.Repo
 
@@ -33,22 +34,36 @@ defmodule ApiProjectWeb.HoursWorkedController do
     end
   end
 
+  def getAvgHoursByTeam(conn, params) do
+    with {:query_params, true, date_from} <-
+           {:query_params, is_binary(params["from"]), params["from"]},
+         {:query_params, true, date_to} <- {:query_params, is_binary(params["to"]), params["to"]},
+         {:ok, from} <- Date.from_iso8601(date_from),
+         {:ok, to} = Date.from_iso8601(date_to),
+         %Team{} = team <- Team.get_team!(params["team_id"]),
+         avg_hours <- HoursWorked.get_avg_hours_by_team(%{team_id: team.id, from: from, to: to}) do
+      render(conn, "averages.json", averages: avg_hours)
+    else
+      nil ->
+        render(conn, "error.json", reason: "The team have not been found")
+
+      {:query_params, _, nil} ->
+        render(conn, "error.json", reason: "You must give from and to query params")
+
+      {:query_params, false, _} ->
+        render(conn, "error.json", reason: "Params must be strings")
+
+      {:error, :invalid_format} ->
+        render(conn, "error.json", reason: "Invalid date format")
+    end
+  end
+
   def create(conn, hours_worked_params) do
     with {:ok, %HoursWorked{} = hours_worked} <-
            HoursWorked.create_hours_worked(hours_worked_params) do
       conn
       |> put_status(:created)
       |> render("show.json", hours_worked: hours_worked)
-    end
-  end
-
-  def getByUser(conn, %{"user_id" => user_id}) do
-    with {:ok, user} <- User.get_user!(user_id),
-         {:ok, hours} <- HoursWorked.get_hours_worked_by_user(user_id) do
-      render(conn, "index.json", hours_worked: hours)
-    else
-      {:not_found, reason, status} ->
-        conn |> put_status(status) |> render("error.json", reason: reason)
     end
   end
 
@@ -63,10 +78,12 @@ defmodule ApiProjectWeb.HoursWorkedController do
   end
 
   def delete(conn, %{"id" => id}) do
-    hours_worked = HoursWorked.get_hours_worked!(id)
-
-    with {:ok, %HoursWorked{}} <- HoursWorked.delete_hours_worked(hours_worked) do
+    with {:ok, hours_worked} <- HoursWorked.get_hours_worked(id),
+         {:ok, %HoursWorked{}} <- HoursWorked.delete_hours_worked(hours_worked) do
       send_resp(conn, :no_content, "")
+    else
+      {:hours_not_found, reason, status} ->
+        conn |> put_status(status) |> render("error.json", reason: reason)
     end
   end
 end
