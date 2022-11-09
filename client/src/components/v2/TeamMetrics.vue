@@ -29,6 +29,7 @@ import BarChart from '@/components/v2/Charts/BarChart.vue'
 import ContainerLayout from '@/components/Layout/ContainerLayout.vue'
 import LineChart from '@/components/v2/Charts/LineChart.vue'
 import DatePicker from '@/components/v2/UserDashboard/DatePicker.vue'
+import {dailyTeamAverage ,dailyTeamSortedAverage, weeklyTeamAverage, weeklyTeamSortedAverage} from '@/utils/hoursworked_utils'
 
 import moment from 'moment'
 import { mapActions } from 'vuex'
@@ -58,7 +59,9 @@ async created() {
           labels: []
         },
         perWeek: {
-          data: {}
+          sorted: [],
+          summed: [],
+          labels: []
         }
       },
       range: [
@@ -78,12 +81,18 @@ async created() {
     },
     async fetchNewValues() {
       const res = await this.fetchHoursWorked({team_id: this.team.id, from: this.range[0], to: this.range[1]})
-      if(res?.status === 200) {
-        // const {data, labels} = sortedData(res.data)
-        // const summed = summedData(res.data)
-        // this.graph.perDay.sorted = data
-        // this.graph.perDay.summed = summed
-        // this.graph.perDay.labels = labels
+      if(res.status === 200) {
+        const {data, labels} = dailyTeamSortedAverage(res.data)
+        const summed = dailyTeamAverage(res.data)
+        this.graph.perDay.sorted = data
+        this.graph.perDay.summed = summed
+        this.graph.perDay.labels = labels
+
+        const {weekData, weekLabels} = weeklyTeamSortedAverage(res.data)
+        const weekSummed = weeklyTeamAverage(res.data)
+        this.graph.perWeek.sorted = weekData
+        this.graph.perWeek.summed = weekSummed
+        this.graph.perWeek.labels = weekLabels
       }
       this.update++
     },
