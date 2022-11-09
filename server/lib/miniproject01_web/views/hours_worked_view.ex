@@ -16,6 +16,17 @@ defmodule ApiProjectWeb.HoursWorkedView do
     end
   end
 
+  def render("averages.json", %{averages: averages}) do
+    for a <- averages do
+      %{
+        avg_night: a.avg_night,
+        avg_normal: a.avg_normal,
+        avg_overtime: a.avg_overtime,
+        date: a.date,
+      }
+    end
+  end
+
   def render("show.json", %{hours_worked: hours_worked}) do
     %{
       id: hours_worked.id,
@@ -25,6 +36,12 @@ defmodule ApiProjectWeb.HoursWorkedView do
       overtime_hours: hours_worked.overtime_hours,
       expected_worked_hours: hours_worked.expected_worked_hours,
       user: hours_worked.user_id
+    }
+  end
+
+  def render("message.json", %{message: message}) do
+    %{
+      message: message
     }
   end
 
