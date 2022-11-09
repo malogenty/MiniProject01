@@ -1,5 +1,6 @@
 <template>
   <div v-if="!loading">
+    <NavBar/>
     <!-- <nav>
       <router-link to="/">Home</router-link> |
       <router-link :to="{ name: 'clock', params: { username: 'mark2021' } }" >
@@ -15,23 +16,25 @@
 
 <script>
 import { mapActions } from 'vuex';
+import NavBar from './components/v2/NavBar.vue';
+
 export default {
+  components: {
+    NavBar
+  },
   data() {
     return {
       loading: true
     }
   },
   async created() {
-    await this.fetchUsers()
+    await this.tokenLogin()
     this.loading = false;
   },
   methods: {
     ...mapActions({
-      'fetchAllUsers': 'users/fetchAllUsers'
-    }),
-    async fetchUsers() {
-      await this.fetchAllUsers()
-    }
+      tokenLogin: 'currentUser/tokenLogin'
+    })
   }
 }
 </script>

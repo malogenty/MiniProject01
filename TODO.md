@@ -26,6 +26,7 @@ BACK-END CHECK RIGHTS
 - [x] Update schemas
 - [ ] Check rights before insertion / getting
 - [ ] Update front-end store accordingly
+- [ ] Update front-end store accordingly
 ## End-Hugo
 
 On front-end, when clock_out with +4 hours difference clock_in, add confirmation && option to custom clock_out (changing clock_out hour/date)
@@ -41,7 +42,7 @@ si le clock_out > schedule.end --> alors excess : overtime_hours
 le reste -> normal_hours
 if clock_in.date !== clock_out.date, separate
 
-- [ ] Hours_Worked instead of working times
+- [x] Hours_Worked instead of working times
 	- date (date) 2022-10-31
 	- normal_hours (float)
 	- night_hours (float)
@@ -60,7 +61,18 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 	- user_id
 	- start (date-time)
 	- end (date-time)
-	- title (string, default: work)
+	- title (work || holiday || sick, default: work)
+- get for 1 user from date to date
+- post for 1 user
+	-> check from date && to date
+	-> check if for that date there is hours_worked
+		- if no, create and set expected_hours
+		- if yes, set expected_hours += schedule.hours
+	- edge case where event spreads on several days
+- update
+	-> update hours_worked
+- delete
+	-> update hours_worked
 
 # Front-end
 - Install && setup https://antoniandre.github.io/vue-cal/ with dummy data (taking into account the form it is supposed to have given the DB)
@@ -77,15 +89,18 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 
 
 All users can :
-• Edit their account information.
-• Delete their account.
-• Report their departure and arrival times. 
-• View their dashboards.
+X Edit their account information.
+X Delete their account.
+X Report their departure and arrival times. 
+X View their dashboards.
+
 The managers and general manager can :
 • Manage their team(s).
-• View the averages of the daily and weekly hours of the team over a given period. 
-• View the daily and weekly workinghours of an employee over a period of time. • View their employees dashboards.
+X View the averages of the daily and weekly hours of the team over a given period. 
+X View the daily and weekly workinghours of an employee over a period of time. 
+X View their employees dashboards.
+
 The general manager can :
-• Promote a user from the rank of employee to manager. 
-• View the dashboards of all users.
-• Delete accounts from all users.
+X Promote a user from the rank of employee to manager. 
+X View the dashboards of all users.
+X Delete accounts from all users.

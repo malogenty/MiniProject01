@@ -1,5 +1,6 @@
 defmodule ApiProjectWeb.HoursWorkedController do
   use ApiProjectWeb, :controller
+  require Logger
 
   alias ApiProject.HoursWorked
   alias ApiProject.User
@@ -16,6 +17,19 @@ defmodule ApiProjectWeb.HoursWorkedController do
       conn
       |> put_status(404)
       |> render("error.json", reason: "Hours worked not found")
+    end
+  end
+
+  def get_by_day(conn, %{"user_id" => user_id, "from" => from, "to" => to}) do
+    hours_worked =
+      HoursWorked.get_hours_worked_from_to(%{
+        user_id: user_id,
+        from: Date.from_iso8601!(from),
+        to: Date.from_iso8601!(to)
+      })
+
+    if hours_worked do
+      render(conn, "index.json", hours_worked: hours_worked)
     end
   end
 

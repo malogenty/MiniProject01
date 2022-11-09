@@ -1,21 +1,32 @@
 <template>
-  <Bar
+  <Doughnut
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
     :dataset-id-key="datasetIdKey"
+    v-if="hasData"
   />
+  <div class="canvas-wrapper" v-else>
+    Sorry, no data to display.
+  </div>
 </template>
 
 <script>
-import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import { Doughnut } from 'vue-chartjs'
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  CategoryScale,
+} from 'chart.js'
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default {
   name: 'BarChart',
-  components: { Bar },
+  components: { Doughnut },
   props: {
     data: {
       type: Object,
@@ -65,5 +76,10 @@ export default {
       return Object.values(obj)
     }
   },
+  computed: {
+    hasData() {
+      return Object.values(this.data).length > 0
+    }
+  }
 }
 </script>
