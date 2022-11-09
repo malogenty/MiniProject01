@@ -1,24 +1,31 @@
 <template>
   <header>
-    <div>
-      <button @click="$router.back()" v-if="showBackButton">go back</button>
-    </div>
-    <span>A beautiful website indeed</span>
+    <span @click="goHome">{{this.showAccount ? "THE best tool to track your employee's attendance" : "A time manager so that ALL your hours get paid !"}}</span>
+    <button @click="goToMyAccount" v-if="showAccount">Go to my account</button>
     <button @click="logout">Logout</button>
   </header>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 export default {
   methods: {
     ...mapActions({
       logout: 'currentUser/logout'
-    })
+    }),
+    goToMyAccount() {
+      this.$router.push(`/user/${this.currentUser.id}`)
+    },
+    goHome() {
+      this.$router.push('/')
+    }
   },
   computed: {
-    showBackButton() {
-      return this.$route.href !== "/" && this.$route.href !== "/login"
+    ...mapGetters({
+      currentUser: "currentUser/getUser"
+    }),
+    showAccount() {
+      return this.currentUser.role === "manager" || this.currentUser.role === "general_manager"
     }
   }
 }
@@ -32,6 +39,14 @@ export default {
     width: 100%;
     display: flex;
     padding: 1vw;
-    justify-content: space-between;
+    span {
+      margin-right: auto;
+      cursor: pointer;
+      font-weight: bold;
+      color: $black;
+    }
+    button:first-of-type {
+      margin-right: 4px;
+    }
   }
 </style>

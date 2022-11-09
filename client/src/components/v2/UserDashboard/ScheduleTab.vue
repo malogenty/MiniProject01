@@ -56,7 +56,7 @@ export default {
       currentUser: "currentUser/getUser"
     }),
     canEdit() {
-      return (this.currentUser.role === "manager" || this.currentUser.role === "general_manager") && this.watchedUser.role === "employee"
+      return (this.currentUser.role === "manager" && this.watchedUser.role === "employee") || (this.currentUser.role === "general_manager" && (this.watchedUser.role === "employee" || this.watchedUser.role === "manager"))
     }
   },
   methods: {
