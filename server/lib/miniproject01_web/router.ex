@@ -22,6 +22,7 @@ defmodule ApiProjectWeb.Router do
 
     get "/hoursworked", HoursWorkedController, :index
     get "/hoursworked/:user_id", HoursWorkedController, :getByUser
+    get "/hoursworked/teams/:team_id", HoursWorkedController, :getAvgHoursByTeam
     post "/hoursworked/:user_id", HoursWorkedController, :create
     put "/hoursworked/:id", HoursWorkedController, :update
     delete "/hoursworked/:id", HoursWorkedController, :delete

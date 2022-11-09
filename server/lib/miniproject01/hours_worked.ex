@@ -4,6 +4,7 @@ defmodule ApiProject.HoursWorked do
   import Ecto.Query, warn: false
   alias ApiProject.Repo
   alias ApiProject.HoursWorked
+  alias ApiProject.TeamsUsers
 
   schema "hours_worked" do
     field :date, :date
@@ -42,6 +43,19 @@ defmodule ApiProject.HoursWorked do
       [] -> {:not_found, "This user don't have hours worked", 404}
       hours -> {:ok, hours}
     end
+  end
+
+  def get_avg_hours_by_team(%{"team_id": team_id, "from": from, "to": to}) do
+    query = from(
+      h in HoursWorked,
+      join: t in TeamsUsers,
+      on: h.user_id == t.user_id,
+      where: t.team_id == ^team_id,
+      where: fragment("? BETWEEN ? AND ?", h.date, ^from, ^to),
+      group_by: h.date,
+      select: %{date: h.date, avg_normal: avg(h.normal_hours), avg_night: avg(h.night_hours), avg_overtime: avg(h.overtime_hours)}
+    )
+    Repo.all(query)
   end
 
   def create_hours_worked(attrs \\ %{}) do

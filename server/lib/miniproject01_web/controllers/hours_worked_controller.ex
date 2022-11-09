@@ -2,6 +2,7 @@ defmodule ApiProjectWeb.HoursWorkedController do
   use ApiProjectWeb, :controller
 
   alias ApiProject.HoursWorked
+  alias ApiProject.Team
   alias ApiProject.User
   alias ApiProject.Repo
 
@@ -16,6 +17,22 @@ defmodule ApiProjectWeb.HoursWorkedController do
       conn
       |> put_status(404)
       |> render("error.json", reason: "Hours worked not found")
+    end
+  end
+
+  def getAvgHoursByTeam(conn, params) do
+    with {:query_params, true, date_from} <- {:query_params, is_binary(params["from"]), params["from"]},
+    {:query_params, true, date_to} <- {:query_params, is_binary(params["to"]), params["to"]},
+    {:ok, from} <- Date.from_iso8601(date_from),
+    {:ok, to} = Date.from_iso8601(date_to),
+    %Team{} = team <- Team.get_team!(params["team_id"]),
+    avg_hours <- HoursWorked.get_avg_hours_by_team(%{"team_id": team.id, "from": from, "to": to}) do
+      render(conn, "averages.json", averages: avg_hours)
+    else
+      nil -> render(conn, "error.json", reason: "The team have not been found")
+      {:query_params, _, nil} -> render(conn, "error.json", reason: "You must give from and to query params" )
+      {:query_params, false, _} -> render(conn, "error.json", reason: "Params must be strings" )
+      {:error, :invalid_format} -> render(conn, "error.json", reason: "Invalid date format" )
     end
   end
 
