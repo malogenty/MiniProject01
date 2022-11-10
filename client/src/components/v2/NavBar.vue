@@ -47,6 +47,7 @@ header {
   background-color: $green;
   width: 100%;
   display: flex;
+  align-items: center;
   padding: 2%;
   margin-bottom: 1%;
   box-shadow: 0px 2px 7px 2px rgba(0, 0, 0, 0.33);
