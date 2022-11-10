@@ -107,16 +107,14 @@ export default {
       }
       return false
     },
-    
+
   }
 }
 </script>
 
 <style scoped lang="scss">
 .canvas-wrapper {
-  width: 90%; 
-  height: 90%; 
-  margin: auto;
+  height: 90%;
   &.no-data {
     display: flex;
     justify-content: center;
