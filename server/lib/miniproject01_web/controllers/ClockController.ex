@@ -1,6 +1,7 @@
 defmodule ApiProjectWeb.ClockController do
   use ApiProjectWeb, :controller
   alias ApiProject.Clock
+  alias ApiProject.HoursWorked
 
   action_fallback(ApiProjectWeb.FallbackController)
 
@@ -16,15 +17,41 @@ defmodule ApiProjectWeb.ClockController do
     end
   end
 
-  def create(conn, %{"userId" => userId, "status" => status}) do
-    with {:ok, %Clock{} = clock} <-
-           Clock.create(%{user_id: userId, time: NaiveDateTime.utc_now(), status: status}) do
-      render(conn, "clock.json", clock: clock)
+  def create(conn, %{"userId" => user_id, "status" => status}) do
+    schedule_end = ~N[2022-11-05 04:00:00]
+    schedule_start = ~N[2022-11-04 23:00:00]
+    with {:ok, last} <- Clock.get_last_clock_by_user(%{user_id: user_id}),
+         {:check_status, true, _x} <- {:check_status, status != last.status, last.status},
+         {:ok, %Clock{} = clock} <- Clock.create(%{user_id: user_id, time: NaiveDateTime.utc_now(), status: status}),
+         {:is_clock_out, true} <- {:is_clock_out, !status},
+         result <- Clock.get_hours(%{clock_in: last.time, clock_out: clock.time, schedule_end: schedule_end, schedule_start: schedule_start}),
+        #  do conn |> render("message.json", message: result)
+         {:ok, %HoursWorked{} = hours_worked} <- HoursWorked.create_hours_worked(%{
+              date: NaiveDateTime.utc_now(),
+              normal_hours: result.normal_hours,
+              night_hours: result.night_hours,
+              overtime_hours: result.overtime,
+              # night_overtime: night_overtime,
+              expected_worked_hours: NaiveDateTime.diff(schedule_end, schedule_start, :minute) / 60,
+              user_id: user_id
+          }) do
+          conn |> put_status(201) |> render("hours_worked.json", hours_worked: hours_worked)
     else
       :error ->
         conn
         |> put_status(400)
         |> render("error.json", reason: "The payload does not match the expected pattern")
+
+      {:not_found, reason, status} ->
+        conn |> put_status(status) |> render("error.json", reason: reason)
+
+      {:check_status, false, false} ->
+        conn |> put_status(400) |> render("error.json", reason: "You already clocked out")
+
+      {:check_status, false, true} ->
+        conn |> put_status(400) |> render("error.json", reason: "You already clocked in")
+
+      {:is_clock_out, false} -> conn |> put_status(200) |> render("message.json", message: "You have successfully clocked in")
     end
   end
 end

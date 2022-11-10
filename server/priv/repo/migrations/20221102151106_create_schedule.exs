@@ -7,9 +7,9 @@ defmodule ApiProject.Repo.Migrations.CreateSchedule do
 
     create table(:schedule) do
       add(:user_id, references(:users, on_delete: :delete_all))
-      add :start, :naive_datetime
-      add :end, :naive_datetime
-      add :title, :string, default: "work"
+      add(:start, :naive_datetime)
+      add(:duration, :float, default: 4)
+      add(:title, :string, default: "work")
 
       timestamps()
     end

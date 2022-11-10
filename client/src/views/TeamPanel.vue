@@ -1,5 +1,6 @@
 <template>
   <ContainerLayout>
+    <TeamMetrics  v-if="team.id" :givenTeam="team"/>
     <div class="users-grid">
       <CardLayout v-for="user in team.users" :key="user.id" @click="goToUser(user.id)">
         <span>
@@ -17,8 +18,9 @@
 import { mapActions, mapGetters } from 'vuex'
 import CardLayout from '@/components/Layout/CardLayout.vue'
 import ContainerLayout from '@/components/Layout/ContainerLayout.vue'
+import TeamMetrics from '@/components/v2/TeamMetrics.vue'
 export default {
-  components: {CardLayout, ContainerLayout},
+  components: { CardLayout, ContainerLayout, TeamMetrics },
   async created() {
     if (!this.team.id) {
       await this.fetchTeam(this.$route.params.id)

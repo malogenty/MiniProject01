@@ -52,10 +52,10 @@ services:
     # Map 5432 port from container to port 5434 in host
     ports:
       - "5432:5432"
-    healthcheck:
-      test: [ "CMD", "pg_isready", "q", "-U", "postgres" ]
-      interval: 5s
-      timeout: 10s
-      retries: 10
+    # healthcheck:
+    #   test: [ "CMD", "pg_isready", "q", "-U", "$POSTGRES_USER" ]
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 10
 volumes:
    pgdata:

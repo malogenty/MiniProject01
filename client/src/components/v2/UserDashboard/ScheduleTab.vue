@@ -10,13 +10,8 @@
         :dblclickToNavigate="false" 
         :editable-events="canEdit"
         :drag-to-create-event="false"
-        @cell-dblclick="canEdit ? $refs.vuecal.createEvent(
-          $event,
-          60 * 4,
-          { title: 'Work', class: 'blue-event' }
-        ) : null"
+        @cell-dblclick="canEdit ? createBasicEvent($event) : null"
         @event-drop="updateEvent"
-        @event-create="createEvent"
         @event-duration-change="updateEvent"
         @event-delete="deleteEvent"
         @view-change="editView"
@@ -38,9 +33,9 @@ import moment from 'moment'
 
 export default {
   async mounted() {
-    await this.fetchSchedule({u_id: this.givenUser.id, from: moment().subtract(2, "week").toISOString(), to: moment().add(2, "week").toISOString()})
+    await this.fetchSchedule({u_id: this.givenUser.id, from: moment().subtract(2, "week").format("YYYY-MM-DD"), to: moment().add(2, "week").format("YYYY-MM-DD")})
     Object.values(this.watchedUser.schedule).forEach(ev => {
-      const calEv = this.$refs.vuecal.createEvent(ev.start, ev.duration, {title: ev.title})
+      const calEv = this.$refs.vuecal.createEvent(new Date(ev.start), ev.duration * 60, {title: ev.title})
       this.eidToId[calEv._eid] = ev.id
     })
   },
@@ -61,7 +56,7 @@ export default {
       currentUser: "currentUser/getUser"
     }),
     canEdit() {
-      return (this.currentUser.role === "manager" || this.currentUser.role === "general_manager") && this.watchedUser.role === "employee"
+      return (this.currentUser.role === "manager" && this.watchedUser.role === "employee") || (this.currentUser.role === "general_manager" && (this.watchedUser.role === "employee" || this.watchedUser.role === "manager"))
     }
   },
   methods: {
@@ -71,8 +66,11 @@ export default {
       updateScheduleEvent: 'watchedUser/updateScheduleEvent',
       deleteScheduleEvent: 'watchedUser/deleteScheduleEvent'
     }),
+    async createBasicEvent (ev) {
+      const event = this.$refs.vuecal.createEvent( ev, 240, { title: 'Work'})
+      return this.createEventDB(event)
+    },
     async setupCal({startDate, endDate}) {
-      console.log("ready")
       this.startDate = startDate
       this.endDate = endDate
     },
@@ -82,18 +80,21 @@ export default {
       } else if (endDate === this.endDate) {
         this.startDate = startDate
       }
-      await this.fetchSchedule({u_id: this.givenUser.id, from: moment(this.startDate).subtract(1, "week"), to: moment(this.endDate).add(1, "week")})
+      await this.fetchSchedule({u_id: this.givenUser.id, from: moment(this.startDate).subtract(1, "week").format("YYYY-MM-DD"), to: moment(this.endDate).add(1, "week").format("YYYY-MM-DD")})
     },
-    async createEvent(event) {
+    async createEventDB(event) {
       this.roundToHalf(event.start)
       this.roundToHalf(event.end)
-      await this.createScheduleEvent({u_id: this.givenUser.id, ...event})
+      console.log(event.start)
+      const duration = moment(event.end).diff(event.start) / 1000 / 60
+      await this.createScheduleEvent({u_id: this.givenUser.id, duration, ...event})
       return event
     },
     async updateEvent({event}) {
       this.roundToHalf(event.start)
       this.roundToHalf(event.end)
-      await this.updateScheduleEvent({u_id: this.givenUser.id, ev_id: this.eidToId[event._eid], ...event})
+      const duration = moment(event.end).diff(event.start) / 1000 / 60
+      await this.updateScheduleEvent({ev_id: this.eidToId[event._eid], duration, ...event})
     },
     async deleteEvent(event) {
       await this.deleteScheduleEvent(this.eidToId[event._eid])

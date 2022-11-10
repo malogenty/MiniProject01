@@ -22,9 +22,30 @@ Time Manager uses a number of open source projects to work properly:
 - [Node JS](https://nodejs.org/)
 - [Docker](https://www.docker.com/) Docker for portability and deployment.
 
+## Travis CI
+
+Everytime code is pushed to the repository a new build is created and deployed to AWS Elastic Container Service.
+
+You can visit our website [Time Manager](http://minip-LoadB-1DLJK7SX4PZU7-67c7b3409686a1f1.elb.eu-west-3.amazonaws.com)
+
 ## Local Installation
 
 Time Manager is very easy to install and deploy in a Docker container.
+
+You need those variables set in your environment in order to build the project:
+- DATABASE_URL (postgres URL)
+- POSTGRES_DB
+- POSTGRES_PASSWORD
+- POSTGRES_USER
+- SECRET_KEY_BASE
+
+To deploy those variables are needed :
+- AWS_ACCESS_KEY_ID
+- AWS_DEFAULT_REGION
+- AWS_SECRET_ACCESS_KEY
+- DOCKER_HUB_PASS
+- DOCKER_HUB_USER
+- VUE_APP_AWS_DNS_NAME
 
 Build 3 images:
 
@@ -47,8 +68,10 @@ Once done you can verify if everything is working properly by navigating to your
 ```sh
 127.0.0.1:80
 # OR
-localhost:80
+http://localhost:80
 ```
+
+[AWS Deployment](http://minip-LoadB-1DLJK7SX4PZU7-67c7b3409686a1f1.elb.eu-west-3.amazonaws.com)
 
 ## License
 

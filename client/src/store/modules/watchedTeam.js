@@ -2,16 +2,13 @@ import axios from 'axios'
 
 const API_URL= process.env.VUE_APP_AWS_DNS_NAME || 'http://localhost:4000/api'
 
-
 const getDefaultState = () => ({
   id: null,
   name: null,
   startOfDay: null,
   endOfDay: null,
   users: [],
-  totalNormalHours: null,
-  totalOvertimeHours: null,
-  totalNightHours: null
+  hoursWorked: []
 })
 
 const watchedTeam = {
@@ -26,6 +23,9 @@ const watchedTeam = {
     },
     setTeamUsers(state, users) {
       state.users = users
+    },
+    setTeamHoursWorked(state, hw) {
+      state.hoursWorked = hw
     }
   },
   actions: {
@@ -47,6 +47,12 @@ const watchedTeam = {
       } catch ({response}) {
         return {error: response.error, status: response.status}
       }
+    },
+    // eslint-disable-next-line no-unused-vars
+    async fetchHoursWorked({commit}, {team_id, from, to}) {
+      const {data, status} = await axios.get(`${API_URL}/hoursworked/teams/${team_id}?from=${from}&to=${to}`)
+      commit('setTeamHoursWorked', data)
+      return {status}
     }
   },
   getters: {

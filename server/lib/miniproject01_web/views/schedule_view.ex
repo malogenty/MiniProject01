@@ -6,7 +6,7 @@ defmodule ApiProjectWeb.ScheduleView do
       %{
         id: schedule.id,
         start: schedule.start,
-        end: schedule.end,
+        duration: schedule.duration,
         user: schedule.user_id,
         title: schedule.title
       }
@@ -17,7 +17,7 @@ defmodule ApiProjectWeb.ScheduleView do
     %{
       id: schedule.id,
       start: schedule.start,
-      end: schedule.end,
+      duration: schedule.duration,
       user: schedule.user_id,
       title: schedule.title
     }

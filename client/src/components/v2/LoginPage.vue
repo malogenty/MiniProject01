@@ -1,6 +1,6 @@
 <template>
   <container-layout>
-    <button @click="loginUser({email: 'test05@gmail.com', username: 'hujolesang'})">Login employee</button>
+    <button @click="loginUser({email: 'test03@gmail.com', username: 'test03'})">Login employee</button>
     <button @click="loginUser({email: 'test02@gmail.com', username: 'test02'})">Login manager</button>
     <button @click="loginUser({email: 'test01@gmail.com', username: 'test01'})">Login general_manager</button>
   </container-layout>

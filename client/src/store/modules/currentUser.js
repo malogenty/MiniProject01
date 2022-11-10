@@ -34,11 +34,9 @@ const currentUser = {
   },
   actions: {
     async login({commit, dispatch}, {username, email}) {
-      console.log(API_URL)
       try {
         commit('resetState')
         const {data, status} = await axios.get(`${API_URL}/users?username=${username}&email=${email}`)
-        console.log("HELLLLLLLLLOOOOOOOOOO")
         commit('setUser', data)
         VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
         axios.defaults.headers.common["Authorization"] = data.token
