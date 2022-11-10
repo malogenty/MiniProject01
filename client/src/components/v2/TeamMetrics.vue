@@ -138,9 +138,12 @@ export default {
 @import '@/styles/colors.scss';
 
 .team-metrics {
+  background-color: $light_grey;
   display: flex;
   flex-direction: column;
   margin-bottom: 2vw;
+  padding: 2%;
+  border-radius: 10px;
 
   .row {
     display: flex;

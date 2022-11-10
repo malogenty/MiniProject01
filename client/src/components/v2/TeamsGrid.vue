@@ -1,4 +1,5 @@
 <template>
+
   <div class="teams-grid">
     <CardLayout v-for="team in teams" :key="team.id" @click="goToTeam(team.id)">
       {{team.name}}
