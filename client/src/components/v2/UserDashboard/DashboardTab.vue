@@ -32,10 +32,11 @@
             :key="update"
           />
         </div>
-        <div class="clock" @click="sendClock">
-          <span>Clock {{ clocked ? 'out' : 'in' }}</span>
-        </div>
       </div>
+    </div>
+
+    <div :class="{ bounce: disabled, clock: true }" @click="sendClock">
+      <span>Clock {{ clocked ? 'out' : 'in' }}</span>
     </div>
   </ContainerLayout>
 </template>
@@ -88,7 +89,8 @@ export default {
       range: [
         moment().subtract(1, 'month').format('YYYY-MM-DD'),
         moment().format('YYYY-MM-DD')
-      ]
+      ],
+      disabled: false
     }
   },
   computed: {
@@ -105,6 +107,7 @@ export default {
       sendClockAction: 'currentUser/sendClock'
     }),
     async sendClock() {
+      this.warnDisabled()
       await this.sendClockAction()
     },
     async updateRange(range) {
@@ -135,6 +138,12 @@ export default {
         this.graph.perWeek.labels = weekLabels
       }
       this.update++
+    },
+    warnDisabled() {
+      this.disabled = true
+      setTimeout(() => {
+        this.disabled = false
+      }, 1500)
     }
   },
   watch: {
@@ -194,5 +203,37 @@ export default {
       }
     }
   }
+}
+
+.clock {
+  cursor: pointer;
+  background-color: $green;
+  color: white;
+  font-size: 2em;
+  padding: 8px;
+  width: fit-content;
+  margin: auto;
+  border-radius: 6px;
+  transition: all 200ms ease;
+  &:hover {
+    box-shadow: 3px 3px 0px 0px darken($green, 20%);
+  }
+}
+.bounce {
+  animation: bounce 0.8s ease-in-out;
+}
+
+@keyframes bounce {
+    0% { transform: scale(1.0); }
+   10% { transform: scale(1.2); }
+   20% { transform: scale(1.3); }
+   30% { transform: scale(1.2); }
+   40% { transform: scale(1.0); }
+   50% { transform: scale(1.1); }
+   60% { transform: scale(1.0); }
+   70% { transform: scale(1.05);}
+   80% { transform: scale(1.0); }
+   90% { transform: scale(1.02);}
+  100% { transform: scale(1.0); }
 }
 </style>
