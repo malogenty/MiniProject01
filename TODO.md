@@ -72,7 +72,7 @@ FRONT-END: schedule: test two last days if night_shift and add warning when tryi
 - update
 	-> update hours_worked
 - delete
-	-> update hours_worked
+	-> update hours_worked to 0
 
 # Front-end
 - Install && setup https://antoniandre.github.io/vue-cal/ with dummy data (taking into account the form it is supposed to have given the DB)
