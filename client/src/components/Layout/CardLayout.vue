@@ -28,8 +28,8 @@ export default {
     border: solid 2px $green;
 
     &:hover {
-      box-shadow: 0px 0px 7px 2px rgba(0,0,0,0.33);
-      -webkit-box-shadow: 0px 0px 7px 2px rgba(0,0,0,0.33);
+      box-shadow: 2px 2px 0px 0px darken(#f0f0f0, 20%);
+      -webkit-box-shadow: 2px 2px 0px 0px darken(#f0f0f0, 20%);
     }
   }
 </style>
