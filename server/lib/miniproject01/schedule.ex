@@ -2,13 +2,12 @@ defmodule ApiProject.Schedule do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias ApiProject.Repo
-  alias ApiProject.Schedule
-  alias ApiProject.User
+  alias ApiProject.{Repo, Schedule, User}
 
   schema "schedule" do
     field(:start, :naive_datetime)
     field(:duration, :float, default: 4.0)
+    field(:end, :naive_datetime)
     field(:title, Ecto.Enum, values: [:work, :holiday, :sick])
     belongs_to(:user, User)
 
@@ -18,8 +17,8 @@ defmodule ApiProject.Schedule do
   @doc false
   def changeset(schedule, attrs) do
     schedule
-    |> cast(attrs, [:user_id, :start, :duration, :title])
-    |> validate_required([:user_id, :start, :duration, :title])
+    |> cast(attrs, [:user_id, :start, :duration, :title, :end])
+    |> validate_required([:user_id, :start, :duration, :title, :end])
   end
 
   def get(id) do
@@ -33,6 +32,18 @@ defmodule ApiProject.Schedule do
     |> where([w], w.user_id == ^user_id)
     |> where([w], fragment("?::date", w.start) >= ^start_date)
     |> where([w], fragment("?::date", w.start) <= ^end_date)
+    |> order_by([w], w.start)
+    |> Repo.all()
+  end
+
+  def get_work_by_date(%{user_id: user_id, date: date}) do
+    Schedule
+    |> Ecto.Query.preload([:user])
+    |> where([w], w.user_id == ^user_id)
+    |> where([w], w.title == :work)
+    |> where([w], fragment("?::date", w.start) == ^date)
+    |> or_where([w], fragment("?::date", w.end) == ^date)
+    |> order_by([w], asc: w.start)
     |> Repo.all()
   end
 

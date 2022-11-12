@@ -1,4 +1,5 @@
 defmodule ApiProject.HoursWorked do
+  require Logger
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
@@ -10,6 +11,7 @@ defmodule ApiProject.HoursWorked do
     field(:night_hours, :float, default: 0.0)
     field(:overtime_hours, :float, default: 0.0)
     field(:expected_worked_hours, :float, default: 0.0)
+    field(:overtime_night_hours, :float, default: 0.0)
     belongs_to(:user, User)
 
     timestamps()
@@ -23,6 +25,7 @@ defmodule ApiProject.HoursWorked do
       :night_hours,
       :overtime_hours,
       :expected_worked_hours,
+      :overtime_night_hours,
       :user_id
     ])
     |> validate_required([
@@ -31,6 +34,7 @@ defmodule ApiProject.HoursWorked do
       :night_hours,
       :overtime_hours,
       :expected_worked_hours,
+      :overtime_night_hours,
       :user_id
     ])
   end
@@ -43,6 +47,41 @@ defmodule ApiProject.HoursWorked do
     case Repo.get(HoursWorked, id) do
       nil -> {:hours_not_found, "Hours not found", 404}
       hours -> {:ok, hours}
+    end
+  end
+
+  def get_hours_worked_by_day(%{userId: user_id, date: date}) do
+    hours_worked =
+      HoursWorked
+      |> where([h], h.user_id == ^user_id)
+      |> where([h], h.date == ^date)
+      |> Repo.one()
+
+    case hours_worked do
+      nil -> {:not_found, "Hours not found for this user", 404}
+      hours -> {:ok, hours}
+    end
+  end
+
+  def get_done_and_expected(%{user_id: user_id, date: date}) do
+    hours_worked =
+      HoursWorked
+      |> where([h], h.user_id == ^user_id)
+      |> where([h], h.date == ^date)
+      |> Repo.one()
+
+    if hours_worked do
+      %{
+        expected: hours_worked.expected_worked_hours,
+        done:
+          hours_worked.normal_hours + hours_worked.overtime_hours + hours_worked.night_hours +
+            hours_worked.overtime_night_hours
+      }
+    else
+      %{
+        expected: 0,
+        done: 0
+      }
     end
   end
 

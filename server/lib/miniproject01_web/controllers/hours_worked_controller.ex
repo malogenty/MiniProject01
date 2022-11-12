@@ -1,11 +1,7 @@
 defmodule ApiProjectWeb.HoursWorkedController do
   use ApiProjectWeb, :controller
   require Logger
-
-  alias ApiProject.HoursWorked
-  alias ApiProject.Team
-  alias ApiProject.User
-  alias ApiProject.Repo
+  alias ApiProject.{HoursWorked, Team, User, Repo}
 
   action_fallback(ApiProjectWeb.FallbackController)
 
