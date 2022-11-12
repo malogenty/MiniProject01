@@ -144,6 +144,9 @@ defmodule ApiProjectWeb.ClockController do
 
       Time.compare(clock_in, event.start) == :lt && Time.compare(clock_out, event.end) == :gt ->
         check_with_times_of_day(event.start, event.end, start_of_day, end_of_day)
+
+      true ->
+        0
     end
   end
 
@@ -153,27 +156,13 @@ defmodule ApiProjectWeb.ClockController do
 
     overtime_list = get_list_of_overtime_events(ev_list)
 
-    end_of_day = ~T[20:00:00]
-    {:ok, clock_out} = NaiveDateTime.new(NaiveDateTime.to_date(clock_out), ~T[22:30:00])
+    overnight_list =
+      overtime_list
+      |> Enum.flat_map(fn event ->
+        [check_case(clock_in, clock_out, event, user_id)]
+      end)
 
-    # do logic here, and there
-    overtime_list
-    |> Enum.each(fn event ->
-      Logger.info(%{val: check_case(clock_in, clock_out, event, user_id)})
-    end)
-
-    %{
-      start_of_day: start_of_day,
-      end_of_day: end_of_day,
-      before:
-        for event <- ev_list do
-          %{
-            start: event.start,
-            end: event.end
-          }
-        end,
-      now: overtime_list
-    }
+    Enum.sum(overnight_list)
   end
 
   def format_schedule_event_to_be_single_day(ev, day) do
@@ -212,13 +201,7 @@ defmodule ApiProjectWeb.ClockController do
                  night_hours: night_hours,
                  normal_hours: normal_hours
                }) do
-          %{
-            date: updated.date,
-            expected: updated.expected_worked_hours,
-            night: updated.night_hours,
-            overtime: updated.overtime_hours,
-            overtime_night: updated.overtime_night_hours
-          }
+          updated
         else
           {:error, %Ecto.Changeset{}} -> %{error: "unable to update"}
         end
@@ -231,7 +214,7 @@ defmodule ApiProjectWeb.ClockController do
                    normal_hours: normal_hours,
                    night_hours: night_hours
                  }) do
-            %{created: %{id: hours.id, expected: hours.expected_worked_hours}}
+            hours
           end
       end
     else
@@ -244,25 +227,60 @@ defmodule ApiProjectWeb.ClockController do
         end
 
       overnight = get_night_overtime(user_id, clock_in, clock_out, ev_list)
+      night_hours = get_night_hours(user_id, clock_in, clock_out) - overnight
 
-      %{
-        hours_expected: hrs_expected,
-        hours_done: hrs_done,
-        clock_in: clock_in,
-        clock_out: clock_out,
-        hrs_clocked: period_worked_hours,
-        events:
-          for ev <- schedule do
-            %{start: ev.start, end: ev.end}
-          end,
-        overnight: overnight
-      }
+      overtime =
+        if period_worked_hours + hrs_done > hrs_expected do
+          if period_worked_hours + hrs_done - hrs_expected - overnight - night_hours > 0 do
+            period_worked_hours + hrs_done - hrs_expected - overnight - night_hours
+          else
+            0
+          end
+        else
+          0
+        end
+
+      normal_hours = period_worked_hours - night_hours - overnight - overtime
+
+      with {:ok, hours} <- HoursWorked.get_hours_worked_by_day(%{userId: user_id, date: date}) do
+        with {:ok, updated} <-
+               HoursWorked.update_hours_worked(hours, %{
+                 night_hours: hours.night_hours + night_hours,
+                 normal_hours: hours.normal_hours + normal_hours,
+                 overtime_hours: hours.overtime_hours + overtime,
+                 overtime_night_hours: hours.overtime_night_hours + overnight
+               }) do
+          updated
+        else
+          {:error, %Ecto.Changeset{}} -> %{error: "unable to update"}
+        end
+      else
+        {:not_found, reason, status} ->
+          with {:ok, %HoursWorked{} = hours} <-
+                 HoursWorked.create_hours_worked(%{
+                   user_id: user_id,
+                   date: date,
+                   night_hours: night_hours,
+                   normal_hours: normal_hours,
+                   overtime_hours: overtime,
+                   overtime_night_hours: overnight
+                 }) do
+            hours
+          end
+      end
     end
   end
 
-  def create_test(conn, %{"userId" => user_id}) do
-    today_datetime = NaiveDateTime.utc_now()
+  def create_test(conn, params) do
+    user_id = params["userId"]
     clock = Clock.get_last_clock_by_user(%{user_id: user_id})
+
+    clock_time =
+      if !is_nil(params["clock_out"]) do
+        NaiveDateTime.from_iso8601!(params["clock_out"])
+      else
+        NaiveDateTime.utc_now()
+      end
 
     status =
       if !is_nil(clock) do
@@ -271,19 +289,25 @@ defmodule ApiProjectWeb.ClockController do
         true
       end
 
-    if(status && !is_nil(clock)) do
+    if(!status && !is_nil(clock)) do
+      Clock.create(%{user_id: user_id, status: status, time: clock_time})
       day_1 = NaiveDateTime.to_date(clock.time)
-      day_2 = NaiveDateTime.to_date(today_datetime)
+      day_2 = NaiveDateTime.to_date(clock_time)
+
+      if Date.diff(day_2, day_1) > 1 do
+        json(conn, %{error: "clock_out is too late."})
+      end
 
       if(day_1 == day_2) do
-        hrs_clocked = NaiveDateTime.diff(today_datetime, clock.time, :second) / 60 / 60
-        day = create_hours_worked(day_1)
-        json(conn, %{day: day})
+        hrs_clocked = NaiveDateTime.diff(clock_time, clock.time, :second) / 60 / 60
+
+        day =
+          create_hours_worked(%{user_id: user_id, clock_in: clock.time, clock_out: clock_time})
+
+        render(conn, "hours_worked.json", hours_worked: day)
       else
         {:ok, almost_midnight} = NaiveDateTime.new(day_1, ~T[23:59:59])
         {:ok, early_midnight} = NaiveDateTime.new(day_2, ~T[00:00:00])
-        {:ok, six_am} = NaiveDateTime.new(day_1, ~T[06:00:00])
-        {:ok, two_am} = NaiveDateTime.new(day_2, ~T[02:00:00])
         # split into two days, and create hours_worked for each day.
 
         day_1_hrs =
@@ -296,110 +320,15 @@ defmodule ApiProjectWeb.ClockController do
         day_2_hrs =
           create_hours_worked(%{
             user_id: user_id,
-            clock_in: two_am,
-            clock_out: today_datetime
+            clock_in: early_midnight,
+            clock_out: clock_time
           })
 
-        json(conn, %{day_1: day_1_hrs, day_2: day_2_hrs})
+        render(conn, "hours_worked_mutliple.json", hours_worked_multiple: [day_1_hrs, day_2_hrs])
       end
     else
-      send_resp(conn, 204, "")
+      {:ok, clock} = Clock.create(%{user_id: user_id, status: status, time: clock_time})
+      render(conn, "clock.json", clock: clock)
     end
-  end
-
-  def create_disabled(conn, %{"userId" => user_id, "status" => status}) do
-    # get right schedule
-    today_datetime = NaiveDateTime.utc_now()
-
-    day_schedules =
-      Schedule.get_expected_hours(%{
-        user_id: user_id,
-        start: ~N[2022-11-10 08:00:00],
-        end: ~N[2022-11-10 13:00:00]
-      })
-
-    json(
-      conn,
-      %{
-        schedules:
-          for schedule <- day_schedules do
-            %{
-              date: schedule.start,
-              duration: schedule.duration
-            }
-          end
-      }
-    )
-
-    schedule =
-      with {:ok, last} <- Clock.get_last_clock_by_user(%{user_id: user_id}),
-           {:check_status, true, _x} <- {:check_status, status != last.status, last.status},
-           {:ok, %Clock{} = clock} <-
-             Clock.create(%{user_id: user_id, time: today_datetime, status: status}),
-           {:is_clock_out, true, clock} <- {:is_clock_out, !status, clock},
-           schedule <-
-             Schedule.get_by_time(%{
-               user_id: user_id,
-               start: NaiveDateTime.to_date(last.time),
-               end: NaiveDateTime.to_date(today_datetime)
-             }),
-           {result, schedule} <-
-             {Clock.get_hours(%{
-                clock_in: last.time,
-                clock_out: clock.time,
-                schedule_end:
-                  if schedule do
-                    NaiveDateTime.add(schedule.start, schedule.duration, :hour)
-                  else
-                    nil
-                  end,
-                schedule_start:
-                  if schedule do
-                    schedule.start
-                  else
-                    nil
-                  end
-              }), schedule},
-           #  do conn |> render("message.json", message: result)
-           {:ok, %HoursWorked{} = hours_worked} <-
-             HoursWorked.create_hours_worked(%{
-               date: today_datetime,
-               normal_hours: result.normal_hours,
-               night_hours: result.night_hours,
-               overtime_hours: result.overtime,
-               # night_overtime: night_overtime,
-               expected_worked_hours:
-                 if schedule do
-                   NaiveDateTime.diff(
-                     NaiveDateTime.add(schedule.start, schedule.duration, :hour),
-                     schedule.start,
-                     :second
-                   ) / 60 / 60
-                 else
-                   0
-                 end,
-               user_id: user_id
-             }) do
-        conn |> put_status(201) |> render("hours_worked.json", hours_worked: hours_worked)
-      else
-        :error ->
-          conn
-          |> put_status(400)
-          |> render("error.json", reason: "The payload does not match the expected pattern")
-
-        {:not_found, reason, status} ->
-          conn |> put_status(status) |> render("error.json", reason: reason)
-
-        {:check_status, false, false} ->
-          conn |> put_status(400) |> render("error.json", reason: "You already clocked out")
-
-        {:check_status, false, true} ->
-          conn |> put_status(400) |> render("error.json", reason: "You already clocked in")
-
-        {:is_clock_out, false, clock} ->
-          conn
-          |> put_status(200)
-          |> render("clock.json", clock: clock)
-      end
   end
 end

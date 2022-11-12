@@ -27,9 +27,25 @@ defmodule ApiProjectWeb.ClockView do
       normal_hours: hours_worked.normal_hours,
       night_hours: hours_worked.night_hours,
       overtime_hours: hours_worked.overtime_hours,
+      overtime_night: hours_worked.overtime_night_hours,
       expected_worked_hours: hours_worked.expected_worked_hours,
       user: hours_worked.user_id
     }
+  end
+
+  def render("hours_worked_mutliple.json", %{hours_worked_multiple: hours_worked_multiple}) do
+    for hours_worked <- hours_worked_multiple do
+      %{
+        id: hours_worked.id,
+        date: hours_worked.date,
+        normal_hours: hours_worked.normal_hours,
+        night_hours: hours_worked.night_hours,
+        overtime_hours: hours_worked.overtime_hours,
+        overtime_night: hours_worked.overtime_night_hours,
+        expected_worked_hours: hours_worked.expected_worked_hours,
+        user: hours_worked.user_id
+      }
+    end
   end
 
   def render("error.json", %{reason: reason}) do
