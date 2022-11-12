@@ -13,6 +13,7 @@ defmodule ApiProjectWeb.Router do
     post("/users", UserController, :create)
     put("/users/:userId", UserController, :update)
     delete("/users/:userId", UserController, :delete)
+
     get("/workingtimes/:userId", WorkingTimeController, :readAll)
     get("/workingtimes/:userId/:id", WorkingTimeController, :readOne)
     post("/workingtimes/:userId", WorkingTimeController, :create)
@@ -27,7 +28,7 @@ defmodule ApiProjectWeb.Router do
     delete("/hoursworked/:id", HoursWorkedController, :delete)
 
     get("/clocks/:userId", ClockController, :read)
-    post("/clocks/:userId", ClockController, :create)
+    post("/clocks/:userId", ClockController, :create_test)
 
     get("/schedule/:userId", ScheduleController, :list)
     post("/schedule/:userId", ScheduleController, :create)

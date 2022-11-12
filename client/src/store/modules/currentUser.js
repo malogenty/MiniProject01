@@ -30,6 +30,12 @@ const currentUser = {
     },
     updateTeams(state, teams) {
       state.teams = teams
+    },
+    setClocks(state, clocks) {
+      state.clocks = clocks
+    },
+    addClock(state, clock) {
+      state.clocks.push(clock)
     }
   },
   actions: {
@@ -41,6 +47,7 @@ const currentUser = {
         VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
         axios.defaults.headers.common["Authorization"] = data.token
         if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
+        dispatch('fetchClocks')
         return {status}
       } catch({response}) {
         return {error: response.error, status: response.status}
@@ -54,8 +61,8 @@ const currentUser = {
         commit('resetState')
         const {data, status} = await axios.get(`${API_URL}/users`)
         commit('setUser', data)
-        if (data.role === "general_manager" || data.role === "manager") {
-          dispatch('fetchTeams')}
+        if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
+        dispatch('fetchClocks')
         return {status}
       } catch({response}) {
         return {error: response.error, status: response.status}
@@ -67,27 +74,34 @@ const currentUser = {
       axios.defaults.headers.common["Authorization"] = null
       router.push('/login')
     },
-    async fetchTeams({commit, state}) {
+    async fetchTeams({commit, getters}) {
       try {
-        const {data, status} = await axios.get(`${API_URL}/users/${state.id}/teams`)
+        const {data, status} = await axios.get(`${API_URL}/users/${getters.getUser.id}/teams`)
         commit('updateTeams', data)
         return {status}
       } catch ({response}) {
         return {error: response.data.error, status: response.status}
       }
     },
-    async editUser({commit, state}, user) {
+    async editUser({commit, getters}, user) {
       const token = VueCookies.get("jwt")
       try {
-        const {data, status} = await axios.put(`${API_URL}/users/${state.id}`, {user: {...user, token}})
+        const {data, status} = await axios.put(`${API_URL}/users/${getters.getUser.id}`, {user: {...user, token}})
         commit('setUser', data)
         return {status}
       } catch ({response}) {
         return {error: response.data.error, status: response.status}
       }
     },
-    async sendClock() {
-      // const {data, status} = await axios.post(`${API_URL}/clocks/${state.id}`)
+    async fetchClocks({commit, getters}) {
+      const {data, status} = await axios.get(`${API_URL}/clocks/${getters.getUser.id}`)
+      commit('setClocks', data)
+      return {status}
+    },
+    async sendClock({getters, commit}, clockStatus) {
+      const {data, status} = await axios.post(`${API_URL}/clocks/${getters.getUser.id}`, {status: clockStatus})
+      commit('addClock', data)
+      return {status}
     }
    },
   getters: {

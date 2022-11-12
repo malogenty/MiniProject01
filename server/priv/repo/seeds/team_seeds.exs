@@ -15,6 +15,6 @@ Repo.insert!(%Team{
 
 Repo.insert!(%Team{
   name: "Dream Team",
-  start_of_day: ~T[16:00:00],
-  end_of_day: ~T[08:00:00]
+  start_of_day: ~T[08:00:00],
+  end_of_day: ~T[16:00:00]
 })

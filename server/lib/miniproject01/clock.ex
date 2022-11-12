@@ -1,10 +1,9 @@
 defmodule ApiProject.Clock do
+  require Logger
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, warn: false
-  alias ApiProject.Repo
-  alias ApiProject.Clock
-  alias ApiProject.User
+  alias ApiProject.{Repo, Clock, User}
 
   schema "clocks" do
     field(:status, :boolean)
@@ -27,13 +26,7 @@ defmodule ApiProject.Clock do
   end
 
   def get_last_clock_by_user(%{user_id: user_id}) do
-    clock =
-      Repo.one(from(c in Clock, where: c.user_id == ^user_id, order_by: [desc: c.time], limit: 1))
-
-    case clock do
-      nil -> {:not_found, "Clocks not found for this user", 404}
-      clock -> {:ok, clock}
-    end
+    Repo.one(from(c in Clock, where: c.user_id == ^user_id, order_by: [desc: c.time], limit: 1))
   end
 
   def create(attrs \\ %{}) do
@@ -56,10 +49,17 @@ defmodule ApiProject.Clock do
       schedule_start < late_date,
       clock_in < late_date
     } do
-      {true, true, true, true, _} -> NaiveDateTime.diff(schedule_start, clock_in, :minute)
-      {false, true, true, true, _} -> NaiveDateTime.diff(schedule_start, early_date, :minute)
-      {true, true, true, false, true} -> NaiveDateTime.diff(late_date, clock_in, :minute)
-      _ -> 0
+      {true, true, true, true, _} ->
+        abs(NaiveDateTime.diff(schedule_start, clock_in, :second)) / 60 / 60
+
+      {false, true, true, true, _} ->
+        abs(NaiveDateTime.diff(schedule_start, early_date, :second)) / 60 / 60
+
+      {true, true, true, false, true} ->
+        abs(NaiveDateTime.diff(late_date, clock_in, :second)) / 60 / 60
+
+      _ ->
+        0
     end
   end
 
@@ -75,10 +75,17 @@ defmodule ApiProject.Clock do
       schedule_end < late_date,
       is_day_two
     } do
-      {true, true, true, false} -> NaiveDateTime.diff(clock_out, schedule_end, :minute)
-      {false, true, true, false} -> NaiveDateTime.diff(late_date, schedule_end, :minute)
-      {_, _, _, true} -> 0
-      _ -> 0
+      {true, true, true, false} ->
+        abs(NaiveDateTime.diff(clock_out, schedule_end, :second)) / 60 / 60
+
+      {false, true, true, false} ->
+        abs(NaiveDateTime.diff(late_date, schedule_end, :second)) / 60 / 60
+
+      {_, _, _, true} ->
+        0
+
+      _ ->
+        0
     end
   end
 
@@ -97,11 +104,20 @@ defmodule ApiProject.Clock do
       is_day_two,
       early_date < clock_out
     } do
-      {true, true, true, false, _} -> NaiveDateTime.diff(clock_out, schedule_end, :minute)
-      {true, true, false, false, _} -> NaiveDateTime.diff(clock_out, late_date, :minute)
-      {false, true, false, true, true} -> NaiveDateTime.diff(early_date, schedule_end, :minute)
-      {false, true, false, true, false} -> NaiveDateTime.diff(clock_out, schedule_end, :minute)
-      _ -> 0
+      {true, true, true, false, _} ->
+        abs(NaiveDateTime.diff(clock_out, schedule_end, :second)) / 60 / 60
+
+      {true, true, false, false, _} ->
+        abs(NaiveDateTime.diff(clock_out, late_date, :second)) / 60 / 60
+
+      {false, true, false, true, true} ->
+        abs(NaiveDateTime.diff(early_date, schedule_end, :second)) / 60 / 60
+
+      {false, true, false, true, false} ->
+        abs(NaiveDateTime.diff(clock_out, schedule_end, :second)) / 60 / 60
+
+      _ ->
+        0
     end
   end
 
@@ -118,26 +134,35 @@ defmodule ApiProject.Clock do
       late_date < schedule_start,
       late_date < clock_in
     } do
-      {true, true, true, false, _} -> NaiveDateTime.diff(schedule_start, clock_in, :minute)
-      {true, true, false, false, _} -> NaiveDateTime.diff(early_date, clock_in, :minute)
-      {false, true, false, true, true} -> NaiveDateTime.diff(schedule_start, clock_in, :minute)
-      {false, true, false, true, false} -> NaiveDateTime.diff(schedule_start, late_date, :minute)
-      _ -> 0
+      {true, true, true, false, _} ->
+        abs(NaiveDateTime.diff(schedule_start, clock_in, :second)) / 60 / 60
+
+      {true, true, false, false, _} ->
+        abs(NaiveDateTime.diff(early_date, clock_in, :second)) / 60 / 60
+
+      {false, true, false, true, true} ->
+        abs(NaiveDateTime.diff(schedule_start, clock_in, :second)) / 60 / 60
+
+      {false, true, false, true, false} ->
+        abs(NaiveDateTime.diff(schedule_start, late_date, :second)) / 60 / 60
+
+      _ ->
+        0
     end
   end
 
   def getEarlyNight(%{clock_in: clock_in, early_date: early_date, clock_out: clock_out}) do
     case {clock_in < early_date, clock_out < early_date} do
-      {true, false} -> NaiveDateTime.diff(early_date, clock_in, :minute)
-      {true, true} -> NaiveDateTime.diff(clock_out, clock_in, :minute)
+      {true, false} -> abs(NaiveDateTime.diff(early_date, clock_in, :second)) / 60 / 60
+      {true, true} -> abs(NaiveDateTime.diff(clock_out, clock_in, :second)) / 60 / 60
       _ -> 0
     end
   end
 
   def getLateNight(%{late_date: late_date, clock_out: clock_out, clock_in: clock_in}) do
     case {late_date < clock_out, late_date < clock_in} do
-      {true, false} -> NaiveDateTime.diff(clock_out, late_date, :minute)
-      {true, true} -> NaiveDateTime.diff(clock_out, clock_in, :minute)
+      {true, false} -> abs(NaiveDateTime.diff(clock_out, late_date, :second)) / 60 / 60
+      {true, true} -> abs(NaiveDateTime.diff(clock_out, clock_in, :second)) / 60 / 60
       _ -> 0
     end
   end
@@ -150,12 +175,15 @@ defmodule ApiProject.Clock do
         day: day,
         is_day_two: is_day_two
       }) do
+    # to make better (fetch team dates)
     {:ok, late_date} = NaiveDateTime.new(day, ~T[22:00:00])
     {:ok, early_date} = NaiveDateTime.new(day, ~T[05:00:00])
 
     # Day 1 night hours : 22h < hours
     late_day_1_night =
       getLateNight(%{late_date: late_date, clock_out: clock_out, clock_in: clock_in})
+
+    Logger.info(%{clock_out: clock_out, late_day_1_night: late_day_1_night})
 
     # Day 1 night hours : hours < 5h
     early_day_1_night =
@@ -215,20 +243,21 @@ defmodule ApiProject.Clock do
     }
   end
 
-  def get_hours(params) do
-    schedule_start = params.schedule_start
-    schedule_end = params.schedule_end
-    clock_out = params.clock_out
-    clock_in = params.clock_in
+  def get_hours(%{
+        clock_in: clock_in,
+        clock_out: clock_out,
+        schedule_start: schedule_start,
+        schedule_end: schedule_end
+      }) do
+    {:ok, day_1} = Date.new(schedule_start.year, schedule_start.month, schedule_start.day)
 
-    {:ok, day_1} = Date.from_erl({schedule_start.year, schedule_start.month, schedule_start.day})
-
-    {:ok, day_2} =
-      Date.from_erl({schedule_start.year, schedule_start.month, schedule_start.day + 1})
+    day_2 = Date.add(day_1, 1)
 
     {:ok, day_2_midnight} = NaiveDateTime.new(day_2, ~T[00:00:00])
 
-    total_hours = NaiveDateTime.diff(params.clock_out, params.clock_in, :minute)
+    total_hours = abs(NaiveDateTime.diff(clock_out, clock_in, :second)) / 60 / 60
+    Logger.info(total_hours)
+    Logger.info(%{clock_out: clock_out, clock_in: clock_in})
 
     is_day_two = day_2_midnight < clock_out
 

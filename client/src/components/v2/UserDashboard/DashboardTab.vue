@@ -73,10 +73,11 @@ async created() {
   },
   computed: {
     ...mapGetters({
-      watchedUser: "watchedUser/getUser"
+      watchedUser: "watchedUser/getUser",
+      currentUser: "currentUser/getUser"
     }),
     clocked() {
-      return this.watchedUser.clocks[this.watchedUser.clocks.length - 1]?.status
+      return this.currentUser.clocks[this.currentUser.clocks.length - 1]?.status
     }
   },
   methods: {
@@ -85,7 +86,7 @@ async created() {
       sendClockAction: "currentUser/sendClock"
     }),
     async sendClock() {
-      await this.sendClockAction()
+      await this.sendClockAction(!this.clocked)
     },
     async updateRange(range) {
       console.log(range)
