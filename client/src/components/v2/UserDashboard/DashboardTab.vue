@@ -86,7 +86,8 @@ async created() {
       sendClockAction: "currentUser/sendClock"
     }),
     async sendClock() {
-      await this.sendClockAction(!this.clocked)
+      const res = await this.sendClockAction(!this.clocked)
+      console.log(res)
     },
     async updateRange(range) {
       console.log(range)

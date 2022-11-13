@@ -101,7 +101,7 @@ const currentUser = {
     async sendClock({getters, commit}, clockStatus) {
       const {data, status} = await axios.post(`${API_URL}/clocks/${getters.getUser.id}`, {status: clockStatus})
       commit('addClock', data)
-      return {status}
+      return {status, data}
     }
    },
   getters: {

@@ -26,8 +26,9 @@ defmodule ApiProjectWeb.ClockView do
       date: hours_worked.date,
       normal_hours: hours_worked.normal_hours,
       night_hours: hours_worked.night_hours,
-      overtime_hours: hours_worked.overtime_hours,
+      overtime_day: hours_worked.overtime_hours,
       overtime_night: hours_worked.overtime_night_hours,
+      overtime_hours: hours_worked.overtime_hours + hours_worked.overtime_night_hours,
       expected_worked_hours: hours_worked.expected_worked_hours,
       user: hours_worked.user_id
     }
@@ -40,8 +41,9 @@ defmodule ApiProjectWeb.ClockView do
         date: hours_worked.date,
         normal_hours: hours_worked.normal_hours,
         night_hours: hours_worked.night_hours,
-        overtime_hours: hours_worked.overtime_hours,
+        overtime_day: hours_worked.overtime_hours,
         overtime_night: hours_worked.overtime_night_hours,
+        overtime_hours: hours_worked.overtime_hours + hours_worked.overtime_night_hours,
         expected_worked_hours: hours_worked.expected_worked_hours,
         user: hours_worked.user_id
       }
