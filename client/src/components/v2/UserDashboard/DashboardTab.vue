@@ -87,29 +87,35 @@ async created() {
     }),
     async sendClock() {
       const res = await this.sendClockAction(!this.clocked)
-      console.log(res)
+      if (res.data.hours_worked) {
+        this.updateGraphData(Object.values(this.watchedUser.hours_worked))
+      }
     },
     async updateRange(range) {
-      console.log(range)
       this.range = [moment(range[0]).format("YYYY-MM-DD"), moment(range[1]).format("YYYY-MM-DD")]
       await this.fetchNewValues()
     },
-    async fetchNewValues() {
-      const res = await this.fetchHoursWorked({u_id: this.user.id, from: this.range[0], to: this.range[1]})
-      if(res.status === 200) {
-        const {data, labels} = sortedUserDaily(res.data)
-        const summed = summedUserDaily(res.data)
+    updateGraphData(graphData) {
+      const {data, labels} = sortedUserDaily(graphData)
+        const summed = summedUserDaily(graphData)
         this.graph.perDay.sorted = data
         this.graph.perDay.summed = summed
         this.graph.perDay.labels = labels
 
-        const {weekData, weekLabels} = sortedUserWeekly(res.data)
-        const weekSummed = summedUserWeekly(res.data)
+        const {weekData, weekLabels} = sortedUserWeekly(graphData)
+        const weekSummed = summedUserWeekly(graphData)
         this.graph.perWeek.sorted = weekData
         this.graph.perWeek.summed = weekSummed
         this.graph.perWeek.labels = weekLabels
+        this.update++
+
+    },
+
+    async fetchNewValues() {
+      const res = await this.fetchHoursWorked({u_id: this.user.id, from: this.range[0], to: this.range[1]})
+      if(res.status === 200) {
+        this.updateGraphData(res.data)
       }
-      this.update++
     },
     
   },

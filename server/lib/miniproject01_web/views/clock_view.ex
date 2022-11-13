@@ -4,9 +4,11 @@ defmodule ApiProjectWeb.ClockView do
 
   def render("clock.json", %{clock: clock}) do
     %{
-      id: clock.id,
-      time: clock.time,
-      status: clock.status
+      clock: %{
+        id: clock.id,
+        time: clock.time,
+        status: clock.status
+      }
     }
   end
 
@@ -20,23 +22,14 @@ defmodule ApiProjectWeb.ClockView do
     end
   end
 
-  def render("hours_worked.json", %{hours_worked: hours_worked}) do
+  def render("hours_worked.json", %{hours_worked: hours_worked, clock: clock}) do
     %{
-      id: hours_worked.id,
-      date: hours_worked.date,
-      normal_hours: hours_worked.normal_hours,
-      night_hours: hours_worked.night_hours,
-      overtime_day: hours_worked.overtime_hours,
-      overtime_night: hours_worked.overtime_night_hours,
-      overtime_hours: hours_worked.overtime_hours + hours_worked.overtime_night_hours,
-      expected_worked_hours: hours_worked.expected_worked_hours,
-      user: hours_worked.user_id
-    }
-  end
-
-  def render("hours_worked_mutliple.json", %{hours_worked_multiple: hours_worked_multiple}) do
-    for hours_worked <- hours_worked_multiple do
-      %{
+      clock: %{
+        status: clock.status,
+        time: clock.time,
+        user_id: clock.user_id
+      },
+      hours_worked: %{
         id: hours_worked.id,
         date: hours_worked.date,
         normal_hours: hours_worked.normal_hours,
@@ -47,7 +40,33 @@ defmodule ApiProjectWeb.ClockView do
         expected_worked_hours: hours_worked.expected_worked_hours,
         user: hours_worked.user_id
       }
-    end
+    }
+  end
+
+  def render("hours_worked_mutliple.json", %{
+        hours_worked_multiple: hours_worked_multiple,
+        clock: clock
+      }) do
+    %{
+      clock: %{
+        status: clock.status,
+        time: clock.time,
+        user_id: clock.user_id
+      },
+      hours_worked:
+        for hours_worked <- hours_worked_multiple do
+          %{
+            id: hours_worked.id,
+            date: hours_worked.date,
+            normal_hours: hours_worked.normal_hours,
+            night_hours: hours_worked.night_hours,
+            overtime_hours: hours_worked.overtime_hours,
+            overtime_night: hours_worked.overtime_night_hours,
+            expected_worked_hours: hours_worked.expected_worked_hours,
+            user: hours_worked.user_id
+          }
+        end
+    }
   end
 
   def render("error.json", %{reason: reason}) do

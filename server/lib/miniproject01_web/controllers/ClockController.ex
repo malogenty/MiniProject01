@@ -290,7 +290,7 @@ defmodule ApiProjectWeb.ClockController do
       end
 
     if(!status && !is_nil(clock)) do
-      Clock.create(%{user_id: user_id, status: status, time: clock_time})
+      {:ok, created_clock} = Clock.create(%{user_id: user_id, status: status, time: clock_time})
       day_1 = NaiveDateTime.to_date(clock.time)
       day_2 = NaiveDateTime.to_date(clock_time)
 
@@ -304,7 +304,7 @@ defmodule ApiProjectWeb.ClockController do
         day =
           create_hours_worked(%{user_id: user_id, clock_in: clock.time, clock_out: clock_time})
 
-        render(conn, "hours_worked.json", hours_worked: day)
+        render(conn, "hours_worked.json", hours_worked: day, clock: created_clock)
       else
         {:ok, almost_midnight} = NaiveDateTime.new(day_1, ~T[23:59:59])
         {:ok, early_midnight} = NaiveDateTime.new(day_2, ~T[00:00:00])
@@ -324,7 +324,10 @@ defmodule ApiProjectWeb.ClockController do
             clock_out: clock_time
           })
 
-        render(conn, "hours_worked_mutliple.json", hours_worked_multiple: [day_1_hrs, day_2_hrs])
+        render(conn, "hours_worked_mutliple.json",
+          hours_worked_multiple: [day_1_hrs, day_2_hrs],
+          clock: created_clock
+        )
       end
     else
       {:ok, clock} = Clock.create(%{user_id: user_id, status: status, time: clock_time})

@@ -98,9 +98,12 @@ const currentUser = {
       commit('setClocks', data)
       return {status}
     },
-    async sendClock({getters, commit}, clockStatus) {
+    async sendClock({getters, commit, rootGetters, dispatch}, clockStatus) {
       const {data, status} = await axios.post(`${API_URL}/clocks/${getters.getUser.id}`, {status: clockStatus})
-      commit('addClock', data)
+      const watchedUser = rootGetters["watchedUser/getUser"]
+      if (data.hours_worked && watchedUser.id == getters.getUser.id) dispatch('watchedUser/addHoursWorked', data.hours_worked, {root: true})
+      
+      commit('addClock', data.clock)
       return {status, data}
     }
    },

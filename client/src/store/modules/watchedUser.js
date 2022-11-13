@@ -12,7 +12,7 @@ const getDefaultState = () => ({
   email: null,
   role: null,
   hourRate: null,
-  hours_worked: [],
+  hours_worked: {},
   clocks: [],
   schedule: {}
 })
@@ -28,8 +28,8 @@ const watchedUser = {
       state.role = role
       state.hourRate = hour_rate
     },
-    setHoursWorked(state, hw) {
-      state.hours_worked = hw
+    setHoursWorked(state, hours_worked_array) {
+      hours_worked_array.forEach(hw => state.hours_worked[hw.date] = hw)
     },
     setSchedules(state, events) {
       events.forEach(ev => state.schedule[ev.id] = ev)
@@ -42,6 +42,9 @@ const watchedUser = {
     },
     deleteEvent(state, ev_id) {
       state.schedule[ev_id] = null
+    },
+    addSingleDay(state, hw) {
+      state.hours_worked[hw.date] = hw
     }
   },
   actions: {
@@ -87,6 +90,11 @@ const watchedUser = {
         return {error: response.error, status: response.status}
       }
     },
+    addHoursWorked({commit}, data) {
+      const arr = Array.isArray(data)
+      if (arr) return commit('setHoursWorked', data)
+      return commit('addSingleDay', data)
+    },
     async fetchSchedule({commit}, {u_id, from, to}) {
       const {status, data} = await axios.get(`${API_URL}/schedule/${u_id}?start=${from}&end=${to}`)
         commit('setSchedules', data)
@@ -113,6 +121,7 @@ const watchedUser = {
   getters: {
     getUser(state) {
       return state
+      
     }
   }
 }
