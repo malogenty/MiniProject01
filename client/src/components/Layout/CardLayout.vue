@@ -17,14 +17,19 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 300px;
-    background-color: $green;
+    height: 10vh;
+    background-color: white;
     color: $black;
     font-size: 24px;
     font-weight: bold;
     border-radius: 16px;
-    -webkit-box-shadow: 0px 0px 10px 3px rgba(0,0,0,0.5); 
-    box-shadow: 0px 0px 10px 3px rgba(0,0,0,0.5);
     cursor: pointer;
+    transition: all 250ms ease;
+    border: solid 2px $green;
+
+    &:hover {
+      box-shadow: 2px 2px 0px 0px darken(#f0f0f0, 20%);
+      -webkit-box-shadow: 2px 2px 0px 0px darken(#f0f0f0, 20%);
+    }
   }
 </style>

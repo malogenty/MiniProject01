@@ -2,9 +2,9 @@
   <div class="user-dashboard">
     <div class="user-nav">
       <ul>
-        <li @click="setTab('dashboard')">Dashboard</li>
-        <li @click="setTab('schedule')">Schedule</li>
-        <li @click="setTab('settings')">Settings</li>
+        <li @click="setTab('dashboard')" :class="tab === 'dashboard' && 'selected'" >Dashboard</li>
+        <li @click="setTab('schedule')" :class="tab === 'schedule' && 'selected'">Schedule</li>
+        <li @click="setTab('settings')" :class="tab === 'settings' && 'selected'">Settings</li>
       </ul>
     </div>
     <DashboardTab v-if="tab === 'dashboard'" :givenUser="user"/>
@@ -62,10 +62,26 @@ export default {
         gap: 12px;
         margin: 0;
         > li {
-          padding: 8px;
-          background: $khaki;
+          position: relative;
           border-radius: 4px;
           cursor: pointer;
+          padding: 8px 10px;        }
+
+        li::after {
+          background: none repeat scroll 0 0 transparent;
+          content: "";
+          display: block;
+          height: 2px;
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          background: black;
+          transition: width 0.3s ease 0s, left 0.3s ease 0s;
+          width: 0;
+        }
+        li:hover::after, .selected::after {
+          width: 100%;
+          left: 0;
         }
       }
     }

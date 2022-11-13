@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div v-if="!loading" :key="$route.path">
     <NavBar/>
     <!-- <nav>
       <router-link to="/">Home</router-link> |
@@ -47,7 +47,7 @@ export default {
 }
 
 html {
-  background-color: #f0f0f0;
+  background-color: white;
 }
 
 body {

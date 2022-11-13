@@ -1,7 +1,9 @@
 <template>
   <ContainerLayout>
     <TeamMetrics  v-if="team.id" :givenTeam="team"/>
-    <div class="users-grid">
+    <div class="users-list">
+      <h2>All users</h2>
+      <div class="users-grid">
       <CardLayout v-for="user in team.users" :key="user.id" @click="goToUser(user.id)">
         <span>
           {{ user.username }}
@@ -10,6 +12,7 @@
           {{ user.role }}
         </span>
       </CardLayout>
+    </div>
     </div>
   </ContainerLayout>
 </template>
@@ -50,4 +53,5 @@ export default {
     grid-template-columns: repeat(4, 1fr);
     gap: 2vw;
   }
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <Datepicker lang="en" range v-model="range" position="bottom" :disabled-end-date="disabledEndDate"/>
+  <Datepicker lang="en" range v-model="range" position="right" :disabled-end-date="disabledEndDate"/>
 </template>
 
 <script>
@@ -18,7 +18,7 @@
           new Date(moment().subtract(1, "month")), new Date()
         ],
         disabledEndDate: {
-          from: new Date(), 
+          from: new Date(),
           to: null
         }
       }

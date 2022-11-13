@@ -1,20 +1,27 @@
 import moment from 'moment'
 
-// USER-ONLY DATA 
+// COLORS
+const dayColor = "#EBE784";
+const nightColor = "#0069A4";
+const overtimeColor = "#008DA1";
+const totalColor = "#77BA99";
+const expectedColor = "#00A76B";
+
+// USER-ONLY DATA
 export const sortedUserDaily = (dates) => {
   let data_normal = {
     label: "Day hours",
-    color: "#B7CECE",
+    color: dayColor,
     datas: {}
   }
   let data_night = {
     label: "Night hours",
-    color: "#494331",
+    color: nightColor,
     datas: {}
   }
   let data_overtime = {
     label: "Overtime hours",
-    color: "#DE541E",
+    color: overtimeColor,
     datas: {}
   }
   let labels = {}
@@ -37,12 +44,12 @@ export const sortedUserDaily = (dates) => {
 export const summedUserDaily = (dates) => {
   let data_normal = {
     label: "Total hours",
-    color: "#DBB3B1",
+    color: totalColor,
     datas: {}
   }
   let data_expected = {
     label: "Expected hours",
-    color: "#2C1A1D",
+    color: expectedColor,
     datas: {}
   }
   dates.forEach(date => {
@@ -56,17 +63,17 @@ export const summedUserDaily = (dates) => {
 export const sortedUserWeekly = (dates) => {
   let data_normal = {
     label: "Day hours",
-    color: "#B7CECE",
+    color: dayColor,
     datas: {}
   }
   let data_night = {
     label: "Night hours",
-    color: "#494331",
+    color: nightColor,
     datas: {}
   }
   let data_overtime = {
     label: "Overtime hours",
-    color: "#DE541E",
+    color: overtimeColor,
     datas: {}
   }
   let weekLabels = []
@@ -93,12 +100,12 @@ export const sortedUserWeekly = (dates) => {
 export const summedUserWeekly = (dates) => {
   let data_normal = {
     label: "Total hours",
-    color: "#DBB3B1",
+    color: totalColor,
     datas: {}
   }
   let data_expected = {
     label: "Expected hours",
-    color: "#2C1A1D",
+    color: expectedColor,
     datas: {}
   }
   dates.forEach(date => {
@@ -117,17 +124,17 @@ export const summedUserWeekly = (dates) => {
 export const dailyTeamSortedAverage = (dates) => {
   let data_normal = {
     label: "Average day hours",
-    color: "#B7CECE",
+    color: dayColor,
     datas: {}
   }
   let data_night = {
     label: "Average night hours",
-    color: "#494331",
+    color: nightColor,
     datas: {}
   }
   let data_overtime = {
     label: "Average overtime hours",
-    color: "#DE541E",
+    color: overtimeColor,
     datas: {}
   }
   let labels = {}
@@ -150,12 +157,12 @@ export const dailyTeamSortedAverage = (dates) => {
 export const dailyTeamAverage = (dates) => {
   let data_normal = {
     label: "Average total hours",
-    color: "#DBB3B1",
+    color: totalColor,
     datas: {}
   }
   let data_expected = {
     label: "Average expected hours",
-    color: "#2C1A1D",
+    color: expectedColor,
     datas: {}
   }
   dates.forEach(date => {
@@ -169,17 +176,17 @@ export const dailyTeamAverage = (dates) => {
 export const weeklyTeamSortedAverage = (dates) => {
   let data_normal = {
     label: "Average day hours",
-    color: "#B7CECE",
+    color: dayColor,
     datas: {}
   }
   let data_night = {
     label: "Average night hours",
-    color: "#494331",
+    color: nightColor,
     datas: {}
   }
   let data_overtime = {
     label: "Average overtime hours",
-    color: "#DE541E",
+    color: overtimeColor,
     datas: {}
   }
   let weekLabels = {}
@@ -205,12 +212,12 @@ export const weeklyTeamSortedAverage = (dates) => {
 export const weeklyTeamAverage = (dates) => {
   let data_normal = {
     label: "Average total hours",
-    color: "#DBB3B1",
+    color: totalColor,
     datas: {}
   }
   let data_expected = {
     label: "Average expected hours",
-    color: "#2C1A1D",
+    color: expectedColor,
     datas: {}
   }
   dates.forEach(date => {

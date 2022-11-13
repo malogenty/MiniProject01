@@ -1,8 +1,14 @@
 <template>
   <header>
-    <span @click="goHome">{{this.showAccount ? "THE best tool to track your employee's attendance" : "A time manager so that ALL your hours get paid !"}}</span>
-    <button @click="goToMyAccount" v-if="showAccount">Go to my account</button>
-    <button @click="logout">Logout</button>
+    <span @click="goHome">{{
+      this.showAccount
+        ? "THE best tool to track your employee's attendance"
+        : 'A time manager so that ALL your hours get paid !'
+    }}</span>
+    <button class="header-btn" @click="goToMyAccount" v-if="showAccount">
+      My account
+    </button>
+    <button class="header-btn" @click="logout">Logout</button>
   </header>
 </template>
 
@@ -11,9 +17,11 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   methods: {
     ...mapActions({
-      logout: 'currentUser/logout'
+      logout: 'currentUser/logout',
+      fetchUser: 'watchedUser/fetchUser'
     }),
-    goToMyAccount() {
+    async goToMyAccount() {
+      await this.fetchUser(this.currentUser.id)
       this.$router.push(`/user/${this.currentUser.id}`)
     },
     goHome() {
@@ -22,31 +30,49 @@ export default {
   },
   computed: {
     ...mapGetters({
-      currentUser: "currentUser/getUser"
+      currentUser: 'currentUser/getUser'
     }),
     showAccount() {
-      return this.currentUser.role === "manager" || this.currentUser.role === "general_manager"
+      return (
+        (this.currentUser.role === 'manager' ||
+        this.currentUser.role === 'general_manager')
+      )
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-  @import "@/styles/colors.scss";
+@import '@/styles/colors.scss';
 
-  header {
-    background-color: $green;
-    width: 100%;
-    display: flex;
-    padding: 1vw;
-    span {
-      margin-right: auto;
-      cursor: pointer;
-      font-weight: bold;
-      color: $black;
-    }
-    button:first-of-type {
-      margin-right: 4px;
+header {
+  background-color: $green;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 2%;
+  margin-bottom: 1%;
+  box-shadow: 0px 2px 7px 2px rgba(0, 0, 0, 0.33);
+  -webkit-box-shadow: 0px 2px 7px 2px rgba(0, 0, 0, 0.33);
+  span {
+    margin-right: auto;
+    cursor: pointer;
+    font-weight: bold;
+    color: $black;
+  }
+  .header-btn {
+    height: 35px;
+    width: 100px;
+    border-radius: 6px;
+    transition: all 200ms ease;
+    border: none;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 3px 3px 0px 0px darken($green, 20%);
     }
   }
+  button:first-of-type {
+    margin-right: 1%;
+  }
+}
 </style>

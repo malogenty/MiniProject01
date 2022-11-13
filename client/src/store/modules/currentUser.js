@@ -68,9 +68,10 @@ const currentUser = {
         return {error: response.error, status: response.status}
       }
     },
-    logout({commit}) {
+    logout({commit, dispatch}) {
       VueCookies.remove("jwt")
       commit('resetState')
+      dispatch('watchedUser/resetUser', null, {root: true})
       axios.defaults.headers.common["Authorization"] = null
       router.push('/login')
     },

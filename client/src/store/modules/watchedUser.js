@@ -21,6 +21,9 @@ const watchedUser = {
   namespaced: true,
   state: () => (getDefaultState()),
   mutations: {
+    resetUser(state) {
+      Object.assign(state, getDefaultState())
+    },
     setUser(state, {id, username, email, role, hour_rate}) {
       state.id = id
       state.username = username
@@ -48,7 +51,11 @@ const watchedUser = {
     }
   },
   actions: {
+    resetUser({commit}) {
+      commit('resetUser')
+    },
     async fetchUser({commit}, id) {
+      commit('resetUser')
       try {
         const {data, status} = await axios.get(`${API_URL}/users/${id}`)
         commit('setUser', data)
