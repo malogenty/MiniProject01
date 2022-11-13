@@ -116,6 +116,12 @@ const watchedUser = {
       const {status} = await axios.delete(`${API_URL}/schedule/${id}`)
       commit('deleteEvent', id)
       return {status}
+    },
+    async customClockOut({getters}, clockOutTime) {
+      clockOutTime = moment(clockOutTime).toISOString()
+      const {data, status} = await axios.post(`${API_URL}/clocks/${getters.getUser.id}?clock_out=${clockOutTime}`)
+      
+      return {status, data}
     }
   },
   getters: {

@@ -16,6 +16,7 @@
       </form>
       <div class="actions">
         <button @click="promoteThisUser" v-if="canBePromoted">Promote user</button>
+        <button @click="customClockOut" v-if="canBeClockedOut">Custom clock out</button>
         <button @click="deleteThisUser" v-if="canBeDeleted">Delete user</button>
       </div>
     </div>
@@ -24,7 +25,9 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import ContainerLayout from '../../Layout/ContainerLayout.vue'
+import ContainerLayout from '@/components/Layout/ContainerLayout.vue'
+import moment from 'moment'
+
 export default {
   components: {ContainerLayout},
   props: {
@@ -44,6 +47,9 @@ export default {
     ...mapGetters({
       currentUser: 'currentUser/getUser'
     }),
+    canBeClockedOut() {
+      return (this.currentUser.role === "general_manager" || this.currentUser.role === "manager") && this.user.role === "employee"
+    },
     canBePromoted() {
       return this.currentUser.role === "general_manager" && this.user.role !== "manager" && this.user.role !== "general_manager"
     },
@@ -56,6 +62,7 @@ export default {
       editUser: 'currentUser/editUser',
       promoteUser: 'watchedUser/promoteUser',
       deleteUser: 'watchedUser/deleteUser',
+      clockOut: 'watchedUser/customClockOut'
     }),
     async handleFormSubmission() {
       if(this.disabled) return
@@ -70,6 +77,11 @@ export default {
       const res = await this.deleteUser(this.user.id)
       this.editMessage(res)
     },
+    async customClockOut() {
+      const date = prompt("Please enter custom clock out date time like so", moment().format("YYYY-MM-DD HH:mm:ss"))
+      if(!moment(date).isValid()) return alert("Not a valid date.")
+      return await this.clockOut(date)
+     },
     editMessage(res) {
       if (res.status === 200) this.message = {status: res.status, msg: "Success !"}
       if (res.status !== 200) this.message = {status: res.status, msg: res.error}
