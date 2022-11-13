@@ -69,7 +69,7 @@ export default {
           this.watchedUser.role === 'employee') ||
         (this.currentUser.role === 'general_manager' &&
           (this.watchedUser.role === 'employee' ||
-            this.watchedUser.role === 'manager'))
+            this.watchedUser.role === 'manager' || this.watchedUser.id === this.currentUser.id))
       )
     }
   },

@@ -17,9 +17,11 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   methods: {
     ...mapActions({
-      logout: 'currentUser/logout'
+      logout: 'currentUser/logout',
+      fetchUser: 'watchedUser/fetchUser'
     }),
-    goToMyAccount() {
+    async goToMyAccount() {
+      await this.fetchUser(this.currentUser.id)
       this.$router.push(`/user/${this.currentUser.id}`)
     },
     goHome() {
@@ -32,8 +34,8 @@ export default {
     }),
     showAccount() {
       return (
-        this.currentUser.role === 'manager' ||
-        this.currentUser.role === 'general_manager'
+        (this.currentUser.role === 'manager' ||
+        this.currentUser.role === 'general_manager')
       )
     }
   }

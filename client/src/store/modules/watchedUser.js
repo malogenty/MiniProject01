@@ -12,7 +12,7 @@ const getDefaultState = () => ({
   email: null,
   role: null,
   hourRate: null,
-  hours_worked: [],
+  hours_worked: {},
   clocks: [],
   schedule: {}
 })
@@ -21,6 +21,9 @@ const watchedUser = {
   namespaced: true,
   state: () => (getDefaultState()),
   mutations: {
+    resetUser(state) {
+      Object.assign(state, getDefaultState())
+    },
     setUser(state, {id, username, email, role, hour_rate}) {
       state.id = id
       state.username = username
@@ -28,8 +31,8 @@ const watchedUser = {
       state.role = role
       state.hourRate = hour_rate
     },
-    setHoursWorked(state, hw) {
-      state.hours_worked = hw
+    setHoursWorked(state, hours_worked_array) {
+      hours_worked_array.forEach(hw => state.hours_worked[hw.date] = hw)
     },
     setSchedules(state, events) {
       events.forEach(ev => state.schedule[ev.id] = ev)
@@ -42,10 +45,17 @@ const watchedUser = {
     },
     deleteEvent(state, ev_id) {
       state.schedule[ev_id] = null
+    },
+    addSingleDay(state, hw) {
+      state.hours_worked[hw.date] = hw
     }
   },
   actions: {
+    resetUser({commit}) {
+      commit('resetUser')
+    },
     async fetchUser({commit}, id) {
+      commit('resetUser')
       try {
         const {data, status} = await axios.get(`${API_URL}/users/${id}`)
         commit('setUser', data)
@@ -87,6 +97,11 @@ const watchedUser = {
         return {error: response.error, status: response.status}
       }
     },
+    addHoursWorked({commit}, data) {
+      const arr = Array.isArray(data)
+      if (arr) return commit('setHoursWorked', data)
+      return commit('addSingleDay', data)
+    },
     async fetchSchedule({commit}, {u_id, from, to}) {
       const {status, data} = await axios.get(`${API_URL}/schedule/${u_id}?start=${from}&end=${to}`)
         commit('setSchedules', data)
@@ -108,11 +123,18 @@ const watchedUser = {
       const {status} = await axios.delete(`${API_URL}/schedule/${id}`)
       commit('deleteEvent', id)
       return {status}
+    },
+    async customClockOut({getters}, clockOutTime) {
+      clockOutTime = moment(clockOutTime).toISOString()
+      const {data, status} = await axios.post(`${API_URL}/clocks/${getters.getUser.id}?clock_out=${clockOutTime}`)
+      
+      return {status, data}
     }
   },
   getters: {
     getUser(state) {
       return state
+      
     }
   }
 }

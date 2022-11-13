@@ -24,10 +24,10 @@ export const sortedUserDaily = (dates) => {
     color: overtimeColor,
     datas: {}
   }
-  let labels = []
+  let labels = {}
   dates.forEach(date => {
-    const date_f = moment(date.date).format("MMM, Mo")
-    labels.push(date_f)
+    const date_f = moment(date.date).format("MMM, Do")
+    if (!labels[date_f]) labels[date_f] = date_f
     if(date.night_hours) {
       data_night.datas[date_f] = date.night_hours
     }
@@ -38,7 +38,7 @@ export const sortedUserDaily = (dates) => {
       data_overtime.datas[date_f] = date.overtime_hours
     }
   })
-  return {data: [data_normal, data_night, data_overtime], labels}
+  return {data: [data_normal, data_night, data_overtime], labels: Object.values(labels)}
 }
 
 export const summedUserDaily = (dates) => {
@@ -53,7 +53,7 @@ export const summedUserDaily = (dates) => {
     datas: {}
   }
   dates.forEach(date => {
-    const date_f = moment(date.date).format("MMM, Mo")
+    const date_f = moment(date.date).format("MMM, Do")
     data_normal.datas[date_f] = date.normal_hours + date.night_hours + date.overtime_hours
     data_expected.datas[date_f] = date.expected_worked_hours
   })
@@ -76,10 +76,10 @@ export const sortedUserWeekly = (dates) => {
     color: overtimeColor,
     datas: {}
   }
-  let weekLabels = {}
+  let weekLabels = []
   dates.forEach(date => {
     const w = moment(date.date).week()
-    if(!weekLabels[w]) weekLabels[w] = w
+    if (!weekLabels[w]) weekLabels[w] = w
     if(date.night_hours) {
       if(!data_night.datas[w]) data_night.datas[w] = 0
       data_night.datas[w] += date.night_hours
@@ -137,10 +137,10 @@ export const dailyTeamSortedAverage = (dates) => {
     color: overtimeColor,
     datas: {}
   }
-  let labels = []
+  let labels = {}
   dates.forEach(date => {
-    const date_f = moment(date.date).format("MMM, Mo")
-    labels.push(date_f)
+    const date_f = moment(date.date).format("MMM, Do")
+    if (!labels[date_f]) labels[date_f] = date_f
     if(date.avg_night) {
       data_night.datas[date_f] = date.avg_night
     }
@@ -151,7 +151,7 @@ export const dailyTeamSortedAverage = (dates) => {
       data_overtime.datas[date_f] = date.avg_overtime
     }
   })
-  return {data: [data_normal, data_night, data_overtime], labels}
+  return {data: [data_normal, data_night, data_overtime], labels: Object.values(labels)}
 }
 
 export const dailyTeamAverage = (dates) => {
@@ -166,7 +166,7 @@ export const dailyTeamAverage = (dates) => {
     datas: {}
   }
   dates.forEach(date => {
-    const date_f = moment(date.date).format("MMM, Mo")
+    const date_f = moment(date.date).format("MMM, Do")
     data_normal.datas[date_f] = date.avg_normal + date.avg_night + date.avg_overtime
     data_expected.datas[date_f] = date.avg_expected
   })
@@ -192,7 +192,7 @@ export const weeklyTeamSortedAverage = (dates) => {
   let weekLabels = {}
   dates.forEach(date => {
     const w = moment(date.date).week()
-    if(!weekLabels[w]) weekLabels[w] = w
+    if (!weekLabels[w]) weekLabels[w] = w
     if(date.avg_night) {
       if(!data_night.datas[w]) data_night.datas[w] = 0
       data_night.datas[w] += date.avg_night

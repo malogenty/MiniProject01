@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div :class="{ bounce: disabled, clock: true }" @click="sendClock">
+    <div :class="{ bounce: disabled, clock: true }" @click="sendClock" v-if="showClock">
       <span>Clock {{ clocked ? 'out' : 'in' }}</span>
     </div>
   </ContainerLayout>
@@ -95,10 +95,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      watchedUser: 'watchedUser/getUser'
+      watchedUser: "watchedUser/getUser",
+      currentUser: "currentUser/getUser"
     }),
     clocked() {
-      return this.watchedUser.clocks[this.watchedUser.clocks.length - 1]?.status
+      return this.currentUser.clocks[this.currentUser.clocks.length - 1]?.status
+    },
+    showClock() {
+      return this.currentUser.id === this.watchedUser.id
     }
   },
   methods: {
@@ -108,15 +112,10 @@ export default {
     }),
     async sendClock() {
       this.warnDisabled()
-      await this.sendClockAction()
-    },
-    async updateRange(range) {
-      console.log(range)
-      this.range = [
-        moment(range[0]).format('YYYY-MM-DD'),
-        moment(range[1]).format('YYYY-MM-DD')
-      ]
-      await this.fetchNewValues()
+      const res = await this.sendClockAction(!this.clocked)
+      if (res.data.hours_worked) {
+        this.updateGraphData(Object.values(this.watchedUser.hours_worked))
+      }
     },
     async fetchNewValues() {
       const res = await this.fetchHoursWorked({
@@ -125,19 +124,27 @@ export default {
         to: this.range[1]
       })
       if (res.status === 200) {
-        const { data, labels } = sortedUserDaily(res.data)
-        const summed = summedUserDaily(res.data)
+        this.updateGraphData(Object.values(this.watchedUser.hours_worked))
+    }
+  },
+    async updateRange(range) {
+      this.range = [moment(range[0]).format("YYYY-MM-DD"), moment(range[1]).format("YYYY-MM-DD")]
+      await this.fetchNewValues()
+    },
+    updateGraphData(graphData) {
+      const {data, labels} = sortedUserDaily(graphData)
+        const summed = summedUserDaily(graphData)
         this.graph.perDay.sorted = data
         this.graph.perDay.summed = summed
         this.graph.perDay.labels = labels
 
-        const { weekData, weekLabels } = sortedUserWeekly(res.data)
-        const weekSummed = summedUserWeekly(res.data)
+        const {weekData, weekLabels} = sortedUserWeekly(graphData)
+        const weekSummed = summedUserWeekly(graphData)
         this.graph.perWeek.sorted = weekData
         this.graph.perWeek.summed = weekSummed
         this.graph.perWeek.labels = weekLabels
-      }
-      this.update++
+        this.update++
+
     },
     warnDisabled() {
       this.disabled = true

@@ -24,7 +24,7 @@ defmodule ApiProjectWeb.ScheduleController do
   # Helper method
   def update_expected_hours(%{user_id: user_id, expected_hours: expected_hours, date: date}) do
     with {:ok, hours} <-
-           HoursWorked.get_hours_workeds_by_day(%{userId: user_id, date: date}) do
+           HoursWorked.get_hours_worked_by_day(%{userId: user_id, date: date}) do
       with {:ok, updated} <-
              HoursWorked.update_hours_worked(hours, %{
                expected_worked_hours: hours.expected_worked_hours + expected_hours
@@ -127,6 +127,17 @@ defmodule ApiProjectWeb.ScheduleController do
     schedule_params = Map.put(schedule_params, "user_id", user_id)
     duration_hrs = schedule_params["duration"] / 60
     user_schedule = Map.put(schedule_params, "duration", duration_hrs)
+
+    user_schedule =
+      Map.put(
+        user_schedule,
+        "end",
+        NaiveDateTime.add(
+          start_datetime,
+          trunc(schedule_params["duration"]) * 60,
+          :second
+        )
+      )
 
     with {:ok, %Schedule{} = schedule} <- Schedule.create(user_schedule) do
       if schedule_params["title"] == "work" do
