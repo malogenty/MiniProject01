@@ -11,7 +11,6 @@
 # and so on) as they will fail if something goes wrong.
 
 alias ApiProject.{Repo, User, TeamsUsers, Team, Clock, HoursWorked, WorkingTime, Schedule}
-
 import Bcrypt
 
 Repo.insert!(%User{
@@ -33,6 +32,24 @@ Repo.insert!(%User{
   email: "test03@gmail.com",
   role: :employee,
   password_hash: Bcrypt.hash_pwd_salt("password")
+})
+
+Repo.insert!(%Team{
+  name: "First Team",
+  start_of_day: ~T[08:00:00],
+  end_of_day: ~T[17:00:00]
+})
+
+Repo.insert!(%Team{
+  name: "Second Team",
+  start_of_day: ~T[09:00:00],
+  end_of_day: ~T[20:00:00]
+})
+
+Repo.insert!(%Team{
+  name: "Dream Team",
+  start_of_day: ~T[08:00:00],
+  end_of_day: ~T[16:00:00]
 })
 
 Repo.insert!(%TeamsUsers{
@@ -65,53 +82,35 @@ Repo.insert!(%TeamsUsers{
   team_id: 3
 })
 
-Repo.insert!(%Team{
-  name: "First Team",
-  start_of_day: ~T[08:00:00],
-  end_of_day: ~T[17:00:00]
-})
-
-Repo.insert!(%Team{
-  name: "Second Team",
-  start_of_day: ~T[09:00:00],
-  end_of_day: ~T[20:00:00]
-})
-
-Repo.insert!(%Team{
-  name: "Dream Team",
-  start_of_day: ~T[08:00:00],
-  end_of_day: ~T[16:00:00]
-})
-
-Repo.insert! %WorkingTime{
+Repo.insert!(%WorkingTime{
   start: ~N[2022-10-13 08:00:00],
   end: ~N[2022-10-14 17:30:00],
   user_id: 1
-}
+})
 
-Repo.insert! %WorkingTime{
+Repo.insert!(%WorkingTime{
   start: ~N[2022-10-13 09:30:00],
   end: ~N[2022-10-14 18:00:00],
   user_id: 2
-}
+})
 
-Repo.insert! %WorkingTime{
+Repo.insert!(%WorkingTime{
   start: ~N[2022-10-13 09:00:00],
   end: ~N[2022-10-14 17:30:00],
   user_id: 1
-}
+})
 
-Repo.insert! %Clock{
+Repo.insert!(%Clock{
   status: false,
   time: ~N[2022-10-13 08:00:00],
   user_id: 3
-}
+})
 
-Repo.insert! %Clock{
+Repo.insert!(%Clock{
   status: false,
   time: ~N[2022-10-13 17:00:00],
   user_id: 3
-}
+})
 
 Repo.insert!(%HoursWorked{
   date: ~D[2022-10-31],
