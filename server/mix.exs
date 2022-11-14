@@ -47,7 +47,8 @@ defmodule ApiProject.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:ecto_commons, "~> 0.3.3"},
       {:cors_plug, "~> 3.0"},
-      {:joken, "~> 2.5"}
+      {:joken, "~> 2.5"},
+      {:bcrypt_elixir, "~> 3.0"}
     ]
   end
 

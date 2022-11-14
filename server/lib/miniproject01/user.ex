@@ -4,15 +4,16 @@ defmodule ApiProject.User do
   import Ecto.Changeset
   import EctoCommons.EmailValidator
   import Ecto.Query, warn: false
-  
-  alias ApiProject.{Repo, User, WorkingTime, Clock, Team, TeamsUsers, HoursWorked}
+  import Bcrypt
 
+  alias ApiProject.{Repo, User, WorkingTime, Clock, Team, TeamsUsers, HoursWorked}
 
   schema "users" do
     field(:email, :string)
     field(:username, :string)
     field(:role, Ecto.Enum, values: [:general_manager, :manager, :employee])
     field(:hour_rate, :float, default: 7.5)
+    field(:password_hash, :string)
     has_many(:workingtimes, WorkingTime)
     has_many(:clocks, Clock)
     has_many(:hours_worked, HoursWorked)
@@ -24,14 +25,21 @@ defmodule ApiProject.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email, :role, :hour_rate])
+    |> cast(attrs, [:username, :email, :role, :hour_rate, :password_hash])
     |> validate_email(:email, checks: [:html_input])
-    |> validate_required([:username, :email, :role, :hour_rate])
+    |> validate_required([:username, :email, :role, :hour_rate, :password_hash])
     |> unique_constraint(:username, message: "This username is already taken")
   end
 
-  def get_user_with_credentials(%{email: email, username: username}) do
-    Repo.get_by(User, email: email, username: username)
+  def get_user_with_credentials(%{username: username, password: password}) do
+    user = Repo.get_by(User, username: username)
+    same = Bcrypt.check_pass(user, password)
+
+    if !is_nil(same) do
+      user
+    else
+      {:error, "Invalid credentials"}
+    end
   end
 
   def get_all() do

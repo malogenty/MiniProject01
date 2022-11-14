@@ -8,6 +8,25 @@ defmodule ApiProjectWeb.Auth do
     User.get_user(claims["user_id"])
   end
 
+  def authenticate({conn, "Bearer: " <> jwt}) do
+    {:ok, claims} = Token.verify_and_validate(jwt)
+    User.get_user(claims["user_id"])
+  end
+
+  def authenticate({conn, "Basic: " <> token}) do
+    [username, password] =
+      token
+      |> Base.decode64!(padding: false)
+      |> String.split(":")
+
+    with {:ok, user} <- User.authenticate_user(username, password) do
+      user
+    else
+      {:error, error_msg} ->
+        {:error, "Invalid credentials"}
+    end
+  end
+
   def has_right(%{bearer_token: token, target: target, action: action}) do
     bearer = get_user(token)
 

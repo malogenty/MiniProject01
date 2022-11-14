@@ -10,6 +10,7 @@ defmodule ApiProject.Repo.Migrations.CreateUsers do
       add(:email, :string, null: false)
       add(:hour_rate, :float, default: 7.25)
       add(:role, :user_role)
+      add(:password_hash, :string)
 
       timestamps()
     end
