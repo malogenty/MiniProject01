@@ -9,7 +9,9 @@ defmodule ApiProjectWeb.HoursWorkedView do
         date: h.date,
         normal_hours: h.normal_hours,
         night_hours: h.night_hours,
-        overtime_hours: h.overtime_hours,
+        overtime_day: h.overtime_hours,
+        overtime_night: h.overtime_night_hours,
+        overtime_hours: h.overtime_hours + h.overtime_night_hours,
         expected_worked_hours: h.expected_worked_hours,
         user: h.user_id
       }

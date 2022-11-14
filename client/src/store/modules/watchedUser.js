@@ -14,7 +14,9 @@ const getDefaultState = () => ({
   hourRate: null,
   hours_worked: {},
   clocks: [],
-  schedule: {}
+  schedule: {},
+  team: {},
+  salary: null
 })
 
 const watchedUser = {
@@ -31,8 +33,14 @@ const watchedUser = {
       state.role = role
       state.hourRate = hour_rate
     },
+    setTeam(state, team) {
+      state.team = team
+    },
     setHoursWorked(state, hours_worked_array) {
       hours_worked_array.forEach(hw => state.hours_worked[hw.date] = hw)
+    },
+    setSalary(state, salary) {
+      state.salary = salary
     },
     setSchedules(state, events) {
       events.forEach(ev => state.schedule[ev.id] = ev)
@@ -54,15 +62,36 @@ const watchedUser = {
     resetUser({commit}) {
       commit('resetUser')
     },
-    async fetchUser({commit}, id) {
+    async fetchUser({commit, dispatch}, id) {
       commit('resetUser')
       try {
         const {data, status} = await axios.get(`${API_URL}/users/${id}`)
         commit('setUser', data)
+        dispatch('getSalary')
         return {status}
       } catch ({response}) {
         return {error: response.error, status: response.status}
       }
+    },
+    async getSalary({commit, getters, dispatch}) {
+      const user = getters.getUser
+      const today = moment().format("YYYY-MM-DD")
+      const startOfMonth = moment().startOf('month').format('YYYY-MM-DD')
+      await dispatch('fetchTeam')
+      await dispatch('fetchHoursWorked', {u_id: user.id, from: startOfMonth, to: today})
+      let salary = 0
+      for (const hw of Object.values(user.hours_worked)) {
+        salary += hw.night_hours * user.team.nightMultiplicator * user.hourRate
+        salary += hw.normal_hours * user.hourRate
+        salary += hw.overtime_day * user.team.overtimeMultiplicator * user.hourRate
+        salary += hw.overtime_night * (user.team.nightMultiplicator + user.team.overtimeMultiplicator) * user.hourRate
+      }
+      commit('setSalary', salary)
+    },
+    async fetchTeam({commit, getters}) {
+      const {data, status} = await axios.get(`${API_URL}/users/${getters.getUser.id}/teams`)
+      commit('setTeam', data[0])
+      return {status, team: data}
     },
     async promoteUser({commit}, id) {
       try {

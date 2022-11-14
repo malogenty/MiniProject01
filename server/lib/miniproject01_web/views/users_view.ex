@@ -31,7 +31,9 @@ defmodule ApiProjectWeb.UserView do
         id: team.id,
         name: team.name,
         startOfDay: team.start_of_day,
-        endOfDay: team.end_of_day
+        endOfDay: team.end_of_day,
+        nightMultiplicator: team.night_multiplicator,
+        overtimeMultiplicator: team.overtime_multiplicator
       }
     end
   end

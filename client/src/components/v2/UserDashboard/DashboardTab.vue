@@ -2,7 +2,12 @@
   <ContainerLayout>
     <div class="dashboard-tab">
       <div class="row">
-        <span class="header">{{ user.username }}'s dashboard</span>
+        <div class="header">
+          <span>
+            {{ user.username }}'s dashboard | 
+          </span>
+          <span>{{ name }} should be paid {{ watchedUser.salary }}$ this month.</span>
+        </div>
         <div class="date-picker">
           <DatePicker @dateChange="updateRange" />
         </div>
@@ -103,6 +108,9 @@ export default {
     },
     showClock() {
       return this.currentUser.id === this.watchedUser.id
+    },
+    name() {
+      return this.currentUser.id === this.watchedUser.id ? "You" : this.watchedUser.username
     }
   },
   methods: {
