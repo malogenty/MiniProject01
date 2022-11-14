@@ -93,6 +93,8 @@ ENV MIX_ENV="prod"
 ENV DATABASE_URL ${DATABASE_URL}
 ENV SECRET_KEY_BASE ${SECRET_KEY_BASE}
 
+COPY priv priv
+
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/miniproject01 ./
 

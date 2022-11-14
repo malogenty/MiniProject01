@@ -23,7 +23,7 @@ defmodule ApiProject.Release do
 
     {:ok, _, _} =
       Ecto.Migrator.with_repo(ApiProject.Repo, fn _repo ->
-        Code.eval_file("app/priv/repo/seeds.exs")
+        Code.eval_file("priv/repo/seeds.exs")
       end)
   end
 
