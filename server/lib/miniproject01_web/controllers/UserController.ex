@@ -5,7 +5,7 @@ defmodule ApiProjectWeb.UserController do
   alias ApiProjectWeb.Auth
   import Bcrypt
 
-  def login(conn, params) do
+  def login(conn, _params) do
     user = Auth.login(conn)
 
     if user do
@@ -33,10 +33,12 @@ defmodule ApiProjectWeb.UserController do
 
   # create a user with given body
   def create(conn, %{"user" => user_params}) do
-    user_params = Map.put(user_params, "password", Bcrypt.hash_pwd_salt(user_params["password"]))
+    user_params =
+      Map.put(user_params, "password_hash", Bcrypt.hash_pwd_salt(user_params["password"]))
 
     with {:ok, %User{} = user} <- User.create_user(user_params) do
-      render(conn, "user.json", user: user, token: nil)
+      {:ok, token, claims} = Token.generate_and_sign(%{user_id: user.id})
+      render(conn, "user.json", user: user, token: token)
     else
       {:error, %Ecto.Changeset{}} ->
         conn
