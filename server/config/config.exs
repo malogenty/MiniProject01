@@ -14,7 +14,7 @@ config :miniproject01, ApiProject.Repo,
 
 config :miniproject01,
   namespace: ApiProject,
-  ecto_repos: [ApiProject.Repo, ApiProject.Repo.seeds]
+  ecto_repos: [ApiProject.Repo]
 
 # Configures the endpoint
 config :miniproject01, ApiProjectWeb.Endpoint,
