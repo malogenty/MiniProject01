@@ -1,9 +1,4 @@
-alias ApiProject.Repo
-alias ApiProject.User
-alias ApiProject.TeamsUsers
-alias ApiProject.WorkingTime
-alias ApiProject.Clock
-alias ApiProject.HoursWorked
+alias ApiProject.{Repo, Team, User, TeamsUsers, WorkingTime, Clock, HoursWorked}
 
 defmodule ApiProject.Seeder do
   def insertall do
@@ -73,52 +68,52 @@ defmodule ApiProject.Seeder do
       team_id: 3
     })
 
-    Repo.insert! %WorkingTime{
+    Repo.insert!(%WorkingTime{
       start: ~N[2022-10-13 08:00:00],
       end: ~N[2022-10-14 17:30:00],
       user_id: 1
-    }
+    })
 
-    Repo.insert! %WorkingTime{
+    Repo.insert!(%WorkingTime{
       start: ~N[2022-10-13 09:30:00],
       end: ~N[2022-10-14 18:00:00],
       user_id: 2
-    }
+    })
 
-    Repo.insert! %WorkingTime{
+    Repo.insert!(%WorkingTime{
       start: ~N[2022-10-13 09:00:00],
       end: ~N[2022-10-14 17:30:00],
       user_id: 1
-    }
+    })
 
-    Repo.insert! %Clock{
+    Repo.insert!(%Clock{
       status: false,
       time: ~N[2022-10-13 08:00:00],
       user_id: 3
-    }
+    })
 
-    Repo.insert! %Clock{
+    Repo.insert!(%Clock{
       status: false,
       time: ~N[2022-10-13 17:00:00],
       user_id: 3
-    }
+    })
 
-    Repo.insert! %HoursWorked{
+    Repo.insert!(%HoursWorked{
       date: ~N[2022-10-31 00:00:00],
       normal_hours: 7.5,
       night_hours: 0.0,
       overtime_hours: 0.0,
       expected_worked_hours: 7.5,
       user_id: 1
-    }
+    })
 
-    Repo.insert! %HoursWorked{
+    Repo.insert!(%HoursWorked{
       date: ~N[2022-11-01 00:00:00],
       normal_hours: 7.5,
       night_hours: 0.0,
       overtime_hours: 1.0,
       expected_worked_hours: 7.5,
       user_id: 1
-    }
+    })
   end
 end
