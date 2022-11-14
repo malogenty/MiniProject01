@@ -20,7 +20,6 @@
                 v-model="loginUser.username"
                 placeholder="username"
                 id="login-username"
-                type="username"
                 required
               />
             </div>
@@ -46,7 +45,7 @@
           Sign Up
           <span class="underline"></span>
         </button>
-        <form class="form form-signup" @submit.prevent="signUp()">
+        <form class="form form-signup" @submit.prevent="signUpAction()">
           <fieldset>
             <legend>
               Please, enter your email, password and password confirmation for
@@ -68,7 +67,6 @@
                 v-model="signUpUser.username"
                 id="signup-username"
                 placeholder="Username"
-                type="username"
                 required
               />
             </div>
@@ -103,8 +101,8 @@ export default {
         password: "",
       },
       signUpUser: {
-        email: "",
         username: "",
+        email: "",
         password: "",
       },
     };
@@ -112,7 +110,7 @@ export default {
   methods: {
     ...mapActions({
       login: "currentUser/login",
-      signUp: "signUpUser/signUp",
+      signup: "currentUser/signup",
     }),
     async loginAction() {
       const res = await this.login(this.loginUser);
@@ -121,18 +119,9 @@ export default {
       }
     },
     async signUpAction() {
-      console.log(this.signUpUser);
-      const res = await this.signUp({
-        user: {
-          email: this.signUpUser.email,
-          username: this.signUpUser.username,
-          password: this.signUpUser.password,
-          role: "employee",
-        },
-      });
-      console.log("Action called")
+      console.log(this.signUpUser)
+      const res = await this.signup(this.signUpUser);
       if (res.status === 200) {
-        console.log("SignUp succesfull");
         // const resLogin = await this.login()
         // this.$router.push("/");
       } else {

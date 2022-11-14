@@ -6,8 +6,6 @@ alias ApiProject.Clock
 alias ApiProject.HoursWorked
 
 defmodule ApiProject.Seeder do
-  @app :miniproject01
-
   def insertall do
     Repo.insert!(%User{
       username: "test01",
