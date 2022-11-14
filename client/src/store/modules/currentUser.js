@@ -69,9 +69,9 @@ const currentUser = {
     },
     async tokenLogin({dispatch}) {
       const token = VueCookies.get("jwt")
+      if (!token) return false
       try {
-        if (!token) return false
-        const {data} = await axios.get(`${API_URL}/users`)
+        const {data} = await axios.get(`${API_URL}/users`, {headers: {Authorization: `Bearer: ${token}`}})
         dispatch('loginUser', data)
       } catch (e) {
         return e
