@@ -46,7 +46,7 @@ const currentUser = {
         const {data, status} = await axios.get(`${API_URL}/users`, {headers: {Authorization: `Basic: ${str}`}})
         commit('setUser', data)
         VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
-        axios.defaults.headers.common["Authorization"] = data.token
+        axios.defaults.headers.common["Authorization"] = `Bearer: ${data.token}`
         if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
         dispatch('fetchClocks')
         return {status}
