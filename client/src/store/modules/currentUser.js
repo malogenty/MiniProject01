@@ -39,34 +39,42 @@ const currentUser = {
     }
   },
   actions: {
-    async login({commit, dispatch}, {username, password}) {
+    async login({dispatch}, {username, password}) {
       try {
-        commit('resetState')
         let str = btoa(`${username}:${password}`)
         const {data, status} = await axios.get(`${API_URL}/users`, {headers: {Authorization: `Basic: ${str}`}})
-        commit('setUser', data)
-        VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
-        axios.defaults.headers.common["Authorization"] = `Bearer: ${data.token}`
-        if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
-        dispatch('fetchClocks')
+        dispatch('loginUser', data)
         return {status}
       } catch({response}) {
         return {error: response.error, status: response.status}
       }
     },
-    async tokenLogin({commit, dispatch}) {
-      const token = VueCookies.get("jwt")
-      if (!token) return false
+    loginUser({commit, dispatch}, user) {
+      commit('setUser', user)
+      VueCookies.set("jwt", user.token, 60 * 60 * 2, null, null, true, "Lax")
+      axios.defaults.headers.common["Authorization"] = `Bearer: ${user.token}`
+      if (user.role === "general_manager" || user.role === "manager") dispatch('fetchTeams')
+      dispatch('fetchClocks')
+    },
+    async signup({dispatch}, user) {
       try {
-        axios.defaults.headers.common["Authorization"] = `Bearer: ${token}`
-        commit('resetState')
-        const {data, status} = await axios.get(`${API_URL}/users`)
-        commit('setUser', data)
-        if (data.role === "general_manager" || data.role === "manager") dispatch('fetchTeams')
-        dispatch('fetchClocks')
+        user.role = "employee"
+        const {data, status} = await axios.post(`${API_URL}/users`, {user: user})
+        dispatch('loginUser', data)
         return {status}
-      } catch({response}) {
+      } catch ({response}) {
         return {error: response.error, status: response.status}
+      }
+
+    },
+    async tokenLogin({dispatch}) {
+      const token = VueCookies.get("jwt")
+      try {
+        if (!token) return false
+        const {data} = await axios.get(`${API_URL}/users`)
+        dispatch('loginUser', data)
+      } catch (e) {
+        return e
       }
     },
     logout({commit, dispatch}) {

@@ -13,14 +13,14 @@
         </button>
         <form class="form form-login" @submit.prevent="loginAction()">
           <fieldset>
-            <legend>Please, enter your email and password for login.</legend>
+            <legend>Please, enter your username and password for login.</legend>
             <div class="input-block">
-              <label for="login-email">E-mail</label>
+              <label for="login-username">Username</label>
               <input
-                v-model="loginUser.email"
-                placeholder="example@example.com"
-                id="login-email"
-                type="email"
+                v-model="loginUser.username"
+                placeholder="username"
+                id="login-username"
+                type="username"
                 required
               />
             </div>
@@ -99,7 +99,7 @@ export default {
     return {
       isActive: true,
       loginUser: {
-        email: "",
+        username: "",
         password: "",
       },
       signUpUser: {
