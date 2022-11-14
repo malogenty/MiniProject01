@@ -1,13 +1,13 @@
 <template>
-  <LoginPage/>
+  <LoginPage2/>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-import LoginPage from '@/components/v2/LoginPage.vue';
+import LoginPage2 from '@/components/v2/LoginPage2.vue';
 export default {
   components: {
-    LoginPage
+    LoginPage2
   },
   created() {
     if(this.currentUser.id) this.$router.push('/')
