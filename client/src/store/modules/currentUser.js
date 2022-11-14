@@ -39,10 +39,11 @@ const currentUser = {
     }
   },
   actions: {
-    async login({commit, dispatch}, {username, email}) {
+    async login({commit, dispatch}, {username, password}) {
       try {
         commit('resetState')
-        const {data, status} = await axios.get(`${API_URL}/users?username=${username}&email=${email}`)
+        let str = btoa(`${username}:${password}`)
+        const {data, status} = await axios.get(`${API_URL}/users`, {headers: {Authorization: `Basic: ${str}`}})
         commit('setUser', data)
         VueCookies.set("jwt", data.token, 60 * 60 * 2, null, null, true, "Lax")
         axios.defaults.headers.common["Authorization"] = data.token
@@ -57,7 +58,7 @@ const currentUser = {
       const token = VueCookies.get("jwt")
       if (!token) return false
       try {
-        axios.defaults.headers.common["Authorization"] = token
+        axios.defaults.headers.common["Authorization"] = `Bearer: ${token}`
         commit('resetState')
         const {data, status} = await axios.get(`${API_URL}/users`)
         commit('setUser', data)

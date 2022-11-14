@@ -1,8 +1,8 @@
 <template>
   <container-layout>
-    <button @click="loginUser({email: 'test03@gmail.com', username: 'test03'})">Login employee</button>
-    <button @click="loginUser({email: 'test02@gmail.com', username: 'test02'})">Login manager</button>
-    <button @click="loginUser({email: 'test01@gmail.com', username: 'test01'})">Login general_manager</button>
+    <button @click="loginUser({username: 'test03', password: 'password'})">Login employee</button>
+    <button @click="loginUser({username: 'test02', password: 'password'})">Login manager</button>
+    <button @click="loginUser({username: 'test01', password: 'password'})">Login general_manager</button>
   </container-layout>
 </template>
 
@@ -16,12 +16,12 @@ export default {
     ...mapActions({
       login: 'currentUser/login'
     }),
-    async loginUser({email, username}) {
-      const res = await this.login({email, username})
+    async loginUser({username, password}) {
+      const res = await this.login({username, password})
       if(res.status === 200) {
         this.$router.push('/')
       } else {
-        alert(res.error)
+        alert(res.erorr)
       }
     }
   }

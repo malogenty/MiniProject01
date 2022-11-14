@@ -3,46 +3,18 @@ defmodule ApiProjectWeb.UserController do
   use ApiProjectWeb, :controller
   alias ApiProject.{User, Token}
   alias ApiProjectWeb.Auth
+  import Bcrypt
 
-  # list one user with params: email & username
-  def list(conn, params) do
-    auth_token = get_req_header(conn, "authorization")
+  def login(conn, params) do
+    user = Auth.login(conn)
 
-    cond do
-      length(auth_token) > 0 ->
-        user = Auth.get_user(List.first(auth_token))
-
-        if user do
-          render(conn, "user.json", user: user, token: auth_token)
-        else
-          conn
-          |> put_status(401)
-          |> render("error.json", reason: "Invalid JWT")
-        end
-
-      params["email"] && params["username"] ->
-        user =
-          User.get_user_with_credentials(%{email: params["email"], username: params["username"]})
-
-        if user do
-          {:ok, token, claims} = Token.generate_and_sign(%{user_id: user.id})
-          render(conn, "user.json", user: user, token: token)
-        else
-          conn
-          |> put_status(401)
-          |> render("error.json", reason: "Invalid credentials")
-        end
-
-      true ->
-        users = User.get_all()
-
-        if users do
-          render(conn, "users.json", users: users)
-        else
-          conn
-          |> put_status(404)
-          |> render("error.json", reason: "An error has occured")
-        end
+    if user do
+      {:ok, token, claims} = Token.generate_and_sign(%{user_id: user.id})
+      render(conn, "user.json", user: user, token: token)
+    else
+      conn
+      |> put_status(401)
+      |> render("error.json", reason: "Invalid credentials")
     end
   end
 
@@ -61,8 +33,10 @@ defmodule ApiProjectWeb.UserController do
 
   # create a user with given body
   def create(conn, %{"user" => user_params}) do
+    user_params = Map.put(user_params, "password", Bcrypt.hash_pwd_salt(user_params["password"]))
+
     with {:ok, %User{} = user} <- User.create_user(user_params) do
-      render(conn, "user.json", user: user)
+      render(conn, "user.json", user: user, token: nil)
     else
       {:error, %Ecto.Changeset{}} ->
         conn

@@ -7,7 +7,7 @@ defmodule ApiProjectWeb.Router do
 
   scope "/api", ApiProjectWeb do
     pipe_through(:api)
-    get("/users", UserController, :list)
+    get("/users", UserController, :login)
     get("/users/:userId", UserController, :read)
     get("/users/:userId/teams", UserController, :list_user_teams)
     post("/users", UserController, :create)

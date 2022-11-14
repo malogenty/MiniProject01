@@ -31,9 +31,10 @@ defmodule ApiProject.User do
     |> unique_constraint(:username, message: "This username is already taken")
   end
 
-  def get_user_with_credentials(%{username: username, password: password}) do
+  def authenticate_user(%{username: username, password: password}) do
     user = Repo.get_by(User, username: username)
     same = Bcrypt.check_pass(user, password)
+    Logger.info(%{user: user, pwd: same})
 
     if !is_nil(same) do
       user
